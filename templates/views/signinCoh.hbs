@@ -1,0 +1,41 @@
+    {{!< auth}}
+    <div class="auth-wrapper">
+      <div class="alert alert-placeholder">
+  {{#if messages}}
+    {{messages.error}}
+  {{/if}}
+  
+      </div>
+      <div class="auth-body">
+        <h1 class="sr-only">Sign In</h1>
+        <div class="auth-box">
+          <div class="auth-box-col">
+            <div class="auth-box-brand"><a href="/" class="auth-box-logo"><img src="/keystone/images/logo.png" width="205" height="68" alt="cluckoldhen"></a>
+            </div>
+          </div>
+          <div class="auth-box-col">
+          
+            {{#if user}}
+			  You are already logged in.
+			{{/if}}
+			{{#unless user}}
+            <form method="post" novalidate class="auth-form">
+              <input type="hidden" name="{{csrf_token_key}}" value="{{csrf_token_value}}">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control" value="{{submitted.email}}">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary">Sign In!</button>
+            </form>
+            <br />
+            <div class='social_logins'>
+            	<a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
+            </div>
+            {{/unless}}
+          </div>
+        </div>
+      </div>
