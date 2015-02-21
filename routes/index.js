@@ -20,83 +20,38 @@
 
 var keystone = require('keystone'),
 	middleware = require('./middleware'),
-	importRoutes = keystone.importer(__dirname);
+	importRoutes = keystone.importer(__dirname),
+	passport = require('passport');
+	keystone.import('models');
+
+require(APP_LIB + 'auth/FacebookPassportStrategy');
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('render', middleware.flashMessages);
 
-var passport = require('passport')
-, FacebookStrategy = require('passport-facebook').Strategy;
 
-passport.use(new FacebookStrategy({
-  clientID: '1558894697697443',
-  clientSecret: '964ee6d698f152d81cc9e8dadaed50e3',
-  callbackURL: "http://local.cluckoldhen.com:3000/auth/facebook/callback"
-},
-function(accessToken, refreshToken, profile, done) {
-	
-	console.log('first name: ' + profile._json.first_name + ' last name: ' + profile._json.last_name);
-	
-	var User = new keystone.List('User');
-
-
-	console.log('user list: ' + User);
-	var newuser = User.model({});
-	/*
-	'name' : {'first_name' : profile._json.first_name, 'last_name' : profile._json.last_name},
-	'fbId' : profile._json.id
-	});
-	
-	console.log('first name: ' + profile._json.first_name + ' last name: ' + profile._json.last_name);
-	
-	newuser.save(function(err) {
-	    console.log('error saving user: ' + err);
-	});
-	
-	/*
-	var url = 'mongodb://localhost:27017/cluckoldhen';
-	MongoClient.connect(url, function(err, db) {
-	
-		var collection = db.collection('users');
-		console.log('inserting user: ' + user.email)
-		collection.insert(user, function(err, result) {
-
-			console.log('error: ' + err);
-
-		});
-		
-	});
-	
-  User.findOrCreate(res, function(err, user) {
-    if (err) { return done(err); }
-    done(null, user);
-  });
-  
-  *  _json: 
-   { id: '10152587010110952',
-     first_name: 'Marshall',
-     gender: 'male',
-     last_name: 'Powell',
-     link: 'https://www.facebook.com/app_scoped_user_id/10152587010110952/',
-     locale: 'en_US',
-     name: 'Marshall Powell',
-     timezone: -5,
-     updated_time: '2013-01-13T03:25:51+0000',
-     verified: true } }
-
-  *
-  */
-}
-));
 
 // Import Route Controllers
 var routes = {
 	views: importRoutes('./views')
 };
 
+var initPassport = function(req, res, next){
+	
+	passport.req = req;
+	passport.res = res;
+	next();
+}
+
 // Setup Route Bindings
 exports = module.exports = function(app) {
+
+	app.configure(function() {
+		  app.use(passport.initialize());
+		  app.use(passport.session());
+		  app.use(app.router);
+		});
 	
 	// Views
 	app.get('/', routes.views.index);
@@ -106,12 +61,10 @@ exports = module.exports = function(app) {
 	app.all('/contact', routes.views.contact);
 	app.all('/signin', routes.views.signin);
 	app.all('/signinCoh', routes.views.signinCoh);
-	//app.all('/facebook', routes.views.facebook);
-	
+
 	app.get('/auth/facebook', passport.authenticate('facebook'));
-	app.get('/auth/facebook/callback', 
-			  passport.authenticate('facebook', { successRedirect: '/',
-			                                      failureRedirect: '/signinCoh?auth=fail' }));
+	app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook', { successRedirect: '/',
+			                                      failureRedirect: '/signinCoh?auth=fail' })]);
 	
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);

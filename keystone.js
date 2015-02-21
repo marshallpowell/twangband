@@ -47,7 +47,9 @@ keystone.init({
 //handlebars.registerPartial('auth', fs.readFileSync('templates/views/layouts/auth.hbs', 'utf8'));
 
 
-
+var path = require('path');
+global.APP_ROOT = path.resolve(__dirname);
+global.APP_LIB = APP_ROOT + "/lib/";
 
 
 var coh = require('./lib/coh.js');

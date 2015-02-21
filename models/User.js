@@ -11,7 +11,8 @@ var User = new keystone.List('User');
 
 User.add({
 	name: { type: Types.Name, required: true, index: true },
-	email: { type: Types.Email, initial: true, required: true, index: true },
+	facebookId: { type: Types.Text, hidden: true, required: false, index: false},
+	email: { type: Types.Email, initial: true, required: true, index: true, unique: true },
 	password: { type: Types.Password, initial: true, required: true },
 	instruments: {type: Types.Relationship, ref : 'Instrument', many:true},
 	country: {type: Types.Select, label: 'Country', options: countryOptions}
