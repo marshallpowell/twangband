@@ -1,0 +1,15 @@
+bcrypt = require('/var/www/share/node_modules/keystone/node_modules/bcrypt-nodejs'),
+
+		bcrypt.genSalt(10, function(err, salt) {
+			if (err)
+				console.log(err);
+
+			bcrypt.hash('mypassword', salt, function () {}, function(err, hash) {
+				if (err)
+					console.log(err);
+
+				// override the cleartext password with the hashed one
+				console.log('salt: ' + salt + ' hash: ' + hash);
+				
+			});
+		});

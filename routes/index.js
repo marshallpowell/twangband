@@ -63,8 +63,7 @@ exports = module.exports = function(app) {
 	app.all('/signinCoh', routes.views.signinCoh);
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
-	app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook', { successRedirect: '/',
-			                                      failureRedirect: '/signinCoh?auth=fail' })]);
+	app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook')]);
 	
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
