@@ -16,7 +16,7 @@
           <div class="auth-box-col">
           
             {{#if user}}
-			  You are already logged in.
+			  You are already logged in as {{user.name.first}}
 			{{/if}}
 			{{#unless user}}
             <form method="post" novalidate class="auth-form">

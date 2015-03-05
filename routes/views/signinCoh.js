@@ -5,6 +5,13 @@ exports = module.exports = function(req, res) {
 	var view = new keystone.View(req, res),
 	locals = res.locals;
 	var renderView = function() {
+
+        if(req.session.userId){
+            console.log("user id: " + req.session.userId);
+        }
+        else{
+            console.log("user id was null");
+        }
 		locals.csrf_token_value= keystone.security.csrf.getToken(req, res);
 		locals.csrf_token_key= keystone.security.csrf.TOKEN_KEY;
 		locals.csrf_query= '&' + keystone.security.csrf.TOKEN_KEY + '=' + keystone.security.csrf.getToken(req, res);

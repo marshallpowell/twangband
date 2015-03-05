@@ -13,6 +13,45 @@ var fs = require('fs');
 // See http://keystonejs.com/guide/config for available options
 // and documentation.
 
+var mongoose = require('mongoose');
+
+var options = {
+    server: {
+        auto_reconnect: true,
+        socketOptions : {
+            keepAlive: 1
+        }
+    }
+};
+
+//keystone.connect(mongoose);
+mongoose.connect('mongodb://localhost/cluckoldhen', options);
+//mongoose.set('debug', true);
+
+keystone.mongoose = mongoose;
+
+mongoose.connection.on('error', function(err){
+    console.log("error connecting to mongoose");
+});
+
+mongoose.connection.on('open', function() {
+    console.log("connection to mongoose opened");
+});
+
+mongoose.connection.on('close', function() {
+    console.log("connection to mongoose closed");
+});
+
+process.on('SIGINT', function() {
+    mongoose.connection.close(function () {
+        console.log('SIGINT Mongoose connection closed');
+        process.exit(0);
+    });
+});
+
+
+//keystone.connect(mongoose);
+
 keystone.init({
 
 	'name': 'cluckoldhen',
@@ -44,12 +83,21 @@ keystone.init({
 
 
 
+
 //handlebars.registerPartial('auth', fs.readFileSync('templates/views/layouts/auth.hbs', 'utf8'));
 
 
 var path = require('path');
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
+
+var winston = require('winston');
+global.logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)({ level: 'debug' }),
+        new (winston.transports.File)({ filename: '/var/www/coh/cluckoldhen/app.log' })
+    ]
+});
 
 
 var coh = require('./lib/coh.js');
@@ -126,3 +174,4 @@ keystone.set('nav', {
 // Start Keystone to connect to your database and initialise the web server
 
 keystone.start();
+
