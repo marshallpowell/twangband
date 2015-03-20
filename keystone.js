@@ -7,7 +7,6 @@ require('dotenv').load();
 var keystone = require('keystone'),
 	handlebars = require('express-handlebars');
 
-var fs = require('fs');
 
 // Initialise Keystone with your project's configuration.
 // See http://keystonejs.com/guide/config for available options
@@ -31,7 +30,7 @@ mongoose.connect('mongodb://localhost/cluckoldhen', options);
 keystone.mongoose = mongoose;
 
 mongoose.connection.on('error', function(err){
-    console.log("error connecting to mongoose");
+    console.log("error connecting to mongoose " + err);
 });
 
 mongoose.connection.on('open', function() {

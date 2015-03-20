@@ -71,7 +71,7 @@ exports = module.exports = function(req, res) {
 		
 		req.flash('error', 'You have been signed out');
 		
-		res.redirect('signinCoh');
+		res.redirect('login');
 	}
 	else {
 		renderView();

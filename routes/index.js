@@ -21,6 +21,7 @@
 var keystone = require('keystone'),
     middleware = require('./middleware'),
     importRoutes = keystone.importer(__dirname),
+    authUtils = require(APP_LIB + 'util/AuthUtils'),
     passport = require('passport');
 keystone.import('models');
 
@@ -42,7 +43,7 @@ var initPassport = function(req, res, next){
     passport.req = req;
     passport.res = res;
     next();
-}
+};
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
@@ -59,8 +60,8 @@ exports = module.exports = function(app) {
     app.get('/blog/post/:post', routes.views.post);
     app.get('/gallery', routes.views.gallery);
     app.all('/contact', routes.views.contact);
-    app.all('/signin', routes.views.signin);
-    app.all('/signinCoh', routes.views.signinCoh);
+    app.all('/login', routes.views.signinCoh);
+    app.all('/logout', [authUtils.signOut, routes.views.signinCoh]);
 
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook')]);
