@@ -1,0 +1,51 @@
+{{!< default}}
+
+
+
+
+<link type="text/css" rel="stylesheet" property="stylesheet" href="/styles/site/mixer.css" />
+
+<div class="container" id="recordSong">
+    <div class="jumbotron"><img src="/images/logo.svg" width="160">
+        <h1>Create a Song</h1>
+
+        <form>
+            <div class="row">
+                <div class=".col-md-3">
+                  Song Name:
+                </div>
+                <div class=".ctyol-md-9">
+                    <input type="text" name="songName" id="songName" />
+
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="row">
+
+            <div class="btn-group text-left">
+                <a class="btn btn-default" href="javascript:void('false');" ><i class="fa fa fa-cog " id="recordBtn" onclick="toggleRecording(this);">Record</i></a>
+                <a class="btn btn-default" href="#" ><i class="fa fa-play" onclick="playAll(this);"></i></a>
+                <a class="btn btn-default" href="#"><i class="fa fa-floppy-o"></i></a>
+            </div>
+        </div>
+
+        <div id="viz" class="row ">
+
+            <div class=".col-md-12">
+                <canvas id="analyser" width="1024" height="200"></canvas>
+            </div>
+        </div>
+
+
+        <p>
+            Footer
+
+        </p>
+    </div>
+</div>
+
+<script src="/js/lib/howler/howler.js"></script>
+<script src="/js/audioUtils.js"></script>

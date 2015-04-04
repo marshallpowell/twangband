@@ -122,7 +122,7 @@ module.exports = function() {
 	};
 	
 	/* To Implement [Ghost Helpers](http://docs.ghost.org/themes/#helpers)
-	 * The [source](https://github.com/TryGhost/Ghost/blob/master/core/server/helpers/index.js)
+	 * The [source](https://github.com/TryGhost/Ghost/data/master/core/server/helpers/index.js)
 	 *
 	 * * `Foreach` Extended Helper
 	 * * `Asset` Helper

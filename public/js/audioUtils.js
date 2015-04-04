@@ -4,7 +4,10 @@
  */
 function drawBuffer(track) {
 
-    var canvas = $('#wavedisplay').clone();
+   // var canvas = $('#wavedisplay').clone();
+    var infoColumn = $('<div class=".col-xs-6 .col-sm-4 ">Track</div>');
+    var wavColumn = $('<div class=".col-xs-12 .col-sm-6 .col-lg-8"></div>');
+    var canvas = $('<canvas width="1024" height="100"></canvas>');
     canvas[0].id = track.id;
     var width = canvas[0].width;
     var height = canvas[0].height;
@@ -28,7 +31,10 @@ function drawBuffer(track) {
         context.fillRect(i,(1+min)*amp,1,Math.max(1,(max-min)*amp));
     }
 
-    canvas.appendTo("#viz");
+    canvas.appendTo(wavColumn);
+    infoColumn.appendTo("#viz");
+    wavColumn.appendTo("#viz");
+   // canvas.appendTo("#viz");
 }
 
 
@@ -56,12 +62,16 @@ function UiTrack(id, data){
 /**
  * Convinience method of playing files
  */
-function playAll(){
+function playAll(el){
 
     for (var i=0; i< Howler._howls.length; i++) {
         console.log("playing: " + Howler._howls[i].urls()[0]);
-        Howler._howls[i].play();
+        Howler._howls[i]._audioNode[0].mediaGroup = "mixer";
+
+        console.log("playing: " + Object.prototype.toString.call(Howler._howls[i]._audioNode[0]));
     }
+
+    Howler._howls[0]._audioNode[0].controller.play();
 }
 
 /* Copyright 2013 Chris Wilson
@@ -155,13 +165,14 @@ function toggleRecording( e ) {
         // stop recording
         audioRecorder.stop();
         e.classList.remove("recording");
-
+       // e.classList.remove("fa-spin");
         audioRecorder.getBuffer( gotBuffers );
     } else {
         // start recording
         if (!audioRecorder)
             return;
         e.classList.add("recording");
+      //  e.classList.add("fa-spin")
         audioRecorder.clear();
         audioRecorder.record();
     }

@@ -66,7 +66,98 @@ exports = module.exports = function(app) {
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook')]);
 
+    app.all('/songMixer', routes.views.songMixer);
+    app.all('/mixer', routes.views.mixer);
+
     // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
     // app.get('/protected', middleware.requireUser, routes.views.protected);
 
+    //MT5 code below//
+    var fs = require("fs");
+    var TRACKS_PATH = '/var/www/coh/cluckoldhen/public/multitrack/';
+    // routing
+    app.get('/track', function (req, res) {
+        console.log("in track");
+        function sendTracks(trackList) {
+            if (!trackList)
+                return res.send(404, 'No track found');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(trackList));
+            res.end();
+        }
+
+        getTracks(sendTracks);
+        //
+    });
+
+// routing
+    app.get('/track/:id', function (req, res) {
+        var id = req.params.id;
+
+        function sendTrack(track) {
+            if (!track)
+                return res.send(404, 'Track not found with id "' + id + '"');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(track));
+            res.end();
+        }
+
+        getTrack(id, sendTrack);
+
+    });
+
+
+    function getTracks(callback) {
+        getFiles(TRACKS_PATH, callback);
+    }
+
+
+    function endsWith(str, suffix) {
+        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    }
+
+    function isASoundFile(fileName) {
+        if(endsWith(fileName, ".mp3")) return true;
+        if(endsWith(fileName, ".ogg")) return true;
+        if(endsWith(fileName, ".wav")) return true;
+        return false;
+    }
+
+    function getTrack(id, callback) {
+        //console.log("id = " + id);
+        if(!id) return;
+
+        getFiles(TRACKS_PATH + id, function(fileNames) {
+            if(! fileNames) {
+                callback(null);
+                return;
+            }
+
+            var track = {
+                id: id,
+                instruments: []
+            };
+            fileNames.sort();
+            for (var i = 0; i < fileNames.length; i++) {
+                // filter files that are not sound files
+                if(!isASoundFile(fileNames[i])) continue;
+
+                var instrument = fileNames[i].match(/(.*)\.[^.]+$/, '')[1];
+                track.instruments.push({
+                    name: instrument,
+                    sound: fileNames[i]
+                });
+            }
+            callback(track);
+        })
+    }
+
+    function getFiles(dirName, callback) {
+        fs.readdir(dirName, function(error, directoryObject) {
+            if(directoryObject !== undefined) {
+                directoryObject.sort();
+            }
+            callback(directoryObject);
+        });
+    }
 };
