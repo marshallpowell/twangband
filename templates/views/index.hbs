@@ -7,8 +7,8 @@
 
 <div class="container">
 	<div class="jumbotron"><img src="/images/logo.svg" width="160">
-		<h1>Welcome to CluckOldHen!</h1>
-		<p>Cluck Old Hen is where musicians from around the world play, record and mix their music together online.</p>
+		<h1>Welcome to musicilo!</h1>
+		<p>musicilo is where musicians from around the world play, record and mix their music together online.</p>
 
 		<p><a href="/signin" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a> to use the Admin UI.</p>
         {{#if user}}
@@ -16,29 +16,9 @@
         {{/if}}
 		<hr>
 
-
-        <div class="row">
-
-            <div class="btn-group text-left">
-                <a class="btn btn-default" href="javascript:void('false');" ><i class="fa fa fa-cog " id="recordBtn" onclick="toggleRecording(this);">Record</i></a>
-                <a class="btn btn-default" href="#" ><i class="fa fa-play" onclick="playAll(this);"></i></a>
-                <a class="btn btn-default" href="#"><i class="fa fa-floppy-o"></i></a>
-            </div>
-        </div>
-
-        <div id="viz" class="row ">
-
-            <div class=".col-md-12">
-                <canvas id="analyser" width="1024" height="200"></canvas>
-            </div>
-        </div>
-
-
 		<p>
 			Footer
 			
 		</p>
 	</div>
 </div>
-<script src="/js/lib/howler/howler.js"></script>
-<script src="/js/audioUtils.js"></script>

@@ -1,0 +1,30 @@
+{{!< default}}
+
+<div id="app" class="container">
+
+    <div class="row">
+        {{#if songs}}
+            <div class="col-md-8 header">
+                Song Name
+            </div>
+            <div class="col-md-4 header">
+                Date Created
+            </div>
+            {{#each songs}}
+                <div class="row">
+                    <div class="col-md-8">
+                       <a href="/mixer?song={{_id}}">{{name}}</a>
+                    </div>
+                    <div class="col-md-4">
+                        {{dateCreated}}
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+
+        {{#unless songs}}
+            You do not have any songs recorded yet
+        {{/unless}}
+    </div>
+
+</div>

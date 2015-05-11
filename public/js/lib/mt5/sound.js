@@ -2,6 +2,8 @@
 //hooking the interface object to the window
 window.View = new View();
 
+var bufferLoader;
+
 // The current song
 var currentSong;
 
@@ -50,7 +52,7 @@ window.requestAnimFrame = (function () {
 })();
 
 
-function init() {
+function init(songDto) {
 
     View.init();
 
@@ -59,6 +61,8 @@ function init() {
     buttonPause = document.querySelector("#bpause");
     buttonStop = document.querySelector("#bstop");
     buttonRecordMix = document.querySelector("#brecordMix");
+
+    buttonRecordMix.disabled=false;
 
     divTrack = document.getElementById("tracks");
     divConsole = document.querySelector("#messages");
@@ -88,9 +92,24 @@ function init() {
 
     // Get the list of the songs available on the server and build a
     // drop down menu
-    loadSongList();
+    //old code loadSongList();
 
     animateTime();
+
+    currentSong  = new Song("", context);
+
+    bufferLoader = new BufferLoader(
+        context,
+        [],
+        finishedLoading,
+        drawTrack
+    );
+
+    if(songDto != null){
+        console.log("new song loaded, name: " + songDto.name);
+        songDto.tracks = songDto.songTracks; //TODO figure out best approach here.
+        loadSongDto(songDto);
+    }
 }
 
 function log(message) {
@@ -220,11 +239,23 @@ function resetAllBeforeLoadingANewSong() {
    // divTrack.innerHTML = "";
 
 
-    buttonRecordMix.disabled = true;
+   // buttonRecordMix.disabled = true;
 }
 
-var bufferLoader;
+/**
+ * loads the songs tracks into audio buffers for playback
+ */
+function loadTracksForPlayback(trackUrls) {
+    bufferLoader = new BufferLoader(
+        context,
+        trackUrls,
+        finishedLoading,
+        drawTrack
+    );
+    bufferLoader.load();
+}
 
+//old loading function
 function loadAllSoundSamples() {
     bufferLoader = new BufferLoader(
         context,
@@ -235,6 +266,11 @@ function loadAllSoundSamples() {
     bufferLoader.load();
 }
 
+/**
+ * Draws the image of the sound
+ * @param decodedBuffer
+ * @param trackNumber
+ */
 function drawTrack(decodedBuffer, trackNumber) {
 
     console.log("drawTrack : let's draw sample waveform for track No" + trackNumber + " named ");
@@ -310,6 +346,9 @@ function finishedLoading(bufferList) {
 
 
 // ######### SONGS
+
+/*
+* Old function to load the drop down list of songs, can remove
 function loadSongList() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "track", true);
@@ -353,10 +392,46 @@ function loadSongList() {
     };
     xhr.send();
 }
-
+*/
 
 // ##### TRACKS #####
 
+function loadSongDto(songDto) {
+    resetAllBeforeLoadingANewSong();
+
+    // This function builds the current
+    // song and resets all states to default (zero muted and zero solo lists, all
+    // volumes set to 1, start at 0 second, etc.)
+    currentSong = new Song(songDto.name, context);
+
+    resizeSampleCanvas(songDto.tracks.length);
+
+    // for eah instrument/track in the song
+    var trackUrls = [];
+    songDto.tracks.forEach(function (trackDto, trackNumber) {
+        // Let's add a new track to the current song for this instrument
+        //currentSong.addTrack(instrument);
+        var track = new Track(trackDto.name, trackDto);
+        // Render HTMl
+        addNewTrackToSong(track, trackNumber);
+        trackUrls.push("/uploads/"+trackDto.fileName);
+
+    });
+
+    // Add range listeners, from range-input.js
+    addRangeListeners();
+
+    // disable all mute/solo buttons
+    $(".mute").attr("disabled", true);
+    $(".solo").attr("disabled", true);
+
+    // Loads all samples for the currentSong
+    loadTracksForPlayback(trackUrls);
+
+
+}
+
+//old load function
 function loadSong(songName) {
     resetAllBeforeLoadingANewSong();
 
@@ -377,12 +452,6 @@ function loadSong(songName) {
         resizeSampleCanvas(song.instruments.length);
 
         // for eah instrument/track in the song
-console.log("loadSong onload");
-        /*
-
-        *song: {"id":"AdmiralCrumple_KeepsFlowing","instruments":[{"name":"01_Kick1","sound":"01_Kick1.mp3"},{"name":"02_Kick2","sound":"02_Kick2.mp3"},{"name":"03_Snare","sound":"03_Snare.mp3"},{"name":"04_Hat1","sound":"04_Hat1.mp3"},{"name":"05_Hat2","sound":"05_Hat2.mp3"},{"name":"06_Sample","sound":"06_Sample.mp3"},{"name":"07_LeadVox","sound":"07_LeadVox.mp3"},{"name":"08_LeadVoxDouble1","sound":"08_LeadVoxDouble1.mp3"},{"name":"09_LeadVoxDouble2","sound":"09_LeadVoxDouble2.mp3"}]}
-         range-touch.js:5 added range listeners
-         */
         song.instruments.forEach(function (instrument, trackNumber) {
             // Let's add a new track to the current song for this instrument
             //currentSong.addTrack(instrument);
@@ -406,10 +475,69 @@ console.log("loadSong onload");
     xhr.send();
 }
 
-function saveTrack(trackNumber){
+/**
+ * Create a SongDTO from a song
+ * @returns {SongDto}
+ */
+function getSongFormData(){
 
-    console.log("saveTrack: "+trackNumber + ", song: " + JSON.stringify(currentSong.tracks));
+    var formData = new FormData();
+    var songDto = new SongDto();
+    songDto.name = $("#songName").val();
+    songDto.description = $("#songDescription").val();
 
+
+    $.each(currentSong.tracks, function(index, track){
+        var trackDto = getTrackDto(track);
+        trackDto.viewOrder = index;
+        songDto.tracks.push(trackDto);
+        if(track.blob != undefined){
+            console.log("adding rack blobData: " + track.blob + " for index: " + index);
+            formData.append("newTrack_"+index, track.blob, "song.wav");
+        }
+    });
+
+    formData.append("song", JSON.stringify(songDto));
+
+    return formData;
+}
+
+/**
+ * Map a track object to TrackDTO
+ * @param track
+ * @returns {TrackDto}
+ */
+function getTrackDto(track){
+
+    var trackDto = new TrackDto();
+    trackDto.name = track.name;
+    trackDto.blobData = track.blob;
+    trackDto.id = track.id;
+    trackDto.peaks = track.peaks;
+    trackDto.volume = track.volume;
+    trackDto.panning = track.panning;
+    trackDto.muted = track.muted;
+    trackDto.solo = track.solo;
+    return trackDto;
+}
+
+function saveSong(){
+
+    var data = getSongFormData();
+
+    console.log("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(data));
+
+    $.ajax({
+        url: '/song/save',
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function(data){
+            console.log(data);
+        }
+    });
 }
 /**
  *
@@ -432,38 +560,13 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     var width = canvas[0].width;
     var height = canvas[0].height;
     var context = canvas[0].getContext('2d');
-    var saveButton='';
 
     //decode newly recorded track
     if(arrayBuffer != null) {
 
         track.blob = new Blob([arrayBuffer], { type: track.type });
         console.log("newly recorded track being added");
-       saveButton = "<button onclick='saveTrack("+trackNumber+")'; id='saveTrack_"+trackNumber+"' >S</button>";
-/*        var float32Array = track.decodedBuffer.getChannelData(0);
 
-        canvas[0].id = track.id;
-        var width = canvas[0].width;
-        var height = canvas[0].height;
-        var context = canvas[0].getContext('2d');
-
-        var step = Math.ceil(float32Array.length / width);
-        var amp = height / 2;
-        context.fillStyle = "silver";
-        context.clearRect(0, 0, width, height);
-
-        for (var i = 0; i < width; i++) {
-            var min = 1.0;
-            var max = -1.0;
-            for (j = 0; j < step; j++) {
-                var datum = float32Array[(i * step) + j];
-                if (datum < min)
-                    min = datum;
-                if (datum > max)
-                    max = datum;
-            }
-            context.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
-        }*/
     }
 
 
@@ -472,7 +575,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     span.id="tracks_row_"+trackNumber;
     span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' +
     "<progress class='pisteProgress' id='progress" + trackNumber + "' value='0' max='100' style='width : " + SAMPLE_HEIGHT + "px' ></progress>" +
-    track.name + '<div style="float : right;">' + saveButton +
+    track.name + '<div style="float : right;">' +
     "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
     "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><img src='../img/earphones.png' /></button></div>" +
     "<span id='volspan'><input type='range' class = 'volumeSlider custom' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
@@ -616,7 +719,7 @@ function animateTime() {
 }
 
 function showWelcomeMessage() {
-    console.log("TODO some type of instructional logic here");
+   // console.log("TODO some type of instructional logic here");
 }
 
 function drawSelection() {

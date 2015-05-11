@@ -1,31 +1,23 @@
 /**
- * This file is where you define your application routes and controllers.
- *
- * Start by including the middleware you want to run for every request;
- * you can attach middleware to the pre('routes') and pre('render') events.
- *
- * For simplicity, the default setup for route controllers is for each to be
- * in its own file, and we import all the files in the /routes/views directory.
- *
- * Each of these files is a route controller, and is responsible for all the
- * processing that needs to happen for the route (e.g. loading data, handling
- * form submissions, rendering the view template, etc).
- *
- * Bind each route pattern your application should respond to in the function
- * that is exported from this module, following the examples below.
- *
- * See the Express application routing documentation for more information:
- * http://expressjs.com/api.html#app.VERB
+ * Routing logic for controllers
  */
 
 var keystone = require('keystone'),
     middleware = require('./middleware'),
     importRoutes = keystone.importer(__dirname),
     authUtils = require(APP_LIB + 'util/AuthUtils'),
-    passport = require('passport');
+    passport = require('passport'),
+    express = require('express'),
+    expressSession = require('express-session'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    multer  = require('multer');
+
 keystone.import('models');
 
 require(APP_LIB + 'auth/FacebookPassportStrategy');
+
+var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);
@@ -35,24 +27,44 @@ keystone.pre('render', middleware.flashMessages);
 
 // Import Route Controllers
 var routes = {
-    views: importRoutes('./views')
+    views: importRoutes('./views'),
+    services: importRoutes('./services')
 };
 
 var initPassport = function(req, res, next){
-
     passport.req = req;
     passport.res = res;
     next();
 };
 
+var redirectHome = function(req, res, next){
+    res.redirect("/");
+}
+
 // Setup Route Bindings
 exports = module.exports = function(app) {
 
-    app.configure(function() {
-        app.use(passport.initialize());
-        app.use(passport.session());
-        app.use(app.router);
-    });
+    app.use(express.static('public'));
+    app.use(cookieParser());
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(bodyParser.json());
+
+    app.use(expressSession({
+        secret: 'keyboard cat',
+
+        cookie: { secure: false }
+    }))
+
+    //cookie: { secure: false } set to true above for SSL
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    var uploads = multer({ dest: './uploads/'});
+
+    app.use("/uploads", express.static(UPLOADS_DIR));
 
     // Views
     app.get('/', routes.views.index);
@@ -64,10 +76,25 @@ exports = module.exports = function(app) {
     app.all('/logout', [authUtils.signOut, routes.views.signinCoh]);
 
     app.get('/auth/facebook', passport.authenticate('facebook'));
-    app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook')]);
+    app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
 
     app.all('/songMixer', routes.views.songMixer);
     app.all('/mixer', routes.views.mixer);
+    app.post('/song/save', uploads, routes.services.saveSong);
+   // app.all('/song/show',routes.services.getSong);
+    app.all('/song/user/', routes.views.userSongs);
+   // app.post('/song/remove',routes.services.removeSong);
+
+
+    passport.serializeUser(function(user, done) {
+        logger.debug("serializeUser: " + JSON.stringify(user));
+        done(null, user);
+    });
+
+    passport.deserializeUser(function(user, done) {
+        logger.debug("deserializeUser");
+        done(null, user);
+    });
 
     // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
     // app.get('/protected', middleware.requireUser, routes.views.protected);
@@ -105,6 +132,7 @@ exports = module.exports = function(app) {
         getTrack(id, sendTrack);
 
     });
+
 
 
     function getTracks(callback) {

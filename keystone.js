@@ -25,7 +25,7 @@ var options = {
 
 //keystone.connect(mongoose);
 mongoose.connect('mongodb://localhost/cluckoldhen', options);
-//mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 keystone.mongoose = mongoose;
 
@@ -89,6 +89,8 @@ keystone.init({
 var path = require('path');
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
+global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
+global.UPLOADS_DIR = "/var/www/uploads/";
 
 var winston = require('winston');
 global.logger = new (winston.Logger)({
