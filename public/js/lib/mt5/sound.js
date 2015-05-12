@@ -226,11 +226,11 @@ function resetAllBeforeLoadingANewSong() {
 
     // disable the menu for selecting song: avoid downloading more than one song
     // at the same time
-    var s = document.querySelector("#songSelect");
-    s.disabled = true;
+  //  var s = document.querySelector("#songSelect");
+  //  s.disabled = true;
 
     // reset the selection
-    resetSelection();
+   // resetSelection();
 
     // Stop the song
     stopAllTracks();
@@ -280,6 +280,7 @@ function drawTrack(decodedBuffer, trackNumber) {
 
     //new code
     var trackCanvas = document.getElementById("track_canvas_"+trackNumber);
+
     trackCanvas.width = (decodedBuffer.duration * 50);
     var trackCanvasContext = trackCanvas.getContext('2d');
     waveformDrawer.init(decodedBuffer, trackCanvas, '#83E83E');
@@ -331,8 +332,8 @@ function finishedLoading(bufferList) {
     $(".solo").attr("disabled", false);
 
     // enable song select menu
-    var s = document.querySelector("#songSelect");
-    s.disabled = false;
+   //var s = document.querySelector("#songSelect");
+   // s.disabled = false;
 
     // Set each track volume slider to max
     for (i = 0; i < currentSong.getNbTracks(); i++) {
@@ -645,9 +646,20 @@ function toFixed(value, precision) {
     return String(Math.round(value * power) / power);
 }
 
+function getMaxTrackWidth(){
+    if(currentSong === undefined){
+        return 0;
+    }
+
+    return (currentSong.getDuration() * 50);
+}
+
 function animateTime() {
     // clear canvas
     View.frontCanvasContext.clearRect(0, 0, window.View.masterCanvas.width, window.View.masterCanvas.height);
+    var maxTrackWidth = getMaxTrackWidth();
+
+   // View.frontCanvasContext.clearRect(0, 0, maxTrackWidth, window.View.masterCanvas.height);
 
     // Draw something only if a song has been loaded
     if (currentSong !== undefined) {
@@ -674,7 +686,10 @@ function animateTime() {
             if (currentSong.decodedAudioBuffers[0] !== undefined) {
 
                 totalTime = currentSong.getDuration();
-                currentXTimeline = currentSong.elapsedTimeSinceStart * window.View.masterCanvas.width / totalTime;
+                console.log("maxTrackWidth: " + maxTrackWidth + ", totalTime: " + totalTime);
+                console.log("maxTrackWidth / totalTime " + maxTrackWidth / totalTime);
+                //currentXTimeline = currentSong.elapsedTimeSinceStart * window.View.masterCanvas.width / totalTime;
+                currentXTimeline = currentSong.elapsedTimeSinceStart * maxTrackWidth / totalTime;
 
                 // draw frequencies that dance with the music
                 drawFrequencies();
@@ -896,7 +911,7 @@ function pauseAllTracks() {
 function setMasterVolume(val) {
     if (currentSong !== undefined) {
         // If we are here, then we need to reset the mute all button
-        document.querySelector("#bsound").innerHTML = '<span class="glyphicon glyphicon-volume-up"></span>';
+        //document.querySelector("#bsound").innerHTML = '<span class="glyphicon glyphicon-volume-up"></span>';
         var fraction;
 
         // set its volume to the current value of the master volume knob
