@@ -1,9 +1,9 @@
 {
-  "name": "cluckoldhen2.0",
+  "name": "musicilo",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./keystone.js"
   },
   "dependencies": {
     "body-parser": "~1.10.2",
