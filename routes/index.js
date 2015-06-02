@@ -81,9 +81,11 @@ exports = module.exports = function(app) {
     app.all('/songMixer', routes.views.songMixer);
     app.all('/mixer', routes.views.mixer);
     app.post('/song/save', uploads, routes.services.saveSong);
+    app.post('/song/updateCollaborators', routes.services.updateCollaborators);
    // app.all('/song/show',routes.services.getSong);
     app.all('/song/user/', routes.views.userSongs);
    // app.post('/song/remove',routes.services.removeSong);
+    app.all('/search/', routes.services.search);
 
 
     passport.serializeUser(function(user, done) {

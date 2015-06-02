@@ -1,8 +1,9 @@
-function Track(songName, instrument) {
+//TODO fix this to just take in a trackDto, or just use track DTO
+function Track(songName, trackDto) {
     // name of the track : bass, guitar, voice, etc.
-    this.name = instrument.name;
+    this.name = trackDto.name;
     // url of the track in the form http://.../track/track_name
-    this.url = "multitrack/" + songName + "/" + instrument.sound;
+    this.fieldName = trackDto.fileName;
     // decoded audio buffer
     this.decodedBuffer;
     // peaks for drawing the sample
