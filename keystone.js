@@ -1,5 +1,14 @@
 // Simulate config options from your production environment by
 // customising the .env file in your project's root folder.
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+
+mongodb_connection_string = 'mongodb://localhost/cluckoldhen';
+//take advantage of openshift env vars when available:
+if(process.env.OPENSHIFT_MONGODB_DB_URL){
+    mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
+}
+
 require('dotenv').load();
 
 
@@ -24,7 +33,7 @@ var options = {
 };
 
 //keystone.connect(mongoose);
-mongoose.connect('mongodb://localhost/cluckoldhen', options);
+mongoose.connect(mongodb_connection_string, options);
 mongoose.set('debug', true);
 
 keystone.mongoose = mongoose;
@@ -53,8 +62,8 @@ process.on('SIGINT', function() {
 
 keystone.init({
 
-	'name': 'cluckoldhen',
-	'brand': 'cluckoldhen',
+	'name': 'musicilo',
+	'brand': 'musicilo',
 	
 	'less': 'public',
 	'static': 'public',
