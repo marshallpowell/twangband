@@ -101,6 +101,10 @@ global.APP_LIB = APP_ROOT + "/lib/";
 global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
 global.UPLOADS_DIR = "/var/www/uploads/";
 
+if(process.env.OPENSHIFT_DATA_DIR){
+    global.UPLOADS_DIR =  process.env.OPENSHIFT_DATA_DIR + "uploads/";
+}
+
 var winston = require('winston');
 global.logger = new (winston.Logger)({
     transports: [
