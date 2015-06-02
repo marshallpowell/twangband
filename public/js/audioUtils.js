@@ -1,11 +1,15 @@
 /**
+ * THIS FILE SHOULD BE COMPLETELY DEPRICATED AND IS NOW DONE IN MIXER UTILS
+ */
+/**
  * Draws the track data on the canvas.
  * @param track
+ * TODO can i remove this?
  */
 function drawBuffer(track) {
 
    // var canvas = $('#wavedisplay').clone();
-    var infoColumn = $('<div class=".col-xs-6 .col-sm-4 ">Track</div>');
+/*    var infoColumn = $('<div class=".col-xs-6 .col-sm-4 ">Track</div>');
     var wavColumn = $('<div class=".col-xs-12 .col-sm-6 .col-lg-8"></div>');
     var canvas = $('<canvas width="1024" height="100"></canvas>');
     canvas[0].id = track.id;
@@ -33,7 +37,7 @@ function drawBuffer(track) {
 
     canvas.appendTo(wavColumn);
     infoColumn.appendTo("#viz");
-    wavColumn.appendTo("#viz");
+    wavColumn.appendTo("#viz");*/
    // canvas.appendTo("#viz");
 }
 
@@ -61,17 +65,18 @@ function UiTrack(id, data){
 
 /**
  * Convinience method of playing files
+ * TODO can I remove this now?
  */
 function playAll(el){
 
-    for (var i=0; i< Howler._howls.length; i++) {
+/*    for (var i=0; i< Howler._howls.length; i++) {
         console.log("playing: " + Howler._howls[i].urls()[0]);
         Howler._howls[i]._audioNode[0].mediaGroup = "mixer";
 
         console.log("playing: " + Object.prototype.toString.call(Howler._howls[i]._audioNode[0]));
     }
 
-    Howler._howls[0]._audioNode[0].controller.play();
+    Howler._howls[0]._audioNode[0].controller.play();*/
 }
 
 /* Copyright 2013 Chris Wilson
@@ -140,7 +145,7 @@ function gotBuffers( buffers ) {
  */
 function doneEncoding( arrayBuffer ) {
 
-    console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer));
+/*    console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer));
 
     drawBuffer(track);
 
@@ -152,7 +157,7 @@ function doneEncoding( arrayBuffer ) {
 
     if(Howler._howls.length > 1){
         playAll();
-    }
+    }*/
 
     //var player = new window.Audio();
     //player.src = window.URL.createObjectURL(blob);
@@ -293,4 +298,4 @@ function initAudio() {
         });
 }
 
-window.addEventListener('load', initAudio );
+
