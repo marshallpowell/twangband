@@ -105,17 +105,17 @@ function init(songDto) {
         finishedLoading,
         drawTrack
     );
-
+    console.log("check songDto: " + songDto);
     if(songDto != null){
-
-        songDto.tracks = songDto.songTracks; //TODO figure out best approach here.
+        console.log("found songDto");
+        console.log("tracks placed");
         currentSongDto = songDto;
-        currentSongDto.id = songDto._id //TODO fix DAO to return a DTO obj!
         console.log("new song loaded, name: " + songDto.name);
 
         loadSongDto(songDto);
     }
     else{
+        console.log("check songDto in NULL");
         currentSongDto = new SongDto();
     }
 }
@@ -496,7 +496,6 @@ function getSongFormData(){
     currentSongDto.name = $("#songName").val();
     currentSongDto.description = $("#songDescription").val();
     currentSongDto.tracks = [];
-    currentSongDto.id = currentSongDto._id; //TODO fix DAO to return a DTO!
 
 
     //if the track is newly recorded add the blob data

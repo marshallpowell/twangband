@@ -5,7 +5,7 @@ var songDao = require(APP_LIB + 'dao/SongDao');
 
 exports = module.exports = function(req, res) {
 
-    logger.debug("enter userSongs with user id: " + req.user._id);
+    logger.debug("enter userSongs with user id: " + JSON.stringify(req.user));
     var view = new keystone.View(req, res),
         locals = res.locals;
 

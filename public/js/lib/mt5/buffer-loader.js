@@ -80,10 +80,11 @@ BufferLoader.prototype.loadBuffer = function (url, index, recordingArrayBuffer) 
     if (e.total !== 0) {
       //var percent = (e.loaded * 100) / e.total;
 
+      //to show progress of loading you may uncomment the below, but first fix the UI to show the progress
       //console.log("loaded " + percent  + "of song " + index);
-      var progress = document.querySelector("#progress" + index);
-      progress.value = e.loaded;
-      progress.max = e.total;
+      //var progress = document.querySelector("#progress" + index);
+      //progress.value = e.loaded;
+      //progress.max = e.total;
     }
   };
 

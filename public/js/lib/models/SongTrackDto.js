@@ -7,19 +7,24 @@
  * This captures the actual Track - TrackDto
  * And captures the Track's attributes within the song
  */
+var method = SongTrackDto.prototype;
 
 function SongTrackDto(){
 
+    this.name;
     this.trackDto;
     this.volume;
     this.gain;
     this.position;
     this.loop;
     this.description;
-    this.songId;
     this.dateCreated;
     this.lastUpdated;
-    this.updatedBy;
-    this.createdBy;
+    this.updatedById;
+    this.creatorId;
     this.delete;
+}
+
+if(module.exports) {
+    module.exports = SongTrackDto;
 }
