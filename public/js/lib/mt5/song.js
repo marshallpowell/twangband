@@ -198,16 +198,7 @@ function Song(songName, context) {
 
     this.getDuration = function () {
         if (this.decodedAudioBuffers !== undefined) {
-
-            var maxDuration = 0;
-
-            for(var i = 0; i < this.decodedAudioBuffers.length; i++){
-
-                if(this.decodedAudioBuffers[i].duration > maxDuration){
-                    maxDuration = this.decodedAudioBuffers[i].duration;
-                }
-            }
-            return maxDuration;
+            return this.decodedAudioBuffers[0].duration;
         }
         return undefined;
     };

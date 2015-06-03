@@ -9,7 +9,7 @@ exports = module.exports = function(req, res) {
 
 
 
-    /* sample post of song data
+    /*
      {"song":"{\"tracks\":[{\"volume\":1,\"muted\":false,\"solo\":false,\"name\":\"01_Kick1\"},{\"volume\":1,\"muted\":false,\"solo\":false,\"name\":\"02_Kick2\"},
      {\"volume\":1,\"muted\":false,\"solo\":false,\"name\":\"03_Snare\"},{\"volume\":1,\"muted\":false,\"solo\":false,\"name\":\"04_Hat1\"},
      {\"volume\":1,\"muted\":false,\"solo\":false,\"name\": \"05_Hat2\"},{\"volume\":1,\"muted\":false,\"solo\":false,\"name\":\"06_Sample\"},
@@ -70,7 +70,7 @@ exports = module.exports = function(req, res) {
 
     //call dao's save the song and songTracks
     songDao.createOrUpdateSong(songDto);
-//TODO return better json response
+
     //map the request data and uploaded file info to the DTO.
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write({name : "marshall"});

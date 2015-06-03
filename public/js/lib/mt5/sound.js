@@ -51,7 +51,6 @@ window.requestAnimFrame = (function () {
         };
 })();
 
-var currentSongDto;
 
 function init(songDto) {
 
@@ -107,16 +106,9 @@ function init(songDto) {
     );
 
     if(songDto != null){
-
-        songDto.tracks = songDto.songTracks; //TODO figure out best approach here.
-        currentSongDto = songDto;
-        currentSongDto.id = songDto._id //TODO fix DAO to return a DTO obj!
         console.log("new song loaded, name: " + songDto.name);
-
+        songDto.tracks = songDto.songTracks; //TODO figure out best approach here.
         loadSongDto(songDto);
-    }
-    else{
-        currentSongDto = new SongDto();
     }
 }
 
@@ -421,7 +413,6 @@ function loadSongDto(songDto) {
         // Let's add a new track to the current song for this instrument
         //currentSong.addTrack(instrument);
         var track = new Track(trackDto.name, trackDto);
-        track.fileName = trackDto.fileName;
         // Render HTMl
         addNewTrackToSong(track, trackNumber);
         trackUrls.push("/uploads/"+trackDto.fileName);
@@ -492,26 +483,22 @@ function loadSong(songName) {
 function getSongFormData(){
 
     var formData = new FormData();
-
-    currentSongDto.name = $("#songName").val();
-    currentSongDto.description = $("#songDescription").val();
-    currentSongDto.tracks = [];
-    currentSongDto.id = currentSongDto._id; //TODO fix DAO to return a DTO!
+    var songDto = new SongDto();
+    songDto.name = $("#songName").val();
+    songDto.description = $("#songDescription").val();
 
 
-    //if the track is newly recorded add the blob data
     $.each(currentSong.tracks, function(index, track){
         var trackDto = getTrackDto(track);
         trackDto.viewOrder = index;
-        trackDto.name = document.getElementById('trackName'+index).value;
-        currentSongDto.tracks.push(trackDto);
+        songDto.tracks.push(trackDto);
         if(track.blob != undefined){
             console.log("adding rack blobData: " + track.blob + " for index: " + index);
             formData.append("newTrack_"+index, track.blob, "song.wav");
         }
     });
 
-    formData.append("song", JSON.stringify(currentSongDto));
+    formData.append("song", JSON.stringify(songDto));
 
     return formData;
 }
@@ -524,8 +511,7 @@ function getSongFormData(){
 function getTrackDto(track){
 
     var trackDto = new TrackDto();
-
-    trackDto.fileName = track.fileName;
+    trackDto.name = track.name;
     trackDto.blobData = track.blob;
     trackDto.id = track.id;
     trackDto.peaks = track.peaks;
@@ -590,10 +576,11 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     var span = document.createElement('tr');
     span.id="tracks_row_"+trackNumber;
     span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' +
-    "<input type='text' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
-    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button><br> " +
-   // "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><img src='../img/earphones.png' /></button></div>" +
-    "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
+    "<progress class='pisteProgress' id='progress" + trackNumber + "' value='0' max='100' style='width : " + SAMPLE_HEIGHT + "px' ></progress>" +
+    track.name + '<div style="float : right;">' +
+    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
+    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><img src='../img/earphones.png' /></button></div>" +
+    "<span id='volspan'><input type='range' class = 'volumeSlider custom' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
 
 
     var trackTd = document.createElement('td');
@@ -916,21 +903,6 @@ function pauseAllTracks() {
     lastTime = context.currentTime;
 }
 
-function changeMasterVolume(goUp){
-    var volume = document.getElementById("masterVolume");
-    if(goUp && volume.value < 100){
-        volume.value++;
-        setMasterVolume(volume.value);
-    }
-    else if(!goUp && volume.value > 0){
-        //go down
-        volume.value--;
-        setMasterVolume(volume.value);
-
-    }
-
-
-}
 // The next function can be called two ways :
 // 1 - when we click or drag the master volume widget. In that case the val
 // parameter is passed.

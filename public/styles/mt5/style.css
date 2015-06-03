@@ -65,9 +65,7 @@
 
 .trackBox {
     vertical-align: middle;
-    text-align: center;
     border: 1px solid grey;
-    padding: 5px;
 }
 
 #canvass {
@@ -156,8 +154,8 @@ a[data-toggle=tab] {
 }
 
 .volumeSlider {
-    width: 100px;
-    height: 15px;
+    margin-left: 20px;
+    width: 170px;
 }
 
 /***** for sliders *****/

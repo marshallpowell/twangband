@@ -1,88 +1,3 @@
-
-function toggleCollaboratorDialog(){
-
-    if(document.getElementById("searchUsers").style.display=="block"){
-        document.getElementById("searchUsers").style.display="none";
-    }
-    else{
-        document.getElementById("searchUsers").style.display="block";
-    }
-
-}
-
-function searchCollaborators(){
-
-    var formData = new FormData();
-    var searchDto = {
-        type : "USER",
-        firstName : document.getElementById("searchFirstName").value,
-        lastName : document.getElementById("searchLastName").value,
-        email : document.getElementById("searchEmail").value
-    };
-
-    formData.append("searchCriteria", JSON.stringify(searchDto));
-
-
-    $.ajax({
-        url: '/search',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        type: 'POST',
-        success: function(data){
-            console.log(data);
-            //display search results
-            var output="<ul>";
-var users = JSON.parse(data.data);
-            for(i=0; i < data.length; i++){
-                output += "<li>" + data[i].name + "</li>";
-            }
-            $( users ).each(function( index ) {
-                output += "<li><a href='#' onclick=addCollaborator('"+this.id+"'); >" + this.name + "</a></li>";
-            });
-
-            output += "</ul>";
-            document.getElementById("searchUsersData").innerHTML=output;
-        }
-    });
-}
-
-function addCollaborator(id){
-
-    var formData = new FormData();
-    var collaboratorDto = {
-        'id' : id,
-        'roles' : ['ADD_TRACK'],
-        'invitationAccepted' : false
-    };
-
-    formData.append("songId", currentSongDto.id);
-    formData.append("collaborator", JSON.stringify(collaboratorDto));
-    formData.append("action", "ADD");
-
-    $.ajax({
-        url: '/song/updateCollaborators',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        type: 'POST',
-        success: function(data){
-            console.log(data);
-            //display search results
-            var output="<ul>";
-            var user = JSON.parse(data);
-            output += "<li>" + user.name + "</li>";
-
-            output += "</ul>";
-            document.getElementById("collaborators").innerHTML +=output;
-        }
-    });
-
-    alert("add collaborator with id : " + id + " to song with id: " + currentSongDto.id);
-}
-
 /**
  * Draws the track data on the canvas.
  * @param track
@@ -221,59 +136,22 @@ function doneEncoding( arrayBuffer ) {
 
 }
 
-
 function toggleRecording( e ) {
-
     if (e.classList.contains("recording")) {
-        //stop the equalizer
-        cancelAnalyserUpdates();
+
         // stop recording
         audioRecorder.stop();
         e.classList.remove("recording");
         // e.classList.remove("fa-spin");
         audioRecorder.getBuffer( gotBuffers );
     } else {
-
-        if (!audioRecorder){
+        // start recording
+        if (!audioRecorder)
             return;
-        }
-
-        //start the equalizer
-        var startRecording = 6;
-        var div = document.getElementById("timer");
-        div.style.display="block";
-        setInterval(function(){
-
-            if(--startRecording > 0){
-
-                if(startRecording == 1){
-                    playAllTracks(0);
-                    div.innerHTML = "PLAY!";
-
-                    // start recording
-
-                    updateAnalysers();
-                    e.classList.add("recording");
-                    //  e.classList.add("fa-spin")
-                    audioRecorder.clear();
-                    audioRecorder.record();
-                    clearInterval();
-                    div.style.display="none";
-                    div.innerHTML="";
-                }
-                else{
-                    div.innerHTML = "Start playing in " + startRecording + "...";
-                }
-
-                //startRecording--;
-            }
-            else{
-                clearInterval();
-            }
-
-        },1000);
-
-
+        e.classList.add("recording");
+        //  e.classList.add("fa-spin")
+        audioRecorder.clear();
+        audioRecorder.record();
     }
 }
 
@@ -364,18 +242,10 @@ function gotStream(stream) {
     zeroGain.gain.value = 0.0;
     inputPoint.connect( zeroGain );
     zeroGain.connect( audioContext.destination );
-
-    toggleRecording(document.getElementById('brecordMix'));
-
+    updateAnalysers();
 }
 
-var AUDIO_INITIALIZED=false;
 function initAudio() {
-
-    if(AUDIO_INITIALIZED){
-        return;
-    }
-
     if (!navigator.getUserMedia)
         navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
     if (!navigator.cancelAnimationFrame)
@@ -398,11 +268,6 @@ function initAudio() {
             alert('Error getting audio');
             console.log(e);
         });
-
-    AUDIO_INITIALIZED=true;
 }
 
-
-
-
-//window.addEventListener('load', initAudio );
+window.addEventListener('load', initAudio );
