@@ -4,7 +4,7 @@
 /**
  * Draws the track data on the canvas.
  * @param track
- * TODO can i remove this?
+ * TODO can i remove this???
  */
 function drawBuffer(track) {
 
@@ -291,7 +291,7 @@ function initAudio() {
                     "googHighpassFilter": "false"
                 },
                 "optional": []
-            },
+            }
         }, gotStream, function(e) {
             alert('Error getting audio');
             console.log(e);
