@@ -5,6 +5,7 @@
 var method = SongDto.prototype;
 
 function SongDto(){
+    
     this.name;
     this.description;
     this.id=null;
