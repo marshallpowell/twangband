@@ -1,3 +1,6 @@
+/**
+ * Created by mpowell on 6/4/2015.
+ */
 
 var method = SongDto.prototype;
 
@@ -16,3 +19,4 @@ function SongDto(){
 if(module.exports) {
     module.exports = SongDto;
 }
+
