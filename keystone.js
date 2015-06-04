@@ -111,7 +111,7 @@ if(process.env.OPENSHIFT_DATA_DIR){
 
     global.FB_CLIENTID = '1558893454364234';
     global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
-    global.FB_CLIENTSECRET = '1558893454364234';
+    global.FB_CLIENTSECRET = '1992cb3d2ab570277129e9f8911b63a4';
 }
 
 var winston = require('winston');
