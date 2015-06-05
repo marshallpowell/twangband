@@ -26,9 +26,10 @@ exports.initLocals = function(req, res, next) {
 	locals.navLinks = [
 		{ label: 'Home',		key: 'home',		href: '/' },
 		{ label: 'Songs',		key: 'songs',		href: '/song/user' },
+        { label: 'Record',		key: 'mix',		href: '/mixer' },
 		{ label: 'Contact',		key: 'contact',		href: '/contact' }
 	];
-	
+
 	locals.user = req.user;
 	
 	next();
@@ -64,7 +65,7 @@ exports.requireUser = function(req, res, next) {
 	
 	if (!req.user) {
 		req.flash('error', 'Please sign in to access this page.');
-		res.redirect('/keystone/login');
+		res.redirect('/login');
 	} else {
 		next();
 	}

@@ -262,7 +262,7 @@ function toggleRecording( e ) {
                     div.innerHTML="";
                 }
                 else{
-                    div.innerHTML = "Start playing in " + startRecording + "...";
+                    div.innerHTML = "Start playing in " + startRecording + "... (Press the record button again when finished)";
                 }
 
                 //startRecording--;

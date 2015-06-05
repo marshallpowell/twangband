@@ -31,7 +31,9 @@ var routes = {
     services: importRoutes('./services')
 };
 
+var locals;
 var initPassport = function(req, res, next){
+    locals = res.locals;
     passport.req = req;
     passport.res = res;
     next();
@@ -65,6 +67,12 @@ exports = module.exports = function(app) {
     var uploads = multer({ dest: './uploads/'});
 
     app.use("/uploads", express.static(UPLOADS_DIR));
+
+    app.use(function(req, res, next) {
+        //this puts the user obj in the locals scope for the tempates
+        res.locals.user = req.user;
+        next();
+    });
 
     // Views
     app.get('/', routes.views.index);

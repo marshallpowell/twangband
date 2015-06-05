@@ -6,18 +6,21 @@
 <link type="text/css" rel="stylesheet" property="stylesheet" href="/styles/site/mixer.css" />
 
 <div class="container">
-	<div class="jumbotron"><img src="/images/logo.svg" width="160">
-		<h1>Welcome to musicilo!</h1>
-		<p>musicilo is where musicians from around the world play, record and mix their music together online.</p>
+	<div class="jumbotron">
+		<h1>welcome to <span class="mblue">music</span><span class="mgreen">ilo</span>!</h1>
+		<p><span class="mblue">music</span><span class="mgreen">ilo</span> is where musicians from around the world play, record and mix their music together online.</p>
 
-		<p><a href="/signin" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a> to use the Admin UI.</p>
+
         {{#if user}}
-            You are already logged in as email {{user.email}}
+            You are already logged in as  {{user.name.first}}
         {{/if}}
+        {{#unless user}}
+            <p><a href="/login" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a></p>
+        {{/unless}}
 		<hr>
 
 		<p>
-			Footer
+			<!--Footer-->
 			
 		</p>
 	</div>

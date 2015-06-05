@@ -1,17 +1,22 @@
+{{!< default}}
+
     {{!< auth}}
     <div class="auth-wrapper">
       <div class="alert alert-placeholder">
   {{#if messages}}
     {{messages.error}}
   {{/if}}
-  
+
       </div>
       <div class="auth-body">
-        <h1 class="sr-only">Sign In</h1>
+        <h1 class="sr-only">sign in</h1>
         <div class="auth-box">
           <div class="auth-box-col">
-            <div class="auth-box-brand"><a href="/" class="auth-box-logo"><img src="/keystone/images/logo.png" width="205" height="68" alt="cluckoldhen"></a>
+            <div>
+                <h1><span class="mblue">music</span><span class="mgreen">ilo</span> sign in</h1>
             </div>
+              <p>Only Facebook authentication is currently enabled. Stay tuned for more options.</p>
+              <p><a href="/">home</a></p>
           </div>
           <div class="auth-box-col">
           
@@ -19,6 +24,8 @@
 			  You are already logged in as {{user.name.first}}
 			{{/if}}
 			{{#unless user}}
+
+                <!--
             <form method="post" novalidate class="auth-form">
               <input type="hidden" name="{{csrf_token_key}}" value="{{csrf_token_value}}">
               <div class="form-group">
@@ -31,6 +38,7 @@
               </div>
               <button type="submit" class="btn btn-primary">Sign In!</button>
             </form>
+            -->
             <br />
             <div class='social_logins'>
             	<a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
@@ -39,3 +47,4 @@
           </div>
         </div>
       </div>
+    </div>
