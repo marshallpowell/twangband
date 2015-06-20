@@ -10,6 +10,7 @@ function SongDto(){
     this.description;
     this.id=null;
     this.tracks = [];
+    this.collaborators = [];
     this.creatorId;
     this.dateCreated;
     this.lastUpdated;
@@ -17,7 +18,5 @@ function SongDto(){
 
 }
 
-if(module.exports) {
-    module.exports = SongDto;
-}
+try{module.exports = SongDto;} catch(err){}
 

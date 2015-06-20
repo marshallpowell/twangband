@@ -11,7 +11,13 @@ exports = module.exports = function(req, res) {
 
     // locals.section is used to set the currently selected
     // item in the header navigation.
-    locals.section = 'home';
+    locals.section = 'songs';
+
+    //if not logged in don't show errors
+    if(!req.user){
+        view.render('userSongs');
+        return;
+    }
 
     songDao.findUserSongs(req.user._id).then(
         function(songs){

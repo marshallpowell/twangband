@@ -1,7 +1,10 @@
 
-function toggleCollaboratorDialog(){
+function toggleCollaboratorDialog(closeMe){
 
-    if(document.getElementById("searchUsers").style.display=="block"){
+    if(closeMe){
+        document.getElementById("searchUsers").style.display="none";
+    }
+    else if(document.getElementById("searchUsers").style.display=="block"){
         document.getElementById("searchUsers").style.display="none";
     }
     else{

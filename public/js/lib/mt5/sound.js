@@ -428,6 +428,11 @@ function loadSongDto(songDto) {
 
     });
 
+    //add the collaboarators to the UI
+    for(var i = 0; i < songDto.collaborators; i++){
+
+    }
+
     // Add range listeners, from range-input.js
     addRangeListeners();
 

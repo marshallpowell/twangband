@@ -10,12 +10,12 @@ exports = module.exports = function(req, res) {
     // Set locals
     locals.section = 'mixer';
 
-
     if(req.query.song) {
         songDao.getSong(req.query.song).then(
             function (song) {
                 logger.debug("rendering with song " + song.name);
                 locals['songJSON'] = JSON.stringify(song);
+
                 // Render the view
                 view.render('mixer');
             },
