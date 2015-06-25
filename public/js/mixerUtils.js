@@ -1,3 +1,6 @@
+var MixerUtil = {};
+
+
 
 function toggleCollaboratorDialog(closeMe){
 
@@ -13,7 +16,21 @@ function toggleCollaboratorDialog(closeMe){
 
 }
 
+MixerUtil.isLoggedIn = function(){
+
+    if(user){
+        return true;
+    }
+
+    alert("You must log in to use this function");
+    return false;
+}
+
 function searchCollaborators(){
+
+    if(!MixerUtil.isLoggedIn()){
+        return;
+    }
 
     var formData = new FormData();
     var searchDto = {

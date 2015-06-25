@@ -543,6 +543,9 @@ function getTrackDto(track){
 
 function saveSong(){
 
+    if(!MixerUtil.isLoggedIn()){
+        return;
+    }
     var data = getSongFormData();
 
     console.log("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(data));
@@ -555,7 +558,15 @@ function saveSong(){
         processData: false,
         type: 'POST',
         success: function(data){
-            console.log(data);
+
+
+            console.log("saved song: " + data);
+            console.log("song name: " + data.name);
+
+            if(!currentSongDto.id){
+                console.log("new song saved, now redirecting");
+                window.location.href="/mixer?song="+data.id;
+            }
         }
     });
 }
@@ -920,6 +931,13 @@ function pauseAllTracks() {
     lastTime = context.currentTime;
 }
 
+function changeMasterVolume(){
+
+    console.log("change volume");
+    setMasterVolume(document.getElementById("masterVolume").value);
+}
+
+/*
 function changeMasterVolume(goUp){
     var volume = document.getElementById("masterVolume");
     if(goUp && volume.value < 100){
@@ -935,6 +953,7 @@ function changeMasterVolume(goUp){
 
 
 }
+*/
 // The next function can be called two ways :
 // 1 - when we click or drag the master volume widget. In that case the val
 // parameter is passed.

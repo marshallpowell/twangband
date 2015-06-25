@@ -27,31 +27,31 @@ function View() {
 
     // getting all the html elements when the page completly loads
     this.init = function () {
-        this.masterCanvas = document.getElementById(this.masterCanvas);
+        this.masterCanvas = document.getElementById("myCanvas");
         this.masterCanvasContext = this.masterCanvas.getContext('2d');
-        this.frontCanvas = document.getElementById(this.frontCanvas);
+        this.frontCanvas = document.getElementById("frontCanvas");
         this.frontCanvasContext = this.frontCanvas.getContext('2d');
 
         // make it same size as its brother
         this.frontCanvas.height = window.View.masterCanvas.height;
         this.frontCanvas.width = window.View.masterCanvas.width;
 
-        this.waveCanvas = document.getElementById(this.waveCanvas);
+        this.waveCanvas = document.getElementById("waveCanvas");
         this.waveCanvasContext = this.waveCanvas.getContext('2d');
-        this.songs = document.getElementById(this.songs);
-        this.knobMasterVolume = document.getElementById(this.knobMasterVolume);
-        this.mute = document.getElementById(this.mute);
-        this.play = document.getElementById(this.play);
-        this.pause = document.getElementById(this.pause);
-        this.stop = document.getElementById(this.stop);
-        this.startLoop = document.getElementById(this.startLoop);
-        this.endLoop = document.getElementById(this.endLoop);
-        this.replayLoop = document.getElementById(this.replayLoop);
-        this.enableLoop = document.getElementById(this.enableLoop);
-        this.tracks = document.getElementById(this.tracks);
-        this.console = document.getElementById(this.console);
-        this.consoleTab = document.getElementById(this.consoleTab);
-        this.waveTab = document.getElementById(this.waveTab);
+        this.songs = document.getElementById("songs");
+        this.knobMasterVolume = document.getElementById("masterVolume");
+        this.mute = document.getElementById("bsound");
+        this.play = document.getElementById("bplay");
+        this.pause = document.getElementById("bpause");
+        this.stop = document.getElementById("bstop");
+        this.startLoop = document.getElementById("loopStart");
+        this.endLoop = document.getElementById("loopEnd");
+        this.replayLoop = document.getElementById("loopReset");
+        this.enableLoop = document.getElementById("loopOnOff");
+        this.tracks = document.getElementById("tracks");
+        this.console = document.getElementById("messages");
+        this.consoleTab = document.getElementById("consoleTab");
+        this.waveTab = document.getElementById("waveTab");
     }
 
     // print the controls of a song's track (name,mute,solo and progress bar)

@@ -16,7 +16,7 @@ exports = module.exports = function(req, res) {
     logger.debug("req JSON song: " + JSON.stringify(req.body.song));
 
     var songDto = JSON.parse(req.body.song);
-    songDto.creatorId = req.user._id;
+    songDto.creatorId = req.user.id;
 
     logger.debug("saving songDto name: " + songDto.name);
     logger.debug("saving songDto tracks: " + songDto.tracks);
@@ -50,12 +50,13 @@ exports = module.exports = function(req, res) {
     }
 
     //call dao's save the song and songTracks
-    songDao.createOrUpdateSong(songDto);
-//TODO return better json response
-    //map the request data and uploaded file info to the DTO.
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.write({name : "marshall"});
-    res.end();
+    songDao.createOrUpdateSong(songDto).then(function(savedSongDto) {
+
+        //map the request data and uploaded file info to the DTO.
+        res.json(savedSongDto);
+
+
+    });
 
 };
 
