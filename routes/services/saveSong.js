@@ -43,7 +43,7 @@ exports = module.exports = function(req, res) {
         songDto.tracks[index].size = req.files[key].size;
         songDto.tracks[index].encoding = req.files[key].encoding;
         songDto.tracks[index].mimetype = req.files[key].mimetype;
-        songDto.tracks[index].creatorId = req.user._id;
+        songDto.tracks[index].creatorId = req.user.id;
 
         //save the track
         trackDao.createOrUpdateTrack(songDto.tracks[index]);

@@ -16,19 +16,19 @@ function toggleCollaboratorDialog(closeMe){
 
 }
 
-MixerUtil.isLoggedIn = function(){
+MixerUtil.isLoggedIn = function(el){
 
     if(user){
         return true;
     }
 
-    alert("You must log in to use this function");
+    $(el).notify('You must login first', 'info');
     return false;
-}
+};
 
 function searchCollaborators(){
 
-    if(!MixerUtil.isLoggedIn()){
+    if(!MixerUtil.isLoggedIn(document.getElementById("bcollaborators"))){
         return;
     }
 
@@ -240,28 +240,38 @@ function doneEncoding( arrayBuffer ) {
 
 
 }
+var isRecordingOn = false;
+//TODO implement better browser detection logic
+var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? document.body : '#myModal';
+function toggleRecording(){
 
+    if(isRecordingOn){
+        //stop recording and close dialog
+        isRecordingOn=false;
 
-function toggleRecording( e ) {
-
-    if (e.classList.contains("recording")) {
+        document.getElementById("recordingWav").style.display="none";
+        $('#myModal').modal('toggle');
+        $(keyEventElement).off('keypress', toggleRecording);
         //stop the equalizer
         cancelAnalyserUpdates();
         // stop recording
         audioRecorder.stop();
-        e.classList.remove("recording");
-        // e.classList.remove("fa-spin");
         audioRecorder.getBuffer( gotBuffers );
-    } else {
-
+    }
+    else{
         if (!audioRecorder){
+            $.notify("There was an error attempting to record. Please ensure your browser settings allow us to access your mic.", "error");
             return;
         }
 
+        //start recording
+        isRecordingOn=true;
         //start the equalizer
         var startRecording = 6;
         var div = document.getElementById("timer");
-        div.style.display="block";
+        //div.style.display="block";
+        document.getElementById("recordingWav").style.display="block";
+        $('#myModal').modal('toggle');
         setInterval(function(){
 
             if(--startRecording > 0){
@@ -273,18 +283,22 @@ function toggleRecording( e ) {
                     // start recording
 
                     updateAnalysers();
-                    e.classList.add("recording");
+                    //e.classList.add("recording");
                     //  e.classList.add("fa-spin")
                     audioRecorder.clear();
                     audioRecorder.record();
                     clearInterval();
-                    div.style.display="none";
-                    div.innerHTML="";
+                    //div.style.display="none";
+                    div.innerHTML="<a onclick='toggleRecording();'>click here to stop recording, or press any key</a>";
+
+                    //document.addEventListener("keydown", toggleRecording);
+                    $(keyEventElement).on('keypress',toggleRecording);
+
                 }
                 else{
-                    div.innerHTML = "Start playing in " + startRecording + "... (Press the record button again when finished)";
+                    div.innerHTML = "Start playing in " + startRecording + "...";
                 }
-
+                $('#notificationBody').html($('#recordingDialog').html());
                 //startRecording--;
             }
             else{
@@ -294,8 +308,11 @@ function toggleRecording( e ) {
         },1000);
 
 
+
     }
+
 }
+
 
 function convertToMono( input ) {
     var splitter = audioContext.createChannelSplitter(2);
@@ -313,6 +330,7 @@ function cancelAnalyserUpdates() {
 }
 
 function updateAnalysers(time) {
+
     if (!analyserContext) {
         var canvas = document.getElementById("analyser");
         canvasWidth = canvas.width;

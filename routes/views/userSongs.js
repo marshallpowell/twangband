@@ -19,7 +19,7 @@ exports = module.exports = function(req, res) {
         return;
     }
 
-    songDao.findUserSongs(req.user._id).then(
+    songDao.findUserSongs(req.user.id).then(
         function(songs){
             logger.debug("got songs: " + songs.length);
             locals['songs'] = songs;
@@ -31,9 +31,5 @@ exports = module.exports = function(req, res) {
             // Render the view
             view.render('userSongs');
         });
-
-
-
-
 
 };

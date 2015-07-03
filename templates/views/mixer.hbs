@@ -10,37 +10,54 @@
             <tr>
                 <td>
 
-                    <button id="saveSong" type="button" class="btn btn-default btn-lg"
-                            onclick="toggleCollaboratorDialog();">
+                    <button id="bcollaborators" type="button" class="btn btn-default btn-lg"
+                            onclick="toggleCollaboratorDialog();"
+                            title="Find collaborators to add tracks to this song"
+                            >
                         <span class="glyphicon glyphicon-user"></span>
                     </button>
 
-                    <button id="saveSong" type="button" class="btn btn-default btn-lg" onclick="saveSong();">
+                    <button id="bsaveSong" type="button" class="btn btn-default btn-lg"
+                            onclick="saveSong();"
+                            title="Save song"
+                            >
                         <span class="glyphicon glyphicon-floppy-disk"></span>
                     </button>
 
-                    <button id="bplay" type="button" class="btn btn-default btn-lg" onclick="playAllTracks(0);"
+                    <button id="bplay" type="button" class="btn btn-default btn-lg"
+                            onclick="playAllTracks(0);"
+                            title="Play song"
                             disabled>
                         <span class="glyphicon glyphicon-play"></span>
                     </button>
 
-                    <button id="bpause" onclick="pauseAllTracks();" disabled type="button"
+                    <button id="bpause"
+                            onclick="pauseAllTracks();"
+                            title="Pause Song"
+                            disabled type="button"
                             class="btn btn-default btn-lg">
                         <span class="glyphicon glyphicon-pause"></span>
                     </button>
 
-                    <button id="bstop" onclick="stopAllTracks();" type="button" class="btn btn-default btn-lg" disabled>
+                    <button id="bstop"
+                            onclick="stopAllTracks();"
+                            title="Stop playing"
+                            type="button" class="btn btn-default btn-lg" disabled>
                         <span class="glyphicon glyphicon-stop"></span>
                     </button>
 
                     <button id="brecordMix"
                             onclick="toggleCollaboratorDialog(true); if(!AUDIO_INITIALIZED){initAudio();} else { toggleRecording(this);}" type="button"
+                            title="Click to start recording."
                             class="btn btn-default btn-lg" disabled>
                         <span class="glyphicon glyphicon-record"></span>
                     </button>
-                    &nbsp;&nbsp;&nbsp;
+
                     <span id="volume">
-                        <button id="bsound" onclick="masterMuteUnmute(this);" type="button"
+                        <button id="bsound"
+                                onclick="masterMuteUnmute(this);"
+                                title="Mute song"
+                                type="button"
                                 class="btn btn-default btn-lg master">
                             <span class="glyphicon glyphicon-volume-up"></span>
                         </button>
@@ -50,18 +67,39 @@
 			        </span>
                 </td>
             </tr>
-            <!-- old drop down for song list can remove
-            <tr><td>
-                <div id="songs" class="styled-select"></div>
-                <br/>
-            </td></tr>
-            -->
+
         </table>
     </div>
 
     <div class="row">
-        <div id="timer" class="col-lg-12" style="display:none;">
 
+        <div id="recordingDialog" style="display:none;">
+            <div id="timer" class="col-lg-12"></div>
+        </div>
+
+        <div id="recordingWav" style="display:none;">
+            <div id="viz" class="col-lg-12">
+                <canvas id="analyser" width="500" height="200"></canvas>
+            </div>
+        </div>
+        <div id="songInfo" style="display:none;">
+
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    <label for="songName">Song Name</label>
+                </div>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="songName" ng-model="songName"
+                           placeholder="Enter a name for this song"/>
+                </div>
+                <div class="col-sm-4">
+                    <label for="songName">Description</label>
+                </div>
+                <div class="col-sm-8">
+                            <textarea class="form-control" id="songDescription" ng-model="songDescription"
+                                      placeholder="Enter a description for this song"></textarea>
+                </div>
+            </div>
         </div>
 
         <div id="searchUsers" class="col-lg-12" style="display:none;">
@@ -101,49 +139,12 @@
         </div>
 
 
-        <div id="viz" class="col-lg-6">
-            <canvas id="analyser" width="500" height="200"></canvas>
-        </div>
-        <div id="console" class="col-lg-6">
-            <ul class="nav nav-tabs">
-                <li><a id="songInfoTab" href="#songInfo" data-toggle="tab">Song Info</a></li>
-                <li><a id="consoleTab" href="#home" data-toggle="tab">Console</a></li>
-                <li><a id="waveTab" href="#profile" data-toggle="tab">Wave</a></li>
-                <li><a class="active" href="#help" data-toggle="tab">Help</a></li>
-            </ul>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <div class="tab-pane fade in " id="songInfo">
-                    <div class="form-group row">
-                        <div class="col-sm-4">
-                            <label for="songName">Song Name</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="songName" ng-model="songName"
-                                   placeholder="Enter a name for this song"/>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="songName">Description</label>
-                        </div>
-                        <div class="col-sm-8">
-                            <textarea class="form-control" id="songDescription" ng-model="songDescription"
-                                      placeholder="Enter a description for this song"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade in " id="home">
-                    <div id="messages">Please choose a song !</div>
-                </div>
-                <div class="tab-pane fade" id="profile">
-                    <canvas id="waveCanvas"></canvas>
-                </div>
-                <div class="tab-pane fade in active" id="help">
-                    Help Text here
-                </div>
 
-            </div>
-        </div>
+
+<div style="display:none;"><!--can show the equalizer that mt5 produces-->  <canvas id="waveCanvas"></canvas></div>
+
+
 
     </div>
 
@@ -221,7 +222,7 @@
         {{/unless}}
 
         {{#if user}}
-        var user = {{{user}}};
+        var user = {{{json user}}};
         {{/if}}
 
         {{#unless user}}
@@ -229,7 +230,7 @@
         {{/unless}}
 
     $(document).ready(function () {
-        init(songDto, user);
+        init(songDto);
 
     });
 
@@ -245,45 +246,24 @@
 
 </script>
 
-<!--
-            var songDto = [{"_id":"5551524a0e585a680b6cb160","name":"TestSong","__v":0,"dateCreated":"2015-05-12T01:07:22.159Z","songTracks":[{"name":"newrecording","fileName":"990e39a64ece1fc6b0576333911b4e60.wav","_id":"5551524a0e585a680b6cb162","dateCreated":"2015-05-12T01:07:22.159Z","muted":false,"position":0,"gain":0,"volume":1},{"name":"newrecording","fileName":"365614bd40a16ff4bbc8a3890b4fe96c.wav","_id":"5551524a0e585a680b6cb161","dateCreated":"2015-05-12T01:07:22.159Z","muted":false,"position":0,"gain":0,"volume":1}]}][0];
--->
-<!-- Record new Track -->
-<!--
-<link type="text/css" rel="stylesheet" property="stylesheet" href="/styles/site/mixer.css" />
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
 
-<div id="recordSong">
-
-    <form>
-        <div class="row">
-            <div class=".col-md-3">
-                Song Name:
-            </div>
-            <div class=".ctyol-md-9">
-                <input type="text" name="songName" id="songName" />
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                Musicilo
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
 
             </div>
+            <div class="modal-body" >
+                <p id="notificationBody"></p>
+            </div>
+            <div class="modal-footer">
 
+            </div>
         </div>
 
-    </form>
-
-    <div class="row">
-
-        <div class="btn-group text-left">
-            <a class="btn btn-default" href="javascript:void('false');" ><i class="fa fa fa-cog " id="recordBtn" onclick="toggleRecording(this);">Record</i></a>
-            <a class="btn btn-default" href="#" ><i class="fa fa-play" onclick="playAll(this);"></i></a>
-            <a class="btn btn-default" href="#"><i class="fa fa-floppy-o"></i></a>
-        </div>
     </div>
-
-    <div id="viz" class="row ">
-
-        <div class=".col-md-12">
-            <canvas id="analyser" width="1024" height="200"></canvas>
-        </div>
-    </div>
-
 </div>
--->
-<!-- End new track -->

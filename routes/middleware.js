@@ -9,6 +9,11 @@
  */
 
 var _ = require('underscore');
+var hbs = require('handlebars');
+
+hbs.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+});
 
 
 /**

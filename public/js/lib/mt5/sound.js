@@ -232,21 +232,10 @@ function initAudioContext() {
 function resetAllBeforeLoadingANewSong() {
     console.log('resetAllBeforeLoadingANewSong');
 
-    // disable the menu for selecting song: avoid downloading more than one song
-    // at the same time
-  //  var s = document.querySelector("#songSelect");
-  //  s.disabled = true;
-
-    // reset the selection
-   // resetSelection();
-
     // Stop the song
     stopAllTracks();
 
     buttonPlay.disabled = true;
-   // divTrack.innerHTML = "";
-
-
    // buttonRecordMix.disabled = true;
 }
 
@@ -281,7 +270,8 @@ function loadAllSoundSamples() {
  */
 function drawTrack(decodedBuffer, trackNumber) {
 
-    console.log("drawTrack : let's draw sample waveform for track No" + trackNumber + " named ");
+    console.log("drawTrack : let's draw sample waveform for track No" + trackNumber + ", TRACK INFO " + JSON.stringify(currentSong.tracks[trackNumber]));
+
 
     var trackName = currentSong.tracks[trackNumber].name;
     //trackName = trackName.slice(trackName.lastIndexOf("/")+1, trackName.length-4);
@@ -354,54 +344,6 @@ function finishedLoading(bufferList) {
 }
 
 
-// ######### SONGS
-
-/*
-* Old function to load the drop down list of songs, can remove
-function loadSongList() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "track", true);
-
-    // Menu for song selection
-    var s = $("<select id='songSelect'/>");
-    s.appendTo("#songs");
-
-    s.change(function (e) {
-        var songName = $(this).val();
-        console.log("You chose : " + songName);
-
-        if (songName !== "nochoice") {
-            // We load if there is no current song or if the current song is
-            // different than the one chosen
-            if ((currentSong === undefined) || ((currentSong !== undefined) && (songName !== currentSong.name))) {
-                loadSong(songName);
-                View.activeConsoleTab();
-            }
-        }
-    });
-
-    xhr.onload = function (e) {
-        var songList = JSON.parse(this.response);
-
-        if (songList[0]) {
-            $("<option />", {
-                value: "nochoice",
-                text: "Choose a song..."
-            }).appendTo(s);
-        }
-
-        songList.forEach(function (songName) {
-            console.log(songName);
-
-            $("<option />", {
-                value: songName,
-                text: songName
-            }).appendTo(s);
-        });
-    };
-    xhr.send();
-}
-*/
 
 // ##### TRACKS #####
 
@@ -430,7 +372,7 @@ function loadSongDto(songDto) {
 
     //add the collaboarators to the UI
     for(var i = 0; i < songDto.collaborators; i++){
-
+        //TODO
     }
 
     // Add range listeners, from range-input.js
@@ -537,18 +479,24 @@ function getTrackDto(track){
     trackDto.panning = track.panning;
     trackDto.muted = track.muted;
     trackDto.solo = track.solo;
+    trackDto.creatorId = track.creatorId;
     return trackDto;
 }
 
-
+/**
+ * persist a song
+ */
 function saveSong(){
 
-    if(!MixerUtil.isLoggedIn()){
+    if(!MixerUtil.isLoggedIn(document.getElementById("bsaveSong"))){
         return;
     }
     var data = getSongFormData();
 
     console.log("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(data));
+
+    $('#notificationBody').html("Saving...");
+    $('#myModal').modal('toggle');
 
     $.ajax({
         url: '/song/save',
@@ -559,14 +507,14 @@ function saveSong(){
         type: 'POST',
         success: function(data){
 
-
+            //TODO need to handle errors too
             console.log("saved song: " + data);
-            console.log("song name: " + data.name);
 
-            if(!currentSongDto.id){
-                console.log("new song saved, now redirecting");
-                window.location.href="/mixer?song="+data.id;
-            }
+            $('#notificationBody').html("Saved Successfully. Refreshing Page");
+            $('#myModal').modal('toggle');
+
+            window.location.href="/mixer?song="+data.id;
+
         }
     });
 }
@@ -600,11 +548,17 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
 
     }
 
+    console.log("track dto: " + JSON.stringify(currentSongDto.tracks[trackNumber]));
+    var creatorImage = "";
+    if(currentSongDto.tracks[trackNumber] && currentSongDto.tracks[trackNumber].creatorId){
+        console.log("creating creatorImage");
+         creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
+    }
 
     // Render HTMl
     var span = document.createElement('tr');
     span.id="tracks_row_"+trackNumber;
-    span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' +
+    span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' + creatorImage +
     "<input type='text' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
     "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button><br> " +
    // "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><img src='../img/earphones.png' /></button></div>" +
