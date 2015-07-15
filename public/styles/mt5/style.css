@@ -106,10 +106,12 @@
     border: 1px solid #ccc;
 }
 
+/*
 button {
     height: 42px;
     width: 42px;
 }
+*/
 
 #sound {
     position: absolute;

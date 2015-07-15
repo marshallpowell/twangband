@@ -240,6 +240,30 @@ function doneEncoding( arrayBuffer ) {
 
 
 }
+
+function toggleEditSong(closeMe){
+
+    /*
+    if(closeMe){
+        document.getElementById("songInfo").style.display="none";
+    }
+    else if(document.getElementById("songInfo").style.display=="block"){
+        document.getElementById("songInfo").style.display="none";
+    }
+    else{
+        document.getElementById("songInfo").style.display="block";
+    }
+    */
+
+     $("#notificationBody").append($('#songInfo'));
+
+
+
+    $('#myModal').modal('toggle');
+
+}
+
+
 var isRecordingOn = false;
 //TODO implement better browser detection logic
 var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? document.body : '#myModal';

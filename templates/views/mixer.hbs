@@ -3,28 +3,53 @@
 
 <div id="app" class="container" ng-app="app" ng-controller="myCtrl">
 
+    <div id="consoleForms" style="display:none;">
+        <div id="songInfo">
+
+            <div class="form-group row">
+                <div class="col-sm-4">
+                    <label for="songName">Song Name</label>
+                </div>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="songName" ng-model="songName"
+                           placeholder="Enter a name for this song"/>
+                </div>
+                <div class="col-sm-4">
+                    <label for="songName">Description</label>
+                </div>
+                <div class="col-sm-8">
+                                <textarea class="form-control" id="songDescription" ng-model="songDescription"
+                                          placeholder="Enter a description for this song"></textarea>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
     <div id="masterTools" class="row">
 
 
         <table style="margin-left: auto; margin-right: auto; text-align:center;">
             <tr>
                 <td>
+<a href="#" onclick="toggleEditSong();" ><span ng-bind="songName" class="glyphicon glyphicon-pencil"></span></a>
 
-                    <button id="bcollaborators" type="button" class="btn btn-default btn-lg"
+                    <button id="bcollaborators" type="button" class="btn btn-default btn-sm"
                             onclick="toggleCollaboratorDialog();"
                             title="Find collaborators to add tracks to this song"
                             >
                         <span class="glyphicon glyphicon-user"></span>
                     </button>
 
-                    <button id="bsaveSong" type="button" class="btn btn-default btn-lg"
+                    <button id="bsaveSong" type="button" class="btn btn-default btn-sm"
                             onclick="saveSong();"
                             title="Save song"
                             >
                         <span class="glyphicon glyphicon-floppy-disk"></span>
                     </button>
 
-                    <button id="bplay" type="button" class="btn btn-default btn-lg"
+                    <button id="bplay" type="button" class="btn btn-default btn-sm"
                             onclick="playAllTracks(0);"
                             title="Play song"
                             disabled>
@@ -35,21 +60,21 @@
                             onclick="pauseAllTracks();"
                             title="Pause Song"
                             disabled type="button"
-                            class="btn btn-default btn-lg">
+                            class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-pause"></span>
                     </button>
 
                     <button id="bstop"
                             onclick="stopAllTracks();"
                             title="Stop playing"
-                            type="button" class="btn btn-default btn-lg" disabled>
+                            type="button" class="btn btn-default btn-sm" disabled>
                         <span class="glyphicon glyphicon-stop"></span>
                     </button>
 
                     <button id="brecordMix"
                             onclick="toggleCollaboratorDialog(true); if(!AUDIO_INITIALIZED){initAudio();} else { toggleRecording(this);}" type="button"
                             title="Click to start recording."
-                            class="btn btn-default btn-lg" disabled>
+                            class="btn btn-default btn-sm" disabled>
                         <span class="glyphicon glyphicon-record"></span>
                     </button>
 
@@ -58,7 +83,7 @@
                                 onclick="masterMuteUnmute(this);"
                                 title="Mute song"
                                 type="button"
-                                class="btn btn-default btn-lg master">
+                                class="btn btn-default btn-sm master">
                             <span class="glyphicon glyphicon-volume-up"></span>
                         </button>
 
@@ -82,25 +107,7 @@
                 <canvas id="analyser" width="500" height="200"></canvas>
             </div>
         </div>
-        <div id="songInfo" style="display:none;">
 
-            <div class="form-group row">
-                <div class="col-sm-4">
-                    <label for="songName">Song Name</label>
-                </div>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" id="songName" ng-model="songName"
-                           placeholder="Enter a name for this song"/>
-                </div>
-                <div class="col-sm-4">
-                    <label for="songName">Description</label>
-                </div>
-                <div class="col-sm-8">
-                            <textarea class="form-control" id="songDescription" ng-model="songDescription"
-                                      placeholder="Enter a description for this song"></textarea>
-                </div>
-            </div>
-        </div>
 
         <div id="searchUsers" class="col-lg-12" style="display:none;">
             <div class="row">
@@ -149,7 +156,7 @@
     </div>
 
 
-    <div id="scroll" class="row">
+    <div id="scroll" class="row" style="overflow-x:auto; overflow-y: scroll; padding-bottom:10px;">
         <div id="trackControl">
 
             <table id="tracks">
@@ -161,8 +168,8 @@
         </div>
 
         <div id="canvass">
-            <div style="position: relative;">
-                <canvas id="myCanvas" width="602" height="400" style="display:none;"></canvas>
+            <div style="position: relative; ">
+                <canvas id="myCanvas" width="4002" height="400" style="display:none;"></canvas>
 
             </div>
         </div>
@@ -235,11 +242,14 @@
     });
 
     var app = angular.module('app', []);
+
     app.controller('myCtrl', function ($scope) {
+
 
         if (songDto != null) {
             console.log("setting scope variables with name: " + songDto.name);
             $scope.songName = songDto.name;
+
         }
 
     });
@@ -260,10 +270,11 @@
             <div class="modal-body" >
                 <p id="notificationBody"></p>
             </div>
-            <div class="modal-footer">
-
+            <div class="modal-footer" style="text-align:center">
+                <button type="button" class="btn btn-default" data-dismiss="modal" value="Close">Close</button>
             </div>
         </div>
 
     </div>
 </div>
+

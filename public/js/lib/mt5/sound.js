@@ -113,6 +113,8 @@ function init(songDto) {
         console.log("new song loaded, name: " + songDto.name);
 
         loadSongDto(songDto);
+
+        View.waveCanvas.width = getMaxTrackWidth();
     }
     else{
         console.log("check songDto in NULL");
@@ -388,49 +390,6 @@ function loadSongDto(songDto) {
 
 }
 
-//old load function
-function loadSong(songName) {
-    resetAllBeforeLoadingANewSong();
-
-    // This function builds the current
-    // song and resets all states to default (zero muted and zero solo lists, all
-    // volumes set to 1, start at 0 second, etc.)
-    currentSong = new Song(songName, context);
-
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', currentSong.url, true);
-
-    xhr.onload = function (e) {
-        // get a JSON description of the song
-        var song = JSON.parse(this.response);
-
-        // resize canvas depending on number of samples
-        resizeSampleCanvas(song.instruments.length);
-
-        // for eah instrument/track in the song
-        song.instruments.forEach(function (instrument, trackNumber) {
-            // Let's add a new track to the current song for this instrument
-            //currentSong.addTrack(instrument);
-            var track = new Track(currentSong.name, instrument);
-            // Render HTMl
-            addNewTrackToSong(track, trackNumber);
-
-        });
-
-        // Add range listeners, from range-input.js
-        addRangeListeners();
-
-
-        // disable all mute/solo buttons
-        $(".mute").attr("disabled", true);
-        $(".solo").attr("disabled", true);
-
-        // Loads all samples for the currentSong
-        loadAllSoundSamples();
-    };
-    xhr.send();
-}
 
 /**
  * Create a SongDTO from a song
@@ -561,7 +520,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' + creatorImage +
     "<input type='text' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
     "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button><br> " +
-   // "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><img src='../img/earphones.png' /></button></div>" +
+    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button></div>" +
     "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
 
 
@@ -951,12 +910,12 @@ function soloNosoloTrack(trackNumber) {
         // we were not in solo mode, let's go in solo mode
         currentTrack.solo = true;
         // Let's change the icon
-        s.innerHTML = "<img src='../img/noearphones.png' />";
+        s.innerHTML = "<span class='glyphicon glyphicon-headphones'></span>";
     } else {
         // we were in solo mode, let's go to the "no solo" mode
         currentTrack.solo = false;
         // Let's change the icon
-        s.innerHTML = "<img src='../img/earphones.png' />";
+        s.innerHTML = "<span class='glyphicon glyphicon-headphones'></span>";
     }
 
     // In all cases we remove the mute state of the curent track
