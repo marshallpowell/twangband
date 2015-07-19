@@ -508,7 +508,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     }
 
     console.log("track dto: " + JSON.stringify(currentSongDto.tracks[trackNumber]));
-    var creatorImage = "";
+    var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='50' height='50' />";
     if(currentSongDto.tracks[trackNumber] && currentSongDto.tracks[trackNumber].creatorId){
         console.log("creating creatorImage");
          creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
@@ -516,11 +516,13 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
 
     // Render HTMl
     var span = document.createElement('tr');
+    span.style="position:absolute;";
     span.id="tracks_row_"+trackNumber;
-    span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px">' + creatorImage +
+    span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px"><div class="row">' + creatorImage +
+    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
+    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
+    "</div>" +
     "<input type='text' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
-    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button><br> " +
-    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button></div>" +
     "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
 
 
@@ -952,7 +954,7 @@ function muteUnmuteTrack(trackNumber) {
     currentTrack.solo = false;
     $(s).removeClass("activated");
     // Let's change the icon
-    s.innerHTML = "<img src='../img/earphones.png' />";
+    s.innerHTML = "<span class='glyphicon glyphicon-headphones'></span>";
 
     // adjust track volumes dependinf on all mute/solo states
     currentSong.setTrackVolumesDependingOnMuteSoloStatus();

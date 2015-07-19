@@ -30,9 +30,6 @@
     <div id="masterTools" class="row">
 
 
-        <table style="margin-left: auto; margin-right: auto; text-align:center;">
-            <tr>
-                <td>
 <a href="#" onclick="toggleEditSong();" ><span ng-bind="songName" class="glyphicon glyphicon-pencil"></span></a>
 
                     <button id="bcollaborators" type="button" class="btn btn-default btn-sm"
@@ -90,10 +87,7 @@
                         <span id='masterVolumeSpan'><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' oninput='changeMasterVolume();'/></span>
 
 			        </span>
-                </td>
-            </tr>
 
-        </table>
     </div>
 
     <div class="row">
@@ -249,6 +243,18 @@
         if (songDto != null) {
             console.log("setting scope variables with name: " + songDto.name);
             $scope.songName = songDto.name;
+
+        }
+        else{
+
+            var name = "anonymous";
+            if(user){
+                name = user.firstName;
+            }
+
+            name += " track " + new Date().toLocaleString();
+            $scope.songName = name.replace(/ /g,"_").replace(/,/g,"");
+           // $scope.songName = name + " track " + new Date().toLocaleString();
 
         }
 
