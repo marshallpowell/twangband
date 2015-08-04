@@ -61,12 +61,30 @@ BufferLoader.prototype.loadBuffer = function (url, index, recordingArrayBuffer) 
         }
         loader.bufferList[index] = buffer;
 
-        // Let's draw this decoded sample
-        loader.drawSample(buffer, index);
+
 
         //console.log("In bufferLoader.onload bufferList size is " + loader.bufferList.length + " index =" + index);
-        if (++loader.loadCount == loader.urlList.length)
-          loader.onload(loader.bufferList);
+        if (++loader.loadCount == loader.urlList.length){
+;
+            //determine max length of tracks
+            var newMaxLength=0;
+            for(var i =0; i < loader.bufferList.length; i++){
+                if(newMaxLength < loader.bufferList[i].duration * 50){
+                    newMaxLength = loader.bufferList[i].duration * 50;
+                }
+            }
+console.log("new max length: " + newMaxLength);
+
+            for(var i =0; i < loader.bufferList.length; i++){
+
+                // Let's draw this decoded sample
+                loader.drawSample(loader.bufferList[i], i, newMaxLength);
+            }
+
+            loader.onload(loader.bufferList);
+        }
+
+
       },
       function (error) {
         console.error('decodeAudioData error', error);

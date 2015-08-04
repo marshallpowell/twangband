@@ -11,7 +11,7 @@ function WaveformDrawer() {
     this.init = function (decodedAudioBuffer, canvas, color) {
         this.decodedAudioBuffer = decodedAudioBuffer;
         this.canvas = canvas;
-        this.displayWidth = canvas.width;
+        this.displayWidth = decodedAudioBuffer.duration * 50; //firefox does not like the decimal place here, try rounding
         this.displayHeight = canvas.height;
         this.color = color;
         //this.sampleStep = sampleStep;

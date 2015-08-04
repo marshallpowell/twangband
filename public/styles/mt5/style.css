@@ -160,6 +160,7 @@ a[data-toggle=tab] {
 .volumeSlider {
     width: 100px;
     height: 15px;
+    text-align: center;
 }
 
 /***** for sliders *****/

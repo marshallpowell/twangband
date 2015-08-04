@@ -241,25 +241,42 @@ function doneEncoding( arrayBuffer ) {
 
 }
 
+
+function toggleEditTrack(trackNumber){
+    var name = '#trackInfo'+trackNumber;
+
+   // $("#notificationBody").children().first().replaceWith($(name)).appendTo($('#trash'));
+   // $('#myModal').modal('toggle');
+    toggleNotification($(name));
+}
+
+function toggleNotification(content, doNotToggle){
+
+    var el = $("#notificationBody").children().first();
+
+    console.log("el id: " + el.attr('id'));
+
+    if(content == null){
+        $("#notificationBody").children().first().replaceWith("").appendTo($('#trash'));
+    }
+    else if(content.attr('id') != el.attr('id')){
+        $("#notificationBody").children().first().replaceWith(content).appendTo($('#trash'));
+    }
+
+    if(!doNotToggle){
+        $('#myModal').modal('toggle');
+    }
+
+}
 function toggleEditSong(closeMe){
 
-    /*
-    if(closeMe){
-        document.getElementById("songInfo").style.display="none";
-    }
-    else if(document.getElementById("songInfo").style.display=="block"){
-        document.getElementById("songInfo").style.display="none";
-    }
-    else{
-        document.getElementById("songInfo").style.display="block";
-    }
-    */
+    var el = $("#notificationBody").children().first();
 
-     $("#notificationBody").append($('#songInfo'));
+    console.log("el id: " + el.attr('id'));
 
-
-
-    $('#myModal').modal('toggle');
+   // $("#notificationBody").children().first().replaceWith($('#songInfo')).appendTo($('#trash'));
+    //$('#myModal').modal('toggle');
+    toggleNotification($('#songInfo'));
 
 }
 
@@ -296,6 +313,7 @@ function toggleRecording(){
         //div.style.display="block";
         document.getElementById("recordingWav").style.display="block";
         $('#myModal').modal('toggle');
+        toggleNotification(null, true);
         setInterval(function(){
 
             if(--startRecording > 0){
@@ -323,6 +341,8 @@ function toggleRecording(){
                     div.innerHTML = "Start playing in " + startRecording + "...";
                 }
                 $('#notificationBody').html($('#recordingDialog').html());
+
+
                 //startRecording--;
             }
             else{

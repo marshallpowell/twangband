@@ -65,7 +65,7 @@ function init(songDto) {
 
     buttonRecordMix.disabled=false;
 
-    divTrack = document.getElementById("tracks");
+   // divTrack = document.getElementById("tracks");
     divConsole = document.querySelector("#messages");
 
     // The waveform drawer
@@ -254,23 +254,13 @@ function loadTracksForPlayback(trackUrls) {
     bufferLoader.load();
 }
 
-//old loading function
-function loadAllSoundSamples() {
-    bufferLoader = new BufferLoader(
-        context,
-        currentSong.getUrlsOfTracks(),
-        finishedLoading,
-        drawTrack
-    );
-    bufferLoader.load();
-}
-
+var maxWidth=0;
 /**
  * Draws the image of the sound
  * @param decodedBuffer
  * @param trackNumber
  */
-function drawTrack(decodedBuffer, trackNumber) {
+function drawTrack(decodedBuffer, trackNumber, newMaxWidth) {
 
     console.log("drawTrack : let's draw sample waveform for track No" + trackNumber + ", TRACK INFO " + JSON.stringify(currentSong.tracks[trackNumber]));
 
@@ -281,7 +271,10 @@ function drawTrack(decodedBuffer, trackNumber) {
     //new code
     var trackCanvas = document.getElementById("track_canvas_"+trackNumber);
 
-    trackCanvas.width = (decodedBuffer.duration * 50);
+    if(maxWidth < decodedBuffer.duration * 50){
+        maxWidth = decodedBuffer.duration * 50
+    }
+    trackCanvas.width = (newMaxWidth)? newMaxWidth : maxWidth;
     var trackCanvasContext = trackCanvas.getContext('2d');
     waveformDrawer.init(decodedBuffer, trackCanvas, '#83E83E');
     var x = 0;
@@ -289,7 +282,7 @@ function drawTrack(decodedBuffer, trackNumber) {
     waveformDrawer.drawWave(y, SAMPLE_HEIGHT);
 
     trackCanvasContext.strokeStyle = "white";
-    trackCanvasContext.strokeRect(x, y, window.View.masterCanvas.width, SAMPLE_HEIGHT);
+    trackCanvasContext.strokeRect(x, y, trackCanvas.width, trackCanvas.height);
 
     trackCanvasContext.font = '14pt Arial';
     trackCanvasContext.fillStyle = 'white';
@@ -298,19 +291,6 @@ function drawTrack(decodedBuffer, trackNumber) {
     //return;
     //end new code
 
-    waveformDrawer.init(decodedBuffer, View.masterCanvas, '#83E83E');
-    var x = 0;
-    var y = trackNumber * SAMPLE_HEIGHT;
-    // First parameter = Y position (top left corner)
-    // second = height of the sample drawing
-    waveformDrawer.drawWave(y, SAMPLE_HEIGHT);
-
-    View.masterCanvasContext.strokeStyle = "white";
-    View.masterCanvasContext.strokeRect(x, y, window.View.masterCanvas.width, SAMPLE_HEIGHT);
-
-    View.masterCanvasContext.font = '14pt Arial';
-    View.masterCanvasContext.fillStyle = 'white';
-    View.masterCanvasContext.fillText(trackName, x + 10, y + 20);
 }
 
 function finishedLoading(bufferList) {
@@ -492,7 +472,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     // resize canvas depending on number of samples
     resizeSampleCanvas(currentSong.tracks.length);
 
-    var canvas = $('<canvas width="'+window.View.masterCanvas.width+'" height="'+SAMPLE_HEIGHT+'"></canvas>');
+    var canvas = $('<canvas width="'+window.View.masterCanvas.width+'" height="'+SAMPLE_HEIGHT+'" class="trackCanvas"></canvas>');
 
     canvas[0].id = "track_canvas_"+trackNumber;
     var width = canvas[0].width;
@@ -513,17 +493,67 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
         console.log("creating creatorImage");
          creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
     }
-
+/*
     // Render HTMl
     var span = document.createElement('tr');
-    span.style="position:absolute;";
+    //span.style="position:absolute;";
     span.id="tracks_row_"+trackNumber;
     span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px"><div class="row">' + creatorImage +
     "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
     "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
     "</div>" +
-    "<input type='text' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
-    "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
+    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span ng-bind='trackName" + trackNumber + "' class='glyphicon glyphicon-pencil'></span>" +track.name.substring(0,15) + "...</a>" +
+*/
+   // "<input type='text' style='display:none;' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
+
+    var trackInfo = "<div class='col-md-2'>" +
+    "<div class='row'>"+ creatorImage +
+    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
+    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
+    "</div>" +
+    "<div class='row'>" +
+    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span ng-bind='trackName" + trackNumber + "' class='glyphicon glyphicon-pencil'></span>" +track.name.substring(0,15) + "...</a>" +
+
+        "<div style='display:none'>" +
+        " <div id='trackInfo"+trackNumber+"'> " +
+        "    <div class='form-group row'> " +
+        "        <div class='col-sm-4'><label for='songName'>Song Name</label></div> " +
+        "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track'/></div> " +
+        "        <div class='col-sm-4'><label for='trackName'>Description</label></div> " +
+        "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' ng-model='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'></textarea></div> " +
+        "    </div> " +
+        "  </div> " +
+        "</div> " +
+        "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span>" +
+    "</div>" +
+    "</div>";
+
+
+    var trackCanvas = document.createElement('div');
+    trackCanvas.className="col-md-10 trackData";
+    trackCanvas.style.overflowX="scroll";
+    trackCanvas.appendChild(canvas[0]);
+    //"<div class='col-md-9'>"+canvas[0]+"</div>";
+
+    var trackRow =  document.createElement('div');
+    trackRow.className="row trackRow";
+    trackRow.style.backgroundColor="#9999";
+    trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
+    $("#scroll").append(trackRow);
+
+  //div to edit track
+    /*
+    "<div style='display:none'>" +
+    " <div id='trackInfo"+trackNumber+"'> " +
+    "    <div class='form-group row'> " +
+    "        <div class='col-sm-4'><label for='songName'>Song Name</label></div> " +
+    "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track'/></div> " +
+    "        <div class='col-sm-4'><label for='trackName'>Description</label></div> " +
+    "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' ng-model='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'></textarea></div> " +
+    "    </div> " +
+    "  </div> " +
+    "</div> " +
+    "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
 
 
     var trackTd = document.createElement('td');
@@ -532,7 +562,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     span.appendChild(trackTd);
 
         divTrack.appendChild(span);
-
+     */
     //places the track cursor at the top left of the track (needs it's with adjusted to the max duration of a track)
     $("#frontCanvas").css({
         top: tracksTopRow.offset().top + "px",
@@ -544,6 +574,9 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     if(arrayBuffer){
         bufferLoader.loadBuffer(null, trackNumber, arrayBuffer);
     }
+
+    //increase width of tracks to max width
+    updateTracksWidth();
 }
 
 function getMousePos(canvas, evt) {
@@ -598,12 +631,29 @@ function getMaxTrackWidth(){
     return (currentSong.getDuration() * 50);
 }
 
+function updateTracksWidth(){
+
+
+    $(".trackCanvas").each(function() {
+        console.log("canvasId: " + $(this)[0].id + " $(this)[0].width: " + $(this)[0].width + " maxWidth: " + maxWidth);
+        if($(this)[0].width < maxWidth){
+            console.log("canvasId 2: " + $(this)[0].id);
+            var index = $(this)[0].id.replace("track_canvas_", "");
+            drawTrack(currentSong.tracks[index].decodedBuffer, index);
+        }
+
+        var c = $(this)[0];
+        var ctx = c.getContext("2d");
+        ctx.moveTo(maxWidth,100);
+        ctx.lineTo(maxWidth,0);
+        ctx.stroke();
+    });
+}
+
+
 function animateTime() {
     // clear canvas
     View.frontCanvasContext.clearRect(0, 0, window.View.masterCanvas.width, window.View.masterCanvas.height);
-    var maxTrackWidth = getMaxTrackWidth();
-
-   // View.frontCanvasContext.clearRect(0, 0, maxTrackWidth, window.View.masterCanvas.height);
 
     // Draw something only if a song has been loaded
     if (currentSong !== undefined) {
@@ -613,7 +663,8 @@ function animateTime() {
         drawSelection();
 
         if (!currentSong.paused) {
-            // Draw the time on the front canvas
+
+                  // Draw the time on the front canvas
             currentTime = context.currentTime;
             var delta = currentTime - lastTime;
 
@@ -630,10 +681,30 @@ function animateTime() {
             if (currentSong.decodedAudioBuffers[0] !== undefined) {
 
                 totalTime = currentSong.getDuration();
-                console.log("maxTrackWidth: " + maxTrackWidth + ", totalTime: " + totalTime);
-                console.log("maxTrackWidth / totalTime " + maxTrackWidth / totalTime);
-                //currentXTimeline = currentSong.elapsedTimeSinceStart * window.View.masterCanvas.width / totalTime;
-                currentXTimeline = currentSong.elapsedTimeSinceStart * maxTrackWidth / totalTime;
+
+
+                var el = $(".trackData");
+
+
+                console.log("element length: " + el.length);
+
+                var adjustXTimeline=0;
+                var adjust=false;
+                //if cursor position = el[0].scrollLeft + el.width() then
+                if((currentXTimeline >= el.width())){
+                    var maxScrollLeft = maxWidth - el[0].clientWidth;
+
+                    var scrollTo = ((el[0].scrollLeft+el.width()) > maxScrollLeft) ? maxScrollLeft : (el[0].scrollLeft+el.width());
+
+                    el.scrollLeft(scrollTo);
+                    adjustXTimeline=el.width();
+
+                    console.log("adjust screen position,  width: " + el.width() + " scrollLeft: " + el[0].scrollLeft + " clientWidth: " + el[0].clientWidth + ", el[0].scrollWidth: " + el[0].scrollWidth);
+                    adjust=true;
+                }
+
+                currentXTimeline = ((currentSong.elapsedTimeSinceStart * maxWidth / totalTime) - (adjustXTimeline + el[0].scrollLeft));
+                currentXTimeline = (currentXTimeline < 0 )? el.position().left : currentXTimeline;
 
                 // draw frequencies that dance with the music
                 drawFrequencies();
@@ -788,6 +859,14 @@ function clearAllSampleDrawings() {
 function playAllTracks(startTime) {
     // First : build the web audio graph
     //currentSong.buildGraph();
+
+    //reset the scrolling on tracks
+    var el = $(".trackData");
+    el.scrollLeft(0);
+    currentXTimeLine=0;
+    // reset the elapsed time
+    currentSong.stop();
+    currentSong.elapsedTimeSinceStart = 0;
 
     // Read current master volume slider position and set the volume
     setMasterVolume();
