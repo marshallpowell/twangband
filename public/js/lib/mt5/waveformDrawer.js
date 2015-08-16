@@ -8,10 +8,10 @@ function WaveformDrawer() {
     this.color = 'black';
     //test
 
-    this.init = function (decodedAudioBuffer, canvas, color) {
+    this.init = function (decodedAudioBuffer, canvas, color, durrationBuffer) {
         this.decodedAudioBuffer = decodedAudioBuffer;
         this.canvas = canvas;
-        this.displayWidth = decodedAudioBuffer.duration * 50; //firefox does not like the decimal place here, try rounding
+        this.displayWidth = decodedAudioBuffer.duration * durrationBuffer;
         this.displayHeight = canvas.height;
         this.color = color;
         //this.sampleStep = sampleStep;
@@ -91,7 +91,7 @@ function WaveformDrawer() {
 
         var channels = buffer.numberOfChannels;
         // The result is an array of size equal to the displayWidth
-        this.peaks = new Float32Array(this.displayWidth);
+        this.peaks = new Float32Array(Math.round(this.displayWidth));
 
         // For each channel
         for (var c = 0; c < channels; c++) {

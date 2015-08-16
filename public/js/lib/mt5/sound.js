@@ -25,7 +25,7 @@ var selectionForLoop = {
     xEnd: -1
 };
 
-
+var DURRATION_BUFFER = (window.navigator.userAgent.indexOf("Firefox") > -1)? 49.5 : 56.8;
 // Sample size in pixels
 var SAMPLE_HEIGHT = 75;
 
@@ -34,7 +34,8 @@ var lastTime = 0;
 var currentTime;
 var delta;
 // The x position in pixels of the timeline
-var currentXTimeline;
+var currentXTimeline=0;
+var cummulativeXTimeline=0;
 
 var tracksTopRow = $("#tracksTopRowId");
 
@@ -271,21 +272,22 @@ function drawTrack(decodedBuffer, trackNumber, newMaxWidth) {
     //new code
     var trackCanvas = document.getElementById("track_canvas_"+trackNumber);
 
-    if(maxWidth < decodedBuffer.duration * 50){
-        maxWidth = decodedBuffer.duration * 50
+    if(maxWidth < decodedBuffer.duration * DURRATION_BUFFER){
+        maxWidth = decodedBuffer.duration * DURRATION_BUFFER
     }
     trackCanvas.width = (newMaxWidth)? newMaxWidth : maxWidth;
+    trackCanvas.width += $('#myCanvas').width();
     var trackCanvasContext = trackCanvas.getContext('2d');
-    waveformDrawer.init(decodedBuffer, trackCanvas, '#83E83E');
+    waveformDrawer.init(decodedBuffer, trackCanvas, '#83E83E',DURRATION_BUFFER);
     var x = 0;
     var y = 0;
     waveformDrawer.drawWave(y, SAMPLE_HEIGHT);
 
-    trackCanvasContext.strokeStyle = "white";
-    trackCanvasContext.strokeRect(x, y, trackCanvas.width, trackCanvas.height);
+   // trackCanvasContext.strokeStyle = "white";
+   // trackCanvasContext.strokeRect(x, y, trackCanvas.width, trackCanvas.height);
 
     trackCanvasContext.font = '14pt Arial';
-    trackCanvasContext.fillStyle = 'white';
+    trackCanvasContext.fillStyle = 'grey';
     trackCanvasContext.fillText(trackName, x + 10, y + 20);
 
     //return;
@@ -531,6 +533,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
 
     var trackCanvas = document.createElement('div');
     trackCanvas.className="col-md-10 trackData";
+    trackCanvas.id="trackData"+trackNumber;
     trackCanvas.style.overflowX="scroll";
     trackCanvas.appendChild(canvas[0]);
     //"<div class='col-md-9'>"+canvas[0]+"</div>";
@@ -564,6 +567,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
         divTrack.appendChild(span);
      */
     //places the track cursor at the top left of the track (needs it's with adjusted to the max duration of a track)
+    tracksTopRow = $("#trackData0");
     $("#frontCanvas").css({
         top: tracksTopRow.offset().top + "px",
         left: tracksTopRow.offset().left + "px",
@@ -651,6 +655,7 @@ function updateTracksWidth(){
 }
 
 
+
 function animateTime() {
     // clear canvas
     View.frontCanvasContext.clearRect(0, 0, window.View.masterCanvas.width, window.View.masterCanvas.height);
@@ -671,10 +676,10 @@ function animateTime() {
 
             var totalTime;
 
-            View.frontCanvasContext.fillStyle = 'white';
+            View.frontCanvasContext.fillStyle = 'grey';
             View.frontCanvasContext.font = '14pt Arial';
             //View.frontCanvasContext.fillText(toFixed(currentSong.elapsedTimeSinceStart, 1) + "s", 180, 20);
-            View.frontCanvasContext.fillText((currentSong.elapsedTimeSinceStart + "").toFormattedTime() + "s", 180, 20);
+            View.frontCanvasContext.fillText((currentSong.elapsedTimeSinceStart + "").toFormattedTime() + "s", 400, 20);
             //console.log("dans animate");
 
             // at least one track has been loaded
@@ -682,36 +687,40 @@ function animateTime() {
 
                 totalTime = currentSong.getDuration();
 
-
                 var el = $(".trackData");
-
 
                 console.log("element length: " + el.length);
 
                 var adjustXTimeline=0;
                 var adjust=false;
                 //if cursor position = el[0].scrollLeft + el.width() then
-                if((currentXTimeline >= el.width())){
-                    var maxScrollLeft = maxWidth - el[0].clientWidth;
 
-                    var scrollTo = ((el[0].scrollLeft+el.width()) > maxScrollLeft) ? maxScrollLeft : (el[0].scrollLeft+el.width());
+                if((currentXTimeline >= el.width())){
+                    var maxScrollLeft = maxWidth; // - el[0].clientWidth;
+                    cummulativeXTimeline+=currentXTimeline;
+                   var scrollTo = (cummulativeXTimeline > maxScrollLeft) ? maxScrollLeft : cummulativeXTimeline;
+
 
                     el.scrollLeft(scrollTo);
                     adjustXTimeline=el.width();
 
                     console.log("adjust screen position,  width: " + el.width() + " scrollLeft: " + el[0].scrollLeft + " clientWidth: " + el[0].clientWidth + ", el[0].scrollWidth: " + el[0].scrollWidth);
                     adjust=true;
+                    currentXTimeline = 0;
                 }
+                else{
 
-                currentXTimeline = ((currentSong.elapsedTimeSinceStart * maxWidth / totalTime) - (adjustXTimeline + el[0].scrollLeft));
-                currentXTimeline = (currentXTimeline < 0 )? el.position().left : currentXTimeline;
-
+                }
+                console.log("currentXTimeline: " + currentXTimeline + " el.width(): " + el.width() + " el[0].scrollLeft: " + el[0].scrollLeft);
+                //currentXTimeline = ((currentSong.elapsedTimeSinceStart * maxWidth / totalTime) - (el[0].scrollLeft) - adjustXTimeline);
+                //currentXTimeline = (currentXTimeline < 0 )? el.position().left : currentXTimeline;
+                currentXTimeline += 1;
                 // draw frequencies that dance with the music
                 drawFrequencies();
 
                 // Draw time bar
-                View.frontCanvasContext.strokeStyle = "white";
-                View.frontCanvasContext.lineWidth = 3;
+                View.frontCanvasContext.strokeStyle = "grey";
+                View.frontCanvasContext.lineWidth = 2;
                 View.frontCanvasContext.beginPath();
                 View.frontCanvasContext.moveTo(currentXTimeline, 0);
                 View.frontCanvasContext.lineTo(currentXTimeline, window.View.masterCanvas.height);
