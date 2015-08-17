@@ -1,8 +1,11 @@
 
+var method = TrackDto.prototype;
+
 function TrackDto(){
 
     this.id=null;
     this.name;
+    this.description;
     this.blobData;
     this.creator;
     this.dateCreated;
@@ -23,3 +26,5 @@ function TrackDto(){
     this.delete; //TODO
 
 }
+
+try{module.exports = TrackDto;} catch(err){}

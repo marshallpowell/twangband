@@ -37,7 +37,7 @@ var delta;
 var currentXTimeline=0;
 var cummulativeXTimeline=0;
 
-var tracksTopRow = $("#tracksTopRowId");
+var tracksTopRow = $("#tracksTop");
 
 // requestAnim shim layer by Paul Irish, like that canvas animation works
 // in all browsers
@@ -108,8 +108,7 @@ function init(songDto) {
     );
     console.log("check songDto: " + songDto);
     if(songDto != null){
-        console.log("found songDto");
-        console.log("tracks placed");
+
         currentSongDto = songDto;
         console.log("new song loaded, name: " + songDto.name);
 
@@ -391,6 +390,9 @@ function getSongFormData(){
         var trackDto = getTrackDto(track);
         trackDto.viewOrder = index;
         trackDto.name = document.getElementById('trackName'+index).value;
+        trackDto.description = document.getElementById('trackDescription'+index).value;
+
+        console.log("tracks description: " + trackDto.description);
         currentSongDto.tracks.push(trackDto);
         if(track.blob != undefined){
             console.log("adding rack blobData: " + track.blob + " for index: " + index);
@@ -495,18 +497,6 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
         console.log("creating creatorImage");
          creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
     }
-/*
-    // Render HTMl
-    var span = document.createElement('tr');
-    //span.style="position:absolute;";
-    span.id="tracks_row_"+trackNumber;
-    span.innerHTML = '<td class="trackBox" style="height : ' + SAMPLE_HEIGHT + 'px"><div class="row">' + creatorImage +
-    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
-    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
-    "</div>" +
-    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span ng-bind='trackName" + trackNumber + "' class='glyphicon glyphicon-pencil'></span>" +track.name.substring(0,15) + "...</a>" +
-*/
-   // "<input type='text' style='display:none;' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' />" +
 
     var trackInfo = "<div class='col-md-2'>" +
     "<div class='row'>"+ creatorImage +
@@ -514,13 +504,13 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
     "</div>" +
     "<div class='row'>" +
-    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span ng-bind='trackName" + trackNumber + "' class='glyphicon glyphicon-pencil'></span>" +track.name.substring(0,15) + "...</a>" +
+    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span id='trackLabelIcon" + trackNumber + "' class='glyphicon glyphicon-pencil'></span><span id='trackLabel"+ trackNumber +"'>" +track.name.substring(0,15) + "...</span></a>" +
 
         "<div style='display:none'>" +
         " <div id='trackInfo"+trackNumber+"'> " +
         "    <div class='form-group row'> " +
-        "        <div class='col-sm-4'><label for='songName'>Song Name</label></div> " +
-        "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track'/></div> " +
+        "        <div class='col-sm-4'><label for='trackName"+ trackNumber+"'>Track Name</label></div> " +
+        "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,"+trackNumber+");'/></div> " +
         "        <div class='col-sm-4'><label for='trackName'>Description</label></div> " +
         "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' ng-model='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'></textarea></div> " +
         "    </div> " +
@@ -536,7 +526,6 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     trackCanvas.id="trackData"+trackNumber;
     trackCanvas.style.overflowX="scroll";
     trackCanvas.appendChild(canvas[0]);
-    //"<div class='col-md-9'>"+canvas[0]+"</div>";
 
     var trackRow =  document.createElement('div');
     trackRow.className="row trackRow";
@@ -544,30 +533,8 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
     $("#scroll").append(trackRow);
 
-  //div to edit track
-    /*
-    "<div style='display:none'>" +
-    " <div id='trackInfo"+trackNumber+"'> " +
-    "    <div class='form-group row'> " +
-    "        <div class='col-sm-4'><label for='songName'>Song Name</label></div> " +
-    "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track'/></div> " +
-    "        <div class='col-sm-4'><label for='trackName'>Description</label></div> " +
-    "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' ng-model='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'></textarea></div> " +
-    "    </div> " +
-    "  </div> " +
-    "</div> " +
-    "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span><td>";
 
-
-    var trackTd = document.createElement('td');
-    trackTd.id = "track_"+trackNumber;
-    trackTd.appendChild(canvas[0]);
-    span.appendChild(trackTd);
-
-        divTrack.appendChild(span);
-     */
     //places the track cursor at the top left of the track (needs it's with adjusted to the max duration of a track)
-    tracksTopRow = $("#trackData0");
     $("#frontCanvas").css({
         top: tracksTopRow.offset().top + "px",
         left: tracksTopRow.offset().left + "px",
@@ -703,15 +670,9 @@ function animateTime() {
 
                     el.scrollLeft(scrollTo);
                     adjustXTimeline=el.width();
-
-                    console.log("adjust screen position,  width: " + el.width() + " scrollLeft: " + el[0].scrollLeft + " clientWidth: " + el[0].clientWidth + ", el[0].scrollWidth: " + el[0].scrollWidth);
                     adjust=true;
                     currentXTimeline = 0;
                 }
-                else{
-
-                }
-                console.log("currentXTimeline: " + currentXTimeline + " el.width(): " + el.width() + " el[0].scrollLeft: " + el[0].scrollLeft);
                 //currentXTimeline = ((currentSong.elapsedTimeSinceStart * maxWidth / totalTime) - (el[0].scrollLeft) - adjustXTimeline);
                 //currentXTimeline = (currentXTimeline < 0 )? el.position().left : currentXTimeline;
                 currentXTimeline += 1;
@@ -851,9 +812,6 @@ function drawSampleImage(imageURL, trackNumber, trackName) {
 
 function resizeSampleCanvas(numTracks) {
 
-    console.log("td id: " + tracksTopRow.id);
-
-
     window.View.masterCanvas.height = SAMPLE_HEIGHT * numTracks;
     window.View.frontCanvas.height = SAMPLE_HEIGHT * numTracks; //window.View.masterCanvas.height;
 
@@ -927,6 +885,8 @@ function stopAllTracks() {
 
     // reset the elapsed time
     currentSong.elapsedTimeSinceStart = 0;
+    currentXTimeline=0;
+    cummulativeXTimeline=0;
 }
 
 function pauseAllTracks() {

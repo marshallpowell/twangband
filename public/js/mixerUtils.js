@@ -16,6 +16,12 @@ function toggleCollaboratorDialog(closeMe){
 
 }
 
+MixerUtil.updateTrackLabel = function(value, index){
+
+    document.getElementById("trackLabel"+index).innerHTML= value.substring(0,15) + "...";
+
+}
+
 MixerUtil.isLoggedIn = function(el){
 
     if(user){
@@ -54,7 +60,7 @@ function searchCollaborators(){
             console.log(data);
             //display search results
             var output="<ul>";
-var users = JSON.parse(data.data);
+            var users = JSON.parse(data.data);
             for(i=0; i < data.length; i++){
                 output += "<li>" + data[i].name + "</li>";
             }
@@ -104,7 +110,7 @@ function addCollaborator(id){
 }
 
 /**
- * Draws the track data on the canvas.
+ * Draws the track data on the canvas. (Not used anywhere at the moment)
  * @param track
  */
 function drawBuffer(track) {
@@ -213,14 +219,6 @@ function gotBuffers( buffers ) {
     Tools.debug("buffers[0].buffer is a  " + Object.prototype.toString.call(buffers[0].buffer));
     track = new UiTrack(recIndex++, buffers[0]);
 
-    /* MP - performed now in "doneEncoding"
-     var canvas = document.getElementById( "wavedisplay" );
-     drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
-     */
-
-    // the ONLY time gotBuffers is called is right after a new recording is completed -
-    // so here's where we should set up the download.
-    ///// original called exportWAV and doneEncoding arg was a blob.
     audioRecorder.exportWAVBufferArray( doneEncoding );
 }
 
@@ -231,7 +229,7 @@ function gotBuffers( buffers ) {
  */
 function doneEncoding( arrayBuffer ) {
 
-    console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer) + " length: " + arrayBuffer.length);
+    //console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer) + " length: " + arrayBuffer.length);
 
     var track = new LocalTrack("localTrack");
 
@@ -243,11 +241,8 @@ function doneEncoding( arrayBuffer ) {
 
 
 function toggleEditTrack(trackNumber){
-    var name = '#trackInfo'+trackNumber;
 
-   // $("#notificationBody").children().first().replaceWith($(name)).appendTo($('#trash'));
-   // $('#myModal').modal('toggle');
-    toggleNotification($(name));
+    toggleNotification($('#trackInfo'+trackNumber));
 }
 
 function toggleNotification(content, doNotToggle){
@@ -270,14 +265,14 @@ function toggleNotification(content, doNotToggle){
 }
 function toggleEditSong(closeMe){
 
-    var el = $("#notificationBody").children().first();
 
-    console.log("el id: " + el.attr('id'));
-
-   // $("#notificationBody").children().first().replaceWith($('#songInfo')).appendTo($('#trash'));
-    //$('#myModal').modal('toggle');
     toggleNotification($('#songInfo'));
 
+}
+
+function toggleSearchUsers(closeMe){
+
+    toggleNotification($('#searchUsers'));
 }
 
 
