@@ -25,7 +25,8 @@ var selectionForLoop = {
     xEnd: -1
 };
 
-var DURRATION_BUFFER = (window.navigator.userAgent.indexOf("Firefox") > -1)? 49.5 : 56.8;
+var DURRATION_BUFFER = (window.navigator.userAgent.indexOf("Firefox") > -1)? 49.5 : 60;
+
 // Sample size in pixels
 var SAMPLE_HEIGHT = 75;
 
@@ -113,6 +114,10 @@ function init(songDto) {
         console.log("new song loaded, name: " + songDto.name);
 
         loadSongDto(songDto);
+
+        for(var i = 0; i < songDto.collaborators.length; i++){
+            MixerUtil.addCollaboratorToUi(songDto.collaborators[i]);
+        }
 
         View.waveCanvas.width = getMaxTrackWidth();
     }
@@ -383,7 +388,7 @@ function getSongFormData(){
     currentSongDto.name = $("#songName").val();
     currentSongDto.description = $("#songDescription").val();
     currentSongDto.tracks = [];
-
+console.log("currentSongDto.description: " + currentSongDto.description);
 
     //if the track is newly recorded add the blob data
     $.each(currentSong.tracks, function(index, track){
@@ -431,9 +436,10 @@ function getTrackDto(track){
  */
 function saveSong(){
 
-    if(!MixerUtil.isLoggedIn(document.getElementById("bsaveSong"))){
+    if(!MixerUtil.validateAndNotify(document.getElementById("bsaveSong"), AppConstants.ROLES.ADD_TRACK)){
         return;
     }
+
     var data = getSongFormData();
 
     console.log("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(data));
@@ -483,8 +489,9 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     var height = canvas[0].height;
     var context = canvas[0].getContext('2d');
 
+    var isNewTrack = (arrayBuffer != null);
     //decode newly recorded track
-    if(arrayBuffer != null) {
+    if(isNewTrack) {
 
         track.blob = new Blob([arrayBuffer], { type: track.type });
         console.log("newly recorded track being added");
@@ -493,16 +500,18 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
 
     console.log("track dto: " + JSON.stringify(currentSongDto.tracks[trackNumber]));
     var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='50' height='50' />";
-    if(currentSongDto.tracks[trackNumber] && currentSongDto.tracks[trackNumber].creatorId){
-        console.log("creating creatorImage");
+    if(!isNewTrack){
          creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
     }
 
     var trackInfo = "<div class='col-md-2'>" +
     "<div class='row'>"+ creatorImage +
-    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " +
-    "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones'></span></button>" +
-    "</div>" +
+    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " + "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
+
+        if(!isNewTrack){
+            trackInfo += "<button class='createNewSongWithTrack' id='createNewSongWith" + trackNumber + "' onclick='MixerUtil.selectTrackForNewSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
+        }
+   trackInfo += "</div>" +
     "<div class='row'>" +
     "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span id='trackLabelIcon" + trackNumber + "' class='glyphicon glyphicon-pencil'></span><span id='trackLabel"+ trackNumber +"'>" +track.name.substring(0,15) + "...</span></a>" +
 
@@ -511,8 +520,8 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
         "    <div class='form-group row'> " +
         "        <div class='col-sm-4'><label for='trackName"+ trackNumber+"'>Track Name</label></div> " +
         "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,"+trackNumber+");'/></div> " +
-        "        <div class='col-sm-4'><label for='trackName'>Description</label></div> " +
-        "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' ng-model='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'></textarea></div> " +
+        "        <div class='col-sm-4'><label for='trackDescription'>Description</label></div> " +
+        "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'>"+track.description+"</textarea></div> " +
         "    </div> " +
         "  </div> " +
         "</div> " +

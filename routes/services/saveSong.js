@@ -18,9 +18,14 @@ exports = module.exports = function(req, res) {
     var songDto = JSON.parse(req.body.song);
     songDto.creatorId = req.user.id;
 
+    if(songDto.id != null){
+
+    }
+
     logger.debug("saving songDto name: " + songDto.name);
     logger.debug("saving songDto tracks: " + songDto.tracks);
     logger.debug("saving songDto length: " + songDto.tracks.length);
+
 
 
     //add new track data into the song

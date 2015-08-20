@@ -91,7 +91,14 @@ function WaveformDrawer() {
 
         var channels = buffer.numberOfChannels;
         // The result is an array of size equal to the displayWidth
-        this.peaks = new Float32Array(Math.round(this.displayWidth));
+
+        if((window.navigator.userAgent.indexOf("Firefox") > -1)){
+            this.peaks = new Float32Array(Math.round(this.displayWidth));
+        }
+        else{
+            this.peaks = new Float32Array(this.displayWidth);
+        }
+
 
         // For each channel
         for (var c = 0; c < channels; c++) {

@@ -1,6 +1,11 @@
 var MixerUtil = {};
 
-
+MixerUtil.addCollaboratorToUi = function(collaborator) {
+    console.log("collaborator: " + JSON.stringify(collaborator));
+    var img = $('<img class="collaborator thumbnail">');
+    img.attr('src', "/uploads/users/profile/"+collaborator.id + ".jpg");
+    img.appendTo('#collaborators');
+}
 
 function toggleCollaboratorDialog(closeMe){
 
@@ -20,6 +25,77 @@ MixerUtil.updateTrackLabel = function(value, index){
 
     document.getElementById("trackLabel"+index).innerHTML= value.substring(0,15) + "...";
 
+}
+
+
+var selectedTrackDtoForNewSong = null;
+MixerUtil.selectTrackForNewSong = function(trackDto){
+
+    selectedTrackDtoForNewSong = trackDto;
+    toggleNotification($("#newSongFromTrack"));
+}
+
+MixerUtil.createNewSongFromTrack = function(){
+    var newSongDto = new SongDto();
+    newSongDto.name = document.getElementById('newSongName').value;
+    newSongDto.description = document.getElementById('newSongDescription').value;
+    newSongDto.tracks.push(selectedTrackDtoForNewSong);
+
+    alert(JSON.stringify(newSongDto));
+
+    var formData = new FormData();
+    formData.append("song", JSON.stringify(newSongDto));
+
+    $('#notificationBody').html("Saving...");
+    $('#myModal').modal('toggle');
+
+    $.ajax({
+        url: '/song/save',
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function(data){
+
+            //TODO need to handle errors too
+            console.log("saved song: " + data);
+
+            $('#notificationBody').html("Saved Successfully. Refreshing Page");
+            $('#myModal').modal('toggle');
+
+            window.location.href="/mixer?song="+data.id;
+
+        },
+        fail: function(data){
+            alert('error');
+        }
+    });
+
+}
+
+MixerUtil.validateAndNotify = function(el, role){
+
+    if(!user){
+        $(el).notify('You must login first', 'info');
+        return false;
+    }
+
+    if(role == AppConstants.ROLES.ADMIN){
+        if(!SongValidation.isAdmin(user, songDto)){
+            $(el).notify('You must be an admin to perform this action', 'info');
+            return false;
+        }
+    }
+
+    if(role == AppConstants.ROLES.ADD_TRACK){
+        if(!SongValidation.canAddTrack(user, songDto)){
+            $(el).notify('You must be collaborator to perform this action', 'info');
+            return false;
+        }
+    }
+
+    return true;
 }
 
 MixerUtil.isLoggedIn = function(el){
@@ -96,13 +172,7 @@ function addCollaborator(id){
         type: 'POST',
         success: function(data){
             console.log(data);
-            //display search results
-            var output="<ul>";
-            var user = JSON.parse(data);
-            output += "<li>" + user.name + "</li>";
-
-            output += "</ul>";
-            document.getElementById("collaborators").innerHTML +=output;
+            MixerUtil.addCOllaboratorToUi(collaboratorDto);
         }
     });
 
@@ -146,6 +216,42 @@ function drawBuffer(track) {
     infoColumn.appendTo("#viz");
     wavColumn.appendTo("#viz");
     // canvas.appendTo("#viz");
+}
+
+
+function toggleEditTrack(trackNumber){
+
+    toggleNotification($('#trackInfo'+trackNumber));
+}
+
+function toggleNotification(content, doNotToggle){
+
+    var el = $("#notificationBody").children().first();
+
+    if(content == null){
+        $("#notificationBody").children().first().replaceWith("").appendTo($('#trash'));
+    }
+    else if(content.attr('id') != el.attr('id')){
+        $("#notificationBody").children().first().replaceWith(content).appendTo($('#trash'));
+    }
+
+    if(!doNotToggle){
+        $('#myModal').modal('toggle');
+    }
+
+}
+function toggleEditSong(closeMe){
+
+    toggleNotification($('#songInfo'));
+
+}
+
+function toggleSearchUsers(closeMe){
+
+    if(!SongValidation.isAdmin(user, songDto)){
+        document.getElementById('searchUsersForm').style.display='none';
+    }
+    toggleNotification($('#searchUsers'));
 }
 
 
@@ -240,40 +346,6 @@ function doneEncoding( arrayBuffer ) {
 }
 
 
-function toggleEditTrack(trackNumber){
-
-    toggleNotification($('#trackInfo'+trackNumber));
-}
-
-function toggleNotification(content, doNotToggle){
-
-    var el = $("#notificationBody").children().first();
-
-    console.log("el id: " + el.attr('id'));
-
-    if(content == null){
-        $("#notificationBody").children().first().replaceWith("").appendTo($('#trash'));
-    }
-    else if(content.attr('id') != el.attr('id')){
-        $("#notificationBody").children().first().replaceWith(content).appendTo($('#trash'));
-    }
-
-    if(!doNotToggle){
-        $('#myModal').modal('toggle');
-    }
-
-}
-function toggleEditSong(closeMe){
-
-
-    toggleNotification($('#songInfo'));
-
-}
-
-function toggleSearchUsers(closeMe){
-
-    toggleNotification($('#searchUsers'));
-}
 
 
 var isRecordingOn = false;

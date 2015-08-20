@@ -1,9 +1,10 @@
 //TODO fix this to just take in a trackDto, or just use track DTO
 function Track(songName, trackDto) {
-
+console.log("description: " + trackDto.description);
     this.creatorId = trackDto.creatorId
     // name of the track : bass, guitar, voice, etc.
     this.name = trackDto.name;
+    this.description = trackDto.description;
     // url of the track in the form http://.../track/track_name
     this.fieldName = trackDto.fileName;
     // decoded audio buffer
