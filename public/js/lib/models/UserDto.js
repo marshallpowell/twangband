@@ -9,6 +9,9 @@ function UserDto(){
     this.firstName;
     this.lastName;
     this.email;
+    this.userName;
+    this.password;
+    this.confirmPassword;
     this.id;
     this.instruments=[];
 

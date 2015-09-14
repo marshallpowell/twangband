@@ -13,7 +13,10 @@ User.add({
 	name: { type: Types.Name, required: true, index: true },
 	facebookId: { type: Types.Text, hidden: true, required: false, index: false},
 	email: { type: Types.Email, initial: true, required: true, index: true, unique: true },
-	password: { type: Types.Password, initial: true, required: true },
+	password: { type: Types.Text, initial: true, required: true },
+    passwordResetToken: { type: Types.Text, initial: false, index: false},
+    passwordResetTokenExpires: { type: Types.Text, initial: false, index: false},
+    profilePic: { type: Types.Text, initial: false, index: false, default : 'undefined.jpg'},
 	instruments: {type: Types.Relationship, ref : 'Instrument', many:true},
 	country: {type: Types.Select, label: 'Country', options: countryOptions}
 }, 'Permissions', {

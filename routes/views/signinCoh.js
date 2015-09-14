@@ -26,13 +26,12 @@ exports = module.exports = function(req, res) {
 	if (req.method === 'POST') {
 
 		if (!keystone.security.csrf.validate(req)) {
-			console.log("here i am in csrf");
 			req.flash('error', 'There was an error with your request, please try again.');
 			return renderView();
 		}
 		
 		if (!req.body.email || !req.body.password) {
-			console.log('here i am ');
+
 			req.flash('error', 'Please enter your email address and password.');
 			
 			return renderView();

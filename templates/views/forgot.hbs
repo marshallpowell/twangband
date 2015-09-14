@@ -1,0 +1,35 @@
+{{!< default}}
+
+{{!< auth}}
+<div class="container">
+
+
+    {{#if user}}
+    <div class="row">
+        <div class="col-sm-8">
+            You are already logged in as {{user.name.first}}
+        </div>
+    </div>
+    {{/if}}
+    {{#unless user}}
+    <div class="row">
+        <div class="row">
+            <div class="col-sm-8">
+                <h1>Forgot Your Password?</h1>
+                Enter your email below and we'll send you a URL to reset your password
+            </div>
+        </div>
+        <div class="col-sm-8">
+
+            <form method="POST" action="/forgot" novalidate class="auth-form">
+                <div class="form-group">
+
+                <input type="email" name="email" id="email" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Get Password</button>
+            </form>
+        </div>
+    </div>
+    {{/unless}}
+
+</div>

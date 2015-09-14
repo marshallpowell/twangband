@@ -104,6 +104,7 @@ global.UPLOADS_DIR = "/var/www/uploads/";
 global.FB_CLIENTID = '1558894697697443';
 global.FB_CALLBACKURL = 'http://local.cluckoldhen.com:3000/auth/facebook/callback';
 global.FB_CLIENTSECRET = '964ee6d698f152d81cc9e8dadaed50e3';
+global.BASE_URL = 'http://local.cluckoldhen.com:3000';
 
 if(process.env.OPENSHIFT_DATA_DIR){
 
@@ -112,6 +113,7 @@ if(process.env.OPENSHIFT_DATA_DIR){
     global.FB_CLIENTID = '1558893454364234';
     global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
     global.FB_CLIENTSECRET = '1992cb3d2ab570277129e9f8911b63a4';
+    global.BASE_URL = 'http://nodejs-musicilo.rhcloud.com';
 }
 
 var winston = require('winston');

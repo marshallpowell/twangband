@@ -12,6 +12,9 @@ var keystone = require('keystone'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     fs = require('fs'),
+    LocalStragey = require('passport-local').Strategy,
+    userDao = require(APP_LIB + 'dao/UserDao'),
+    flash = require('express-flash'),
     multer  = require('multer');
 
 keystone.import('models');
@@ -46,9 +49,9 @@ var redirectHome = function(req, res, next){
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
-
     app.use(express.static('public'));
     app.use(cookieParser());
+    app.use(flash());
     app.use(bodyParser.urlencoded({
         extended: true
     }));
@@ -58,7 +61,7 @@ exports = module.exports = function(app) {
         secret: 'keyboard cat',
 
         cookie: { secure: false }
-    }))
+    }));
 
     //cookie: { secure: false } set to true above for SSL
 
@@ -66,6 +69,9 @@ exports = module.exports = function(app) {
     app.use(passport.session());
 
     var uploads = multer({ dest: './uploads/'});
+
+
+    var userProfileUploads = multer({ dest: './uploads' });
 
     app.use("/uploads", express.static(UPLOADS_DIR));
 
@@ -81,11 +87,17 @@ exports = module.exports = function(app) {
     app.get('/blog/post/:post', routes.views.post);
     app.get('/gallery', routes.views.gallery);
     app.all('/contact', routes.views.contact);
+
     app.all('/login', routes.views.signinCoh);
     app.all('/logout', [authUtils.signOut, routes.views.signinCoh]);
+    app.all('/forgot', routes.views.forgot);
+    app.all('/reset/', routes.views.reset);
 
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
+
+    app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login'}));
+
 
     app.all('/songMixer', routes.views.songMixer);
     app.all('/mixer', routes.views.mixer);
@@ -95,6 +107,12 @@ exports = module.exports = function(app) {
     app.all('/song/user/', routes.views.userSongs);
    // app.post('/song/remove',routes.services.removeSong);
     app.all('/search/', routes.services.search);
+
+    app.get('/user/profile/', uploads, routes.views.userProfile);
+
+    app.post('/user/save', routes.services.saveProfile);
+
+
 
     //404's
     app.use(function(req, res, next){
@@ -137,6 +155,15 @@ exports = module.exports = function(app) {
         logger.debug("deserializeUser");
         done(null, user);
     });
+
+    passport.use(new LocalStragey(function(username, password, done){
+
+        userDao.authenticate(username, password).then(function(userDto){
+            return done(null, userDto);
+        }, function(err){
+            return done(err);
+        });
+    }));
 
 
 };

@@ -1,0 +1,96 @@
+<div class="container">
+    <h1>Edit Profile</h1>
+    <hr>
+
+    <form class="form-horizontal" role="form" id="userForm">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-3">
+            <div class="text-center">
+                <img src="/uploads/users/profile/{{user.id}}.jpg" class="avatar img-circle" alt="avatar">
+                <h6>Upload a different photo...</h6>
+
+                <input type="file" class="form-control" name="profileImg" id="profileImg" />
+            </div>
+        </div>
+
+        <!-- edit form column -->
+        <div class="col-md-9 personal-info">
+
+            <h3>Personal info</h3>
+
+
+
+                <input type="hidden" name="id" value="{{user.id}}" />
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">First name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" id="firstName" name="firstName" value="{{user.firstName}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Last name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" id="lastName" name="lastName" value="{{user.lastName}}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Email:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" id="email" name="email" value="{{user.email}}">
+                    </div>
+                </div>
+
+
+                {{#if user}}
+
+                {{/if}}
+
+                {{#unless user}}
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Password:</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="password" id="password" name="password" value="{{password}}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Confirm Password:</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="password" id="confirmPassword" name="confirmPassword" value="{{password}}">
+                    </div>
+                </div>
+
+                {{/unless}}
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label"></label>
+                    <div class="col-md-8">
+
+                        {{#if user}}
+                            <input type="button" class="btn btn-primary" id="saveUserBtn" value="Save Changes" onClick="UserProfile.saveUser();">
+
+                        {{/if}}
+                        {{#unless user}}
+
+                            <input type="button" class="btn btn-primary" id="createUserBtn" value="Create Profile" onClick="UserProfile.saveUser();">
+                        {{/unless}}
+
+                        <span></span>
+                        <input type="reset" class="btn btn-default" value="Cancel">
+                    </div>
+                </div>
+
+        </div>
+    </div>
+    </form>
+</div>
+<hr>
+
+<script src="/js/lib/models/UserDto.js"></script>
+<script src="/js/lib/validation/UserValidation.js"></script>
+<script src="/js/scripts/userProfile.js"></script>
+
+

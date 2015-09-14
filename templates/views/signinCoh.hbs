@@ -25,12 +25,12 @@
 			{{/if}}
 			{{#unless user}}
 
-                <!--
-            <form method="post" novalidate class="auth-form">
+
+            <form method="post" action="/auth/local" novalidate class="auth-form">
               <input type="hidden" name="{{csrf_token_key}}" value="{{csrf_token_value}}">
               <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{submitted.email}}">
+                <label for="username">Email</label>
+                <input type="text" name="username" id="username" class="form-control">
               </div>
               <div class="form-group">
                 <label for="password">Password</label>
@@ -38,7 +38,7 @@
               </div>
               <button type="submit" class="btn btn-primary">Sign In!</button>
             </form>
-            -->
+
             <br />
             <div class='social_logins'>
             	<a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
