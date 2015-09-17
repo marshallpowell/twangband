@@ -9,7 +9,7 @@ exports = module.exports = function(req, res) {
 
     // locals.section is used to set the currently selected
     // item in the header navigation.
-    locals.section = 'songs';
+    locals.section = 'profile';
 
     //if not logged in don't show errors
 
@@ -22,7 +22,7 @@ exports = module.exports = function(req, res) {
     //req.user.id
     userDao.findUserById(req.user.id).then(
         function(user){
-            logger.debug("got songs: " + JSON.stringify(user));
+            logger.debug("found user:  " + JSON.stringify(user));
             locals['user'] = user;
             // Render the view
             res.render('userProfile');

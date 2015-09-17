@@ -7,7 +7,7 @@
         <!-- left column -->
         <div class="col-md-3">
             <div class="text-center">
-                <img src="/uploads/users/profile/{{user.id}}.jpg" class="avatar img-circle" alt="avatar">
+                <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar img-circle" alt="avatar">
                 <h6>Upload a different photo...</h6>
 
                 <input type="file" class="form-control" name="profileImg" id="profileImg" />
@@ -21,7 +21,7 @@
 
 
 
-                <input type="hidden" name="id" value="{{user.id}}" />
+                <input type="hidden" name="id" id="id" value="{{user.id}}" />
                 <div class="form-group">
                     <label class="col-lg-3 control-label">First name:</label>
                     <div class="col-lg-8">

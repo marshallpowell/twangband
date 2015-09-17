@@ -57,9 +57,11 @@
 										<a href="{{ href }}">{{ label }}</a>
 									</li>
 								{{/each}}
+
 							</ul>
 							<ul class="nav navbar-nav navbar-right">
 								{{#if user}}
+                                    <li {{#ifeq section 'profile'}}class="active"{{else}}{{/ifeq}}><a href="/user/profile"><img class="thumbnailSmall" src="/uploads/users/profile/{{user.profilePic}}" />Your Profile</a></li>
 								<li><a href="/logout">Sign Out {{user.name.first}}</a></li>
 								{{else}}
 								<li><a href="/login">Sign In</a></li>

@@ -12,7 +12,7 @@
 
 
         {{#if user}}
-            You are already logged in as  {{user.firstName}}  <img src="/uploads/users/profile/{{user.profilePic}}" />
+            Welcome  {{user.firstName}}!  <img class="thumbnail" src="/uploads/users/profile/{{user.profilePic}}" />
         {{/if}}
         {{#unless user}}
             <p><a href="/login" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a></p>

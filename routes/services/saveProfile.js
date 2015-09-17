@@ -9,14 +9,6 @@ exports = module.exports = function(req, res) {
 
     log.debug("enter saveProfile with user: " + req.body.user);
 
-    //add new track data into the song
-    var profilePic = null;
-    for (var key in req.files) {
-        log.debug("uploaded file is: " + req.files[key].name);
-
-        profilePic = req.files[key].name;
-    }
-
     var data = {};
     data.errors = [];
 
@@ -25,58 +17,71 @@ exports = module.exports = function(req, res) {
         res.json(data);
     }
     var userDto = JSON.parse(req.body.user);
-    userDto.profilePic = Date.now()+ '-'+profilePic;
+
+    data.errors = userValidation.validateUser(userDto);
+
+    if(data.errors.length){
+        res.json(data);
+        return;
+    }
+
+    //add new track data into the song
+    var profilePic = null;
+    for (var key in req.files) {
+        log.debug("uploaded file is: " + req.files[key].name);
+
+        profilePic = req.files[key].name;
+        userDto.profilePic = Date.now()+ '-'+profilePic;
+    }
+
 
 
     if(req.user){
         log.debug("update existing user");
-        //update existing user
 
-        //email must be unique
+        userDao.isUniqueEmail(userDto).then(function (isUnique) {
 
-        //if social user
+            if (isUnique) {
+                logger.debug("email is unique");
 
-        //else if not social user ... more validation?
+                uploadPic(profilePic, userDto);
+
+                userDao.updateProfile(userDto).then(function(updatedUser){
+                    data.user = updatedUser;
+                    res.json(data);
+                });
+
+            }
+            else{
+                logger.debug("email is NOT unique");
+                data.errors.push("The email address " + userDto.email + " is already being used by another user");
+                res.json(data);
+            }
+
+
+        });
+
     }
     //create user
-    else{
+    else {
 
         log.debug("create new user");
 
-        //basic validation
-        data.errors = userValidation.validateUser(userDto);
-
-        if(data.errors.length){
-            res.json(data);
-        }
         //ensure email is unique
-        userDao.isUniqueEmail(userDto).then(function(isUnique){
+        userDao.isUniqueEmail(userDto).then(function (isUnique) {
 
-            if(isUnique){
-               log.debug('email is good, create user for: ' + JSON.stringify(userDto));
-                userDao.createUser(userDto).then(function(newuserDto){
+            if (isUnique) {
+                log.debug('email is good, create user for: ' + JSON.stringify(userDto));
+                userDao.createUser(userDto).then(function (newuserDto) {
 
                     log.debug("created user now check for profile pic");
 
-                    if(profilePic != null){
-                        log.debug("image uploaded : " + profilePic);
-
-                        mv('/tmp/'+profilePic, global.UPLOADS_DIR+'users/profile/'+newuserDto.profilePic, function(err) {
-                            if(err){
-                                log.debug('error uploading file: ' + err);
-                            }
-
-                        });
-
-                    }
-                    else{
-                        log.debug("no image uploaded");
-                    }
+                    uploadPic(profilePic, newUserDto);
 
                     data.user = newuserDto;
                     res.json(data);
 
-                }, function(err){
+                }, function (err) {
                     log.debug("error saving new user: " + err);
                     data.errors.push("There was an error creating your profile, please try back later");
 
@@ -84,12 +89,29 @@ exports = module.exports = function(req, res) {
                 })
 
             }
-            else{
+            else {
                 data.errors.push('That email already exists within our system. Please use a different one');
                 res.json(data);
             }
         });
 
+    }
+};
 
+var uploadPic = function(profilePic, userDto){
+
+    if (profilePic != null) {
+        log.debug("image uploaded : " + profilePic);
+
+        mv('/tmp/' + profilePic, global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
+            if (err) {
+                log.debug('error uploading file: ' + err);
+            }
+
+        });
+
+    }
+    else {
+        log.debug("no image uploaded");
     }
 }

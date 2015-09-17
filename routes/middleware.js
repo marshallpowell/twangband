@@ -27,15 +27,18 @@ hbs.registerHelper('json', function(context) {
 exports.initLocals = function(req, res, next) {
 	
 	var locals = res.locals;
+    locals.user = req.user;
 
 	locals.navLinks = [
 		{ label: 'Home',		key: 'home',		href: '/' },
 		{ label: 'Songs',		key: 'songs',		href: '/song/user' },
         { label: 'Record',		key: 'mixer',		href: '/mixer' },
 		{ label: 'Contact',		key: 'contact',		href: '/contact' }
+
+
 	];
 
-	locals.user = req.user;
+
 	
 	next();
 	

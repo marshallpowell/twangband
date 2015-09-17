@@ -40,8 +40,16 @@ UserProfile.saveUser = function(){
             data: formData,
             success : function(data){
 
-                NotificationUtil.success("Your profile has been created/updated. Click <b></b><a href='/login'>here</a></b> to sign in");
-                $("#id").val(data.user.id);
+                if(data.errors.length){
+                    var message = "there were errors with your submission:\n<br /> * "+data.errors.join("\n<br/> * ");
+                    NotificationUtil.error(message);
+                }
+                else{
+                    NotificationUtil.success("Your profile has been created/updated. Click <b></b><a href='/login'>here</a></b> to sign in");
+                    $("#id").val(data.user.id);
+                }
+
+
             },
             error : function(error){
 
