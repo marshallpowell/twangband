@@ -115,6 +115,11 @@ function init(songDto) {
 
         loadSongDto(songDto);
 
+        var collaboratorIds = [];
+
+        for(var i = 0; i < songDto.collaborators.length; i++){
+            
+        }
         for(var i = 0; i < songDto.collaborators.length; i++){
             MixerUtil.addCollaboratorToUi(songDto.collaborators[i]);
         }

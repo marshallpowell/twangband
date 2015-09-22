@@ -34,7 +34,7 @@ exports = module.exports = function(req, res) {
 
             searchResults.data = JSON.stringify(searchResults.data);
             res.json(searchResults);
-logger.debug('just wrote json results');
+
             done(null, users)
 
         }, handleError);
@@ -42,13 +42,26 @@ logger.debug('just wrote json results');
 
 
     }
+    else if(searchDto.type=='USER_IDS'){
+
+        logger.debug("search type is for a user");
+
+
+        userDao.getUsersById(searchDto.userIds).then( function(users){
+
+
+            logger.debug('getting ready to write users');
+            data.users = users;
+            res.json(data);
+        }, handleError);
+    }
 
 
     //map the request data and uploaded file info to the DTO.
 
-
+    var handleError = function(err){
+        res.json(err);
+        logger.debug("error: " + err);
+    };
 };
 
-var handleError = function(err){
-    logger.debug("error: " + err);
-};

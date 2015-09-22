@@ -7,6 +7,8 @@ exports = module.exports = function(req, res) {
 
 
     logger.debug("enter addSongCollaborator: ");
+    var data = {};
+    data.errors = [];
 
     var collaboratorDto = JSON.parse(req.body.collaborator);
 
@@ -16,15 +18,26 @@ exports = module.exports = function(req, res) {
     if(req.body.action == "ADD"){
         logger.debug("action is ADD");
 
-        songDao.addOrRemoveCollaborators(req.body.songId,collaboratorDto);
+        songDao.addOrRemoveCollaborators(req.body.songId,collaboratorDto).then(function(songDto){
+
+            userDao.findUserById(collaboratorDto.id).then(function(userDto){
+                data.user = userDto;
+                res.json(data);
+
+            },function(err){
+                data.errors.push(err);
+                res.json(data);
+            })
+
+        },function(err){
+            data.errors.push(err);
+            res.json(data);
+        });
     }
     else{
         logger.debug("other action called");
     }
-    //map the request data and uploaded file info to the DTO.
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.write({name : "marshall"});
-    res.end();
+
 
 };
 

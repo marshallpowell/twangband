@@ -1,13 +1,13 @@
 var MixerUtil = {};
 
-MixerUtil.addCollaboratorToUi = function(collaborator) {
-    console.log("collaborator: " + JSON.stringify(collaborator));
+MixerUtil.addCollaboratorToUi = function(userDto) {
+    console.log("collaborator: " + JSON.stringify(userDto));
     var img = $('<img class="collaborator thumbnail">');
-    img.attr('src', "/uploads/users/profile/"+collaborator.id + ".jpg");
+    img.attr('src', "/uploads/users/profile/"+userDto.profilePic);
     img.appendTo('#collaborators');
 }
 
-function toggleCollaboratorDialog(closeMe){
+MixerUtil.toggleCollaboratorDialog = function (closeMe){
 
     if(closeMe){
         document.getElementById("searchUsers").style.display="none";
@@ -25,7 +25,7 @@ MixerUtil.updateTrackLabel = function(value, index){
 
     document.getElementById("trackLabel"+index).innerHTML= value.substring(0,15) + "...";
 
-}
+};
 
 
 var selectedTrackDtoForNewSong = null;
@@ -33,7 +33,7 @@ MixerUtil.selectTrackForNewSong = function(trackDto){
 
     selectedTrackDtoForNewSong = trackDto;
     toggleNotification($("#newSongFromTrack"));
-}
+};
 
 MixerUtil.createNewSongFromTrack = function(){
     var newSongDto = new SongDto();
@@ -171,8 +171,23 @@ function addCollaborator(id){
         processData: false,
         type: 'POST',
         success: function(data){
-            console.log(data);
-            MixerUtil.addCOllaboratorToUi(collaboratorDto);
+
+            if(data.errors.length){
+                var message = "there were errors with your submission:\n<br /> * "+data.errors.join("\n<br/> * ");
+                NotificationUtil.error(message);
+                //TODO close popup too
+            }
+            else{
+                console.log(data);
+                MixerUtil.addCollaboratorToUi(data.user);
+            }
+
+
+        },
+        error : function(error){
+
+            NotificationUtil.error("There was an error processing your submission: " + error);
+
         }
     });
 

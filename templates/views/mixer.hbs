@@ -160,7 +160,7 @@
                     </button>
 
                     <button id="brecordMix"
-                            onclick="toggleCollaboratorDialog(true); if(!AUDIO_INITIALIZED){initAudio();} else { toggleRecording(this);}" type="button"
+                            onclick="MixerUtil.toggleCollaboratorDialog(true); if(!AUDIO_INITIALIZED){initAudio();} else { toggleRecording(this);}" type="button"
                             title="Click to start recording."
                             class="btn btn-default btn-sm" disabled>
                         <span class="glyphicon glyphicon-record"></span>
