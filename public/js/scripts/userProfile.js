@@ -4,7 +4,7 @@ var UserProfile = {};
 
 UserProfile.saveUser = function(){
 
-    console.log("enter saveUserBtn.click");
+    console.log("enter saveUserBtn.click, tags: " + JSON.stringify($("#tags").val()));
 
     var user = new UserDto();
     user.firstName = $("#firstName").val();
@@ -14,16 +14,21 @@ UserProfile.saveUser = function(){
     user.password = $("#password").val();
     user.confirmPassword = $("#confirmPassword").val();
     user.id = $("#id").val();
+    user.tags = $("#tags").val();
 
+    console.log("here 1");
     var errors = UserValidation.validateUser(user);
+
+    console.log("here 2");
     if(errors.length){
 
         var message = "there were errors with your submission:\n<br /> * "+errors.join("\n<br/> * ");
 
+        console.log("here 3");
         NotificationUtil.error(message);
     }
     else{
-
+        console.log("here 4");
         var formData = new FormData();
         formData.append("user", JSON.stringify(user));
 

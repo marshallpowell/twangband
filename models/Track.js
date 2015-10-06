@@ -26,7 +26,8 @@ Track.add({
     encoding: { type: String, required: true, initial: false},
     size: { type: Number, required: true, initial: false},
     dateCreated: { type: Types.Datetime, default: Date.now },
-    isPublic: {type: Types.Boolean, default: true}
+    isPublic: {type: Types.Boolean, default: true},
+    tags: {type: Types.TextArray, label:'tags'}
 
 }, 'Permissions', {
     isAdmin: { type: Boolean, label: 'Can access Keystone', index: true }

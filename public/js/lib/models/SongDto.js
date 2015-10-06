@@ -15,6 +15,8 @@ function SongDto(){
     this.dateCreated;
     this.lastUpdated;
     this.delete; //TODO
+    this.isPublic=true;
+    this.tags=[];
 
 }
 

@@ -7,6 +7,8 @@ console.log("description: " + trackDto.description);
     this.description = trackDto.description;
     // url of the track in the form http://.../track/track_name
     this.fieldName = trackDto.fileName;
+
+    this.tags = trackDto.tags;
     // decoded audio buffer
     this.decodedBuffer;
     // peaks for drawing the sample
@@ -31,6 +33,8 @@ function LocalTrack(name) {
     this.name = 'newrecording';
     // url of the track in the form http://.../track/track_name
     this.url = "local/"+name;
+
+    this.tags=[];
     // decoded audio buffer
     this.decodedBuffer;
     // peaks for drawing the sample

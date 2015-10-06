@@ -14,10 +14,10 @@ exports = module.exports = function(req, res) {
     var searchResults = {};
     searchResults.data=[]
 
-    //call dao's save the song and songTracks
+
     if(searchDto.type=='SONG'){
         logger.debug("search type is for a song");
-        //songDao.createOrUpdateSong(songDto);
+
     }
     else if(searchDto.type=='USER'){
 
@@ -26,14 +26,9 @@ exports = module.exports = function(req, res) {
 
         userDao.findUser(searchDto).then( function(users){
 
-            for(var i = 0; i < users.length; i++){
-                searchResults.data.push({'name' : users[i].name.first + ' ' + users[i].name.last, 'id' : users[i]._id});
-            }
-            logger.debug('getting ready to write json results: ' + JSON.stringify(searchResults));
-            //res.writeHead(200, { 'Content-Type': 'application/json' });
+            logger.debug("found users list size: " + users.length);
 
-            searchResults.data = JSON.stringify(searchResults.data);
-            res.json(searchResults);
+            res.json(users);
 
             done(null, users)
 
@@ -48,11 +43,8 @@ exports = module.exports = function(req, res) {
 
 
         userDao.getUsersById(searchDto.userIds).then( function(users){
-
-
             logger.debug('getting ready to write users');
-            data.users = users;
-            res.json(data);
+            res.json(users);
         }, handleError);
     }
 

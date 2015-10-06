@@ -121,6 +121,8 @@ exports = module.exports = function(app) {
 
     app.post('/user/save', routes.services.saveProfile);
 
+    app.get('/listData', routes.services.listData);
+
 
 
     //404's

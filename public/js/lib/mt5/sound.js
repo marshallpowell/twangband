@@ -7,6 +7,9 @@ var bufferLoader;
 // The current song
 var currentSong;
 
+//array of users who created tracks here
+var musicians={};
+
 // The audio context
 var context;
 
@@ -100,6 +103,7 @@ function init(songDto) {
     animateTime();
 
     currentSong  = new Song("", context);
+    musicians[user.id]= user;
 
     bufferLoader = new BufferLoader(
         context,
@@ -114,17 +118,44 @@ function init(songDto) {
         console.log("new song loaded, name: " + songDto.name);
 
         loadSongDto(songDto);
-
-        var collaboratorIds = [];
-
-        for(var i = 0; i < songDto.collaborators.length; i++){
-            
-        }
-        for(var i = 0; i < songDto.collaborators.length; i++){
-            MixerUtil.addCollaboratorToUi(songDto.collaborators[i]);
-        }
-
         View.waveCanvas.width = getMaxTrackWidth();
+
+
+        //load collaborators
+        var formData = new FormData();
+        var searchDto = new SearchCriteriaDto();
+        searchDto.type = "USER_IDS";
+
+        for(var i = 0; i < songDto.collaborators.length; i++){
+            searchDto.userIds.push(songDto.collaborators[i].id);
+        }
+
+        for(var i = 0; i < songDto.tracks.length; i++){
+            searchDto.userIds.push(songDto.tracks[i].creatorId);
+        }
+
+        formData.append("searchCriteria", JSON.stringify(searchDto));
+
+        $.ajax({
+            url: '/search',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data){
+                console.log('found collaborators: '+data);
+                $( data ).each(function( index ) {
+                    MixerUtil.addCollaboratorToUi(this);
+                    musicians[this.id]=this;
+                });
+
+                console.log("musicians: " + JSON.stringify(musicians));
+
+            }
+        });
+
+
     }
     else{
         console.log("check songDto in NULL");
@@ -357,6 +388,7 @@ function loadSongDto(songDto) {
         //currentSong.addTrack(instrument);
         var track = new Track(trackDto.name, trackDto);
         track.fileName = trackDto.fileName;
+        track.tags = trackDto.tags;
         // Render HTMl
         addNewTrackToSong(track, trackNumber);
         trackUrls.push("/uploads/"+trackDto.fileName);
@@ -392,8 +424,8 @@ function getSongFormData(){
 
     currentSongDto.name = $("#songName").val();
     currentSongDto.description = $("#songDescription").val();
+    currentSongDto.tags = $("#songTags").val();
     currentSongDto.tracks = [];
-console.log("currentSongDto.description: " + currentSongDto.description);
 
     //if the track is newly recorded add the blob data
     $.each(currentSong.tracks, function(index, track){
@@ -402,7 +434,8 @@ console.log("currentSongDto.description: " + currentSongDto.description);
         trackDto.name = document.getElementById('trackName'+index).value;
         trackDto.description = document.getElementById('trackDescription'+index).value;
 
-        console.log("tracks description: " + trackDto.description);
+        trackDto.tags = $('#trackTags'+index).val();
+
         currentSongDto.tracks.push(trackDto);
         if(track.blob != undefined){
             console.log("adding rack blobData: " + track.blob + " for index: " + index);
@@ -433,6 +466,7 @@ function getTrackDto(track){
     trackDto.muted = track.muted;
     trackDto.solo = track.solo;
     trackDto.creatorId = track.creatorId;
+    trackDto.tags = track.tags;
     return trackDto;
 }
 
@@ -478,7 +512,7 @@ function saveSong(){
  * @param trackNumber
  * @param arrayBuffer optional, used for newly recorded track
  */
-function addNewTrackToSong(track, trackNumber, arrayBuffer){
+function addNewTrackToSong(track, trackNumber, arrayBuffer) {
     console.log("enter addnewTrackToSong");
 
     // Let's add a new track to the current song for this instrument
@@ -487,58 +521,74 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     // resize canvas depending on number of samples
     resizeSampleCanvas(currentSong.tracks.length);
 
-    var canvas = $('<canvas width="'+window.View.masterCanvas.width+'" height="'+SAMPLE_HEIGHT+'" class="trackCanvas"></canvas>');
+    var canvas = $('<canvas width="' + window.View.masterCanvas.width + '" height="' + SAMPLE_HEIGHT + '" class="trackCanvas"></canvas>');
 
-    canvas[0].id = "track_canvas_"+trackNumber;
+    canvas[0].id = "track_canvas_" + trackNumber;
     var width = canvas[0].width;
     var height = canvas[0].height;
     var context = canvas[0].getContext('2d');
 
     var isNewTrack = (arrayBuffer != null);
     //decode newly recorded track
-    if(isNewTrack) {
+    if (isNewTrack) {
 
-        track.blob = new Blob([arrayBuffer], { type: track.type });
+        track.blob = new Blob([arrayBuffer], {type: track.type});
         console.log("newly recorded track being added");
 
     }
 
     console.log("track dto: " + JSON.stringify(currentSongDto.tracks[trackNumber]));
+
     var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='50' height='50' />";
-    if(!isNewTrack){
-         creatorImage = "<img src='/uploads/users/profile/"+currentSongDto.tracks[trackNumber].creatorId+".jpg' width='50' height='50' />&nbsp;";
+    if (!isNewTrack) {
+        creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + musicians[currentSongDto.tracks[trackNumber].creatorId].profilePic + "' width='50' height='50' />&nbsp;";
     }
 
     var trackInfo = "<div class='col-md-2'>" +
-    "<div class='row'>"+ creatorImage +
-    "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button> " + "<button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
+        "<div class='row'>" + creatorImage +
+        "<button class='mute' id='mute" + trackNumber + "' onclick='muteUnmuteTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-volume-up'></span></button>" +
+        " <button class='solo' id='solo" + trackNumber + "' onclick='soloNosoloTrack(" + trackNumber + ");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
 
-        if(!isNewTrack){
-            trackInfo += "<button class='createNewSongWithTrack' id='createNewSongWith" + trackNumber + "' onclick='MixerUtil.selectTrackForNewSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
+    if (!isNewTrack) {
+        trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackNumber + "' onclick='MixerUtil.selectTrackForNewSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
+        trackInfo += " <button class='removeTrack' id='removeTrack" + trackNumber + "' onclick='MixerUtil.removeTrackFromSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
+
+    }
+
+    //add in tag info
+    var trackTags='';
+    if (track.tags) {
+        for (var i = 0; i < track.tags.length; i++) {
+
+            trackTags += '<option value="'+track.tags[i]+'" selected>'+track.tags[i]+'</option>\n';
         }
-   trackInfo += "</div>" +
-    "<div class='row'>" +
-    "<a href='#' onclick='toggleEditTrack("+trackNumber+");' ><span id='trackLabelIcon" + trackNumber + "' class='glyphicon glyphicon-pencil'></span><span id='trackLabel"+ trackNumber +"'>" +track.name.substring(0,15) + "...</span></a>" +
+    }
 
-        "<div style='display:none'>" +
-        " <div id='trackInfo"+trackNumber+"'> " +
-        "    <div class='form-group row'> " +
-        "        <div class='col-sm-4'><label for='trackName"+ trackNumber+"'>Track Name</label></div> " +
-        "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" +track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,"+trackNumber+");'/></div> " +
-        "        <div class='col-sm-4'><label for='trackDescription'>Description</label></div> " +
-        "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'>"+track.description+"</textarea></div> " +
-        "    </div> " +
-        "  </div> " +
-        "</div> " +
-        "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span>" +
+    trackInfo += "</div>" +
+    "<div class='row'>" +
+    "<a href='#' onclick='toggleEditTrack(" + trackNumber + ");' ><span id='trackLabelIcon" + trackNumber + "' class='glyphicon glyphicon-pencil'></span><span id='trackLabel" + trackNumber + "'>" + track.name.substring(0, 15) + "...</span></a>" +
+
+    "<div style='display:none'>" +
+    " <div id='trackInfo" + trackNumber + "'> " +
+    "    <div class='form-group row'> " +
+    "        <div class='col-sm-4'><label for='trackName" + trackNumber + "'>Track Name</label></div> " +
+    "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackNumber + "' class='trackName' value='" + track.name + "' name='trackName" + trackNumber + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value," + trackNumber + ");'/></div> " +
+    "        <div class='col-sm-4'><label for='trackDescription'>Description</label></div> " +
+    "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackNumber + "' placeholder='Enter a description for this track'>" + track.description + "</textarea></div> " +
+    "        <div class='col-sm-4'><label for='trackDescription'>What type of intrument(s) is on this track?</label></div> " +
+    "        <div class='col-sm-8'><select name='trackTags" + trackNumber + "' id='trackTags" + trackNumber + "' multiple>"+trackTags+"</select></div> " +
+    "    </div> " +
+    "  </div> " +
+    "</div> " +
+    "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackNumber + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(" + trackNumber + ");'/></span>" +
     "</div>" +
     "</div>";
 
 
     var trackCanvas = document.createElement('div');
-    trackCanvas.className="col-md-10 trackData";
-    trackCanvas.id="trackData"+trackNumber;
-    trackCanvas.style.overflowX="scroll";
+    trackCanvas.className = "col-md-10 trackData";
+    trackCanvas.id = "trackData" + trackNumber;
+    trackCanvas.style.overflowX = "scroll";
     trackCanvas.appendChild(canvas[0]);
 
     var trackRow =  document.createElement('div');
@@ -547,6 +597,14 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer){
     trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
     $("#scroll").append(trackRow);
 
+    $('#trackTags'+trackNumber).tagsinput({
+        typeaheadjs: {
+            name: 'instruments',
+            displayKey: 'name',
+            valueKey: 'name',
+            source: tags.ttAdapter()
+        }
+    });
 
     //places the track cursor at the top left of the track (needs it's with adjusted to the max duration of a track)
     $("#frontCanvas").css({

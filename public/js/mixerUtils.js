@@ -2,9 +2,12 @@ var MixerUtil = {};
 
 MixerUtil.addCollaboratorToUi = function(userDto) {
     console.log("collaborator: " + JSON.stringify(userDto));
+    var div = $('<div class="col-sm-2"></div>');
     var img = $('<img class="collaborator thumbnail">');
     img.attr('src', "/uploads/users/profile/"+userDto.profilePic);
-    img.appendTo('#collaborators');
+    img.appendTo(div);
+    div.append("<div style='display:inline'>"+userDto.firstName+"</div>");
+    div.appendTo('#collaborators');
 }
 
 MixerUtil.toggleCollaboratorDialog = function (closeMe){
@@ -35,13 +38,17 @@ MixerUtil.selectTrackForNewSong = function(trackDto){
     toggleNotification($("#newSongFromTrack"));
 };
 
+MixerUtil.removeTrackFromSong = function(trackDto){
+
+    $('#notificationBody').html("Are you sure you want to remove this track");
+    $('#myModal').modal('toggle');
+};
+
 MixerUtil.createNewSongFromTrack = function(){
     var newSongDto = new SongDto();
     newSongDto.name = document.getElementById('newSongName').value;
     newSongDto.description = document.getElementById('newSongDescription').value;
     newSongDto.tracks.push(selectedTrackDtoForNewSong);
-
-    alert(JSON.stringify(newSongDto));
 
     var formData = new FormData();
     formData.append("song", JSON.stringify(newSongDto));
@@ -136,12 +143,9 @@ function searchCollaborators(){
             console.log(data);
             //display search results
             var output="<ul>";
-            var users = JSON.parse(data.data);
-            for(i=0; i < data.length; i++){
-                output += "<li>" + data[i].name + "</li>";
-            }
-            $( users ).each(function( index ) {
-                output += "<li><a href='#' onclick=addCollaborator('"+this.id+"'); >" + this.name + "</a></li>";
+
+            $( data ).each(function( index ) {
+                output += "<li><a href='#' onclick=addCollaborator("+JSON.stringify(this)+"); >" + this.firstName + " " + this.lastName + "</a></li>";
             });
 
             output += "</ul>";
@@ -150,48 +154,19 @@ function searchCollaborators(){
     });
 }
 
-function addCollaborator(id){
+function addCollaborator(userDto){
 
+    console.log("add userDto: " + userDto);
     var formData = new FormData();
     var collaboratorDto = {
-        'id' : id,
+        'id' : userDto.id,
         'roles' : ['ADD_TRACK'],
         'invitationAccepted' : false
     };
 
-    formData.append("songId", currentSongDto.id);
-    formData.append("collaborator", JSON.stringify(collaboratorDto));
-    formData.append("action", "ADD");
+    currentSongDto.collaborators.push(collaboratorDto);
+    MixerUtil.addCollaboratorToUi(userDto);
 
-    $.ajax({
-        url: '/song/updateCollaborators',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        type: 'POST',
-        success: function(data){
-
-            if(data.errors.length){
-                var message = "there were errors with your submission:\n<br /> * "+data.errors.join("\n<br/> * ");
-                NotificationUtil.error(message);
-                //TODO close popup too
-            }
-            else{
-                console.log(data);
-                MixerUtil.addCollaboratorToUi(data.user);
-            }
-
-
-        },
-        error : function(error){
-
-            NotificationUtil.error("There was an error processing your submission: " + error);
-
-        }
-    });
-
-    alert("add collaborator with id : " + id + " to song with id: " + currentSongDto.id);
 }
 
 /**
@@ -374,6 +349,8 @@ function toggleRecording(){
 
         document.getElementById("recordingWav").style.display="none";
         $('#myModal').modal('toggle');
+        document.getElementById("modalCloseBtn").style.display="inline";
+        document.getElementById("modalXCloseBtn").style.display="inline";
         $(keyEventElement).off('keypress', toggleRecording);
         //stop the equalizer
         cancelAnalyserUpdates();
@@ -394,6 +371,8 @@ function toggleRecording(){
         var div = document.getElementById("timer");
         //div.style.display="block";
         document.getElementById("recordingWav").style.display="block";
+        document.getElementById("modalCloseBtn").style.display="none";
+        document.getElementById("modalXCloseBtn").style.display="none";
         $('#myModal').modal('toggle');
         toggleNotification(null, true);
         setInterval(function(){
@@ -413,7 +392,7 @@ function toggleRecording(){
                     audioRecorder.record();
                     clearInterval();
                     //div.style.display="none";
-                    div.innerHTML="<a onclick='toggleRecording();'>click here to stop recording, or press any key</a>";
+                    div.innerHTML="Press the space bar to stop recording";
 
                     //document.addEventListener("keydown", toggleRecording);
                     $(keyEventElement).on('keypress',toggleRecording);

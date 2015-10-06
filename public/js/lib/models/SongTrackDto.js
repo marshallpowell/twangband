@@ -23,6 +23,7 @@ function SongTrackDto(){
     this.updatedById;
     this.creatorId;
     this.delete;
+    this.tags=[];
 }
 
 if(module.exports) {

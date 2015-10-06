@@ -14,6 +14,7 @@ function UserDto(){
     this.confirmPassword;
     this.id;
     this.instruments=[];
+    this.tags=[];
 
 }
 

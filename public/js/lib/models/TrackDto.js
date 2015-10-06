@@ -25,6 +25,8 @@ function TrackDto(){
     this.fileName;
     this.delete; //TODO
 
+    this.tags=[];
+
 }
 
 try{module.exports = TrackDto;} catch(err){}

@@ -18,7 +18,8 @@ User.add({
     passwordResetTokenExpires: { type: Types.Text, initial: false, index: false},
     profilePic: { type: Types.Text, initial: false, index: false, default : 'undefined.jpg'},
 	instruments: {type: Types.Relationship, ref : 'Instrument', many:true},
-	country: {type: Types.Select, label: 'Country', options: countryOptions}
+	country: {type: Types.Select, label: 'Country', options: countryOptions},
+    tags: {type: Types.TextArray, label:'tags'}
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true }
 	
