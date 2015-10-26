@@ -6,6 +6,8 @@ function SearchCriteriaDto(){
     this.lastName=null;
     this.email=null;
     this.userIds=[];
+    this.tags = [];
+    this.matchCriteria='ANY'; //ALL, NONE
     this.searchType=null;
 }
 

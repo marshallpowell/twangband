@@ -38,10 +38,31 @@ MixerUtil.selectTrackForNewSong = function(trackDto){
     toggleNotification($("#newSongFromTrack"));
 };
 
-MixerUtil.removeTrackFromSong = function(trackDto){
+MixerUtil.removeTrackFromSong = function(uiId){
 
-    $('#notificationBody').html("Are you sure you want to remove this track");
-    $('#myModal').modal('toggle');
+    if(!confirm("Are you sure you want to remove this track")){
+        return;
+    }
+
+
+    //find parent div and remove
+
+    //remove from the currentSong array
+
+    console.log("before currentSong tracks size: " + currentSong.tracks.length + " \n" + JSON.stringify(currentSong.tracks));
+
+    for(var i =0; i < currentSong.tracks.length; i++){
+        if(currentSong.tracks[i].uiId == uiId){
+            console.log('removing track: ' + $("#"+uiId).html());
+            document.getElementById(uiId).style.display='none';
+            currentSong.removeTrack(i);
+            break;
+        }
+    }
+
+    console.log("after currentSong track size: " + currentSong.tracks.length + " \n" + JSON.stringify(currentSong.tracks));
+
+
 };
 
 MixerUtil.createNewSongFromTrack = function(){
@@ -145,10 +166,12 @@ function searchCollaborators(){
             var output="<ul>";
 
             $( data ).each(function( index ) {
-                output += "<li><a href='#' onclick=addCollaborator("+JSON.stringify(this)+"); >" + this.firstName + " " + this.lastName + "</a></li>";
+
+                output += "<li><a href='#' onclick='addCollaborator("+JSON.stringify(this)+");' >" + this.firstName + " " + this.lastName + "</a></li>";
             });
 
             output += "</ul>";
+
             document.getElementById("searchUsersData").innerHTML=output;
         }
     });
@@ -327,11 +350,14 @@ function doneEncoding( arrayBuffer ) {
 
     //console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer) + " length: " + arrayBuffer.length);
 
-    var track = new LocalTrack("localTrack");
+    if(confirm("Do you want to keep this recording?")){
 
-    //currentSong.tracks.push(track);
-    addNewTrackToSong(track, currentSong.tracks.length, arrayBuffer);
-
+        //had to put this into a delay for modal to work properly
+        setTimeout(function() {
+            var track = new LocalTrack("localTrack");
+            addNewTrackToSong(track, currentSong.tracks.length, arrayBuffer);
+        },1000);
+    }
 
 }
 
@@ -357,6 +383,8 @@ function toggleRecording(){
         // stop recording
         audioRecorder.stop();
         audioRecorder.getBuffer( gotBuffers );
+
+
     }
     else{
         if (!audioRecorder){

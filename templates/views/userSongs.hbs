@@ -3,20 +3,62 @@
 <div id="app" class="container">
 
     <div class="row">
-        {{#if songs}}
-            <div class="col-md-8 header">
+        <div class="col-md-12 page-header"><h2>Songs I am collaborating on</h2></div>
+
+        {{#if collaboratedSongs}}
+            <div class="col-md-4 header">
                 Song Name
+            </div>
+            <div class="col-md-4 header">
+                Tags
+            </div>
+            <div class="col-md-4 header">
+                Date Created
+            </div>
+            {{#each collaboratedSongs}}
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="/mixer?song={{_id}}">{{name}}</a>
+                    </div>
+                    <div class="col-md-4">
+                        {{tags}}
+                    </div>
+                    <div class="col-md-4">
+                        {{formatDate dateCreated}}
+
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+
+        {{#unless collaboratedSongs}}
+            You are not collaborating on any songs yet
+        {{/unless}}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 page-header"><h2>My Songs</h2></div>
+        {{#if songs}}
+            <div class="col-md-4 header">
+                Song Name
+            </div>
+            <div class="col-md-4 header">
+                Tags
             </div>
             <div class="col-md-4 header">
                 Date Created
             </div>
             {{#each songs}}
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                        <a href="/mixer?song={{_id}}">{{name}}</a>
                     </div>
                     <div class="col-md-4">
-                        {{dateCreated}}
+                        {{tags}}
+                    </div>
+                    <div class="col-md-4">
+                        {{formatDate dateCreated}}
+
                     </div>
                 </div>
             {{/each}}

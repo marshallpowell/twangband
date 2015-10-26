@@ -19,12 +19,26 @@ exports = module.exports = function(req, res) {
         return;
     }
 
+
     songDao.findUserSongs(req.user.id).then(
         function(songs){
             logger.debug("got songs: " + songs.length);
             locals['songs'] = songs;
             // Render the view
-            view.render('userSongs');
+
+            songDao.findUserCollaboratorSongs(req.user.id).then(
+                function(songs){
+                    logger.debug("got collaborator songs: " + songs.length);
+                    locals['collaboratedSongs'] = songs;
+                    // Render the view
+                     view.render('userSongs');
+                },
+                function(err){
+                    logger.debug("error retrieving songs: " + err);
+                    // Render the view
+                    // view.render('userSongs');
+                }
+            );
     },
         function(err){
             logger.debug("error retrieving songs: " + err);

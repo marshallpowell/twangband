@@ -49,6 +49,14 @@ function Song(songName, context) {
         this.tracks.push(new Track(this.name, instrument));
     };
 
+    this.removeTrack = function(index){
+        this.tracks[index].removed = true;
+        this.tracks[index].muted = true;
+        //this.decodedAudioBuffers.splice(index,1);
+       // this.trackVolumeNodes.splice(index,1);
+        //this.sampleNodes.splice(index,1);
+    }
+
     // Build the web audio graph
     this.buildGraph = function () {
         var sources = [];

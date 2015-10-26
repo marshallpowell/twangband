@@ -112,9 +112,11 @@
         prefetch: {
         url: '/listData?type=instruments',
         filter: function(list) {
-        return $.map(list, function(instrument) {
-        return { name: instrument }; });
-        }
+            return $.map(list, function(instrument) {
+                return { name: instrument };
+            });
+        },
+            cache : false
         }
         });
         instruments.initialize();
@@ -124,6 +126,7 @@
         name: 'instruments',
         displayKey: 'name',
         valueKey: 'name',
+            limit : 15,
         source: instruments.ttAdapter()
         }
         });

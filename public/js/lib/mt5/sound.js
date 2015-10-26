@@ -112,13 +112,13 @@ function init(songDto) {
         drawTrack
     );
     console.log("check songDto: " + songDto);
+
     if(songDto != null){
 
         currentSongDto = songDto;
         console.log("new song loaded, name: " + songDto.name);
 
-        loadSongDto(songDto);
-        View.waveCanvas.width = getMaxTrackWidth();
+
 
 
         //load collaborators
@@ -134,8 +134,11 @@ function init(songDto) {
             searchDto.userIds.push(songDto.tracks[i].creatorId);
         }
 
+        searchDto.userIds.push(songDto.creatorId);
+
         formData.append("searchCriteria", JSON.stringify(searchDto));
 
+        //TODO we should load in the collaborator info server side
         $.ajax({
             url: '/search',
             data: formData,
@@ -148,10 +151,13 @@ function init(songDto) {
                 $( data ).each(function( index ) {
                     MixerUtil.addCollaboratorToUi(this);
                     musicians[this.id]=this;
+
                 });
 
                 console.log("musicians: " + JSON.stringify(musicians));
 
+                loadSongDto(songDto);
+                View.waveCanvas.width = getMaxTrackWidth();
             }
         });
 
@@ -429,17 +435,20 @@ function getSongFormData(){
 
     //if the track is newly recorded add the blob data
     $.each(currentSong.tracks, function(index, track){
-        var trackDto = getTrackDto(track);
-        trackDto.viewOrder = index;
-        trackDto.name = document.getElementById('trackName'+index).value;
-        trackDto.description = document.getElementById('trackDescription'+index).value;
 
-        trackDto.tags = $('#trackTags'+index).val();
+        if(!track.removed) {
+            var trackDto = getTrackDto(track);
+            trackDto.viewOrder = index;
+            trackDto.name = document.getElementById('trackName' + index).value;
+            trackDto.description = document.getElementById('trackDescription' + index).value;
 
-        currentSongDto.tracks.push(trackDto);
-        if(track.blob != undefined){
-            console.log("adding rack blobData: " + track.blob + " for index: " + index);
-            formData.append("newTrack_"+index, track.blob, "song.wav");
+            trackDto.tags = $('#trackTags' + index).val();
+
+            currentSongDto.tracks.push(trackDto);
+            if (track.blob != undefined) {
+                console.log("adding rack blobData: " + track.blob + " for index: " + index);
+                formData.append("newTrack_" + index, track.blob, "song.wav");
+            }
         }
     });
 
@@ -537,11 +546,11 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer) {
 
     }
 
-    console.log("track dto: " + JSON.stringify(currentSongDto.tracks[trackNumber]));
 
     var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='50' height='50' />";
+
     if (!isNewTrack) {
-        creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + musicians[currentSongDto.tracks[trackNumber].creatorId].profilePic + "' width='50' height='50' />&nbsp;";
+        creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + musicians[track.creatorId].profilePic + "' width='50' height='50' />&nbsp;";
     }
 
     var trackInfo = "<div class='col-md-2'>" +
@@ -551,9 +560,8 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer) {
 
     if (!isNewTrack) {
         trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackNumber + "' onclick='MixerUtil.selectTrackForNewSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
-        trackInfo += " <button class='removeTrack' id='removeTrack" + trackNumber + "' onclick='MixerUtil.removeTrackFromSong(" + JSON.stringify(songDto.tracks[trackNumber]) + ");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
-
     }
+    trackInfo += " <button class='removeTrack' id='removeTrack" + trackNumber + "' onclick='MixerUtil.removeTrackFromSong(\"" + track.uiId + "\");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
 
     //add in tag info
     var trackTags='';
@@ -593,6 +601,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer) {
 
     var trackRow =  document.createElement('div');
     trackRow.className="row trackRow";
+    trackRow.id = track.uiId;
     trackRow.style.backgroundColor="#9999";
     trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
     $("#scroll").append(trackRow);
@@ -620,6 +629,10 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer) {
 
     //increase width of tracks to max width
     updateTracksWidth();
+
+    if(isNewTrack){
+        toggleEditTrack(trackNumber);
+    }
 }
 
 function getMousePos(canvas, evt) {
@@ -682,6 +695,9 @@ function updateTracksWidth(){
         if($(this)[0].width < maxWidth){
             console.log("canvasId 2: " + $(this)[0].id);
             var index = $(this)[0].id.replace("track_canvas_", "");
+            console.log("index: " + index);
+
+            console.log("currentSong.tracks[index]: " + JSON.stringify(currentSong.tracks[index]));
             drawTrack(currentSong.tracks[index].decodedBuffer, index);
         }
 

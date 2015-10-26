@@ -16,6 +16,8 @@ require('dotenv').load();
 var keystone = require('keystone'),
 	handlebars = require('express-handlebars');
 
+//var DateUtil = require('./util/DateUtil.js');
+
 
 // Initialise Keystone with your project's configuration.
 // See http://keystonejs.com/guide/config for available options
@@ -128,6 +130,7 @@ global.logger = new (winston.Logger)({
 var coh = require('./lib/coh.js');
 keystone.coh = coh;
 
+
 // Load your project's Models
 
 keystone.import('models');
@@ -192,7 +195,6 @@ keystone.set('nav', {
 	'users': 'users',
 	'instruments': ['instruments', 'instrument-categories']
 });
-
 
 
 

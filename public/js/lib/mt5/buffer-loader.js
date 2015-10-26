@@ -30,7 +30,7 @@ BufferLoader.prototype.loadBuffer = function (url, index, recordingArrayBuffer) 
             function(buffer) {
                 console.log("new recording arrayBuffer being added");
                 loader.bufferList[index] = buffer;
-
+currentSong.tracks[index].decodedBuffer = buffer;
                 // Let's draw this decoded sample
                 loader.drawSample(buffer, index);
 

@@ -17,6 +17,12 @@ exports = module.exports = function(req, res) {
 
     if(searchDto.type=='SONG'){
         logger.debug("search type is for a song");
+        trackDao.searchTracks(searchDto).then( function(tracks){
+
+            logger.debug("found tracks list size: " + tracks.length);
+            res.json(tracks);
+
+        }, handleError);
 
     }
     else if(searchDto.type=='USER'){

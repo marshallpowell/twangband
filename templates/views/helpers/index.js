@@ -333,6 +333,16 @@ module.exports = function() {
 		}
 		return new hbs.SafeString(output);
 	};
+
+    //FIXME
+    _helpers.formatDate = function(date){
+
+        if (typeof(date) == "undefined") {
+            return "Unknown";
+        }
+        // These methods need to return a String
+        return date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
+    }
 	
 	return _helpers;
 };

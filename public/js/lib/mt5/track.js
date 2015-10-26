@@ -1,7 +1,7 @@
 //TODO fix this to just take in a trackDto, or just use track DTO
 function Track(songName, trackDto) {
 console.log("description: " + trackDto.description);
-    this.creatorId = trackDto.creatorId
+    this.creatorId = trackDto.creatorId;
     // name of the track : bass, guitar, voice, etc.
     this.name = trackDto.name;
     this.description = trackDto.description;
@@ -9,6 +9,12 @@ console.log("description: " + trackDto.description);
     this.fieldName = trackDto.fileName;
 
     this.tags = trackDto.tags;
+
+    this.uiId = "track"+Math.random().toString().replace(".","");
+
+    this.removed = false;
+
+
     // decoded audio buffer
     this.decodedBuffer;
     // peaks for drawing the sample
@@ -35,6 +41,10 @@ function LocalTrack(name) {
     this.url = "local/"+name;
 
     this.tags=[];
+
+    this.uiId = "track"+Math.random().toString().replace(".","");
+
+    this.removed = false;
     // decoded audio buffer
     this.decodedBuffer;
     // peaks for drawing the sample
