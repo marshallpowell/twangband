@@ -118,9 +118,6 @@ function init(songDto) {
         currentSongDto = songDto;
         console.log("new song loaded, name: " + songDto.name);
 
-
-
-
         //load collaborators
         var formData = new FormData();
         var searchDto = new SearchCriteriaDto();
@@ -628,6 +625,7 @@ function addNewTrackToSong(track, trackNumber, arrayBuffer) {
     }
 
     //increase width of tracks to max width
+    //FIXME this is getting called before the bufferLoader is completed which causes an error
     updateTracksWidth();
 
     if(isNewTrack){

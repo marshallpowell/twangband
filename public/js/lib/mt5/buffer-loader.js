@@ -14,7 +14,7 @@ function BufferLoader(context, urlList, callback, callbackDraw) {
  */
 BufferLoader.prototype.loadBuffer = function (url, index, recordingArrayBuffer) {
   // Load buffer asynchronously
-  console.log('file : ' + url + "loading and decoding for index " + index);
+  console.log('file : ' + url + "loading and decoding for index " + index + " using recordingArrayBuffer: " + (typeof recordingArrayBuffer === "object"));
 
   var request = new XMLHttpRequest();
   request.open("GET", url, true);
@@ -30,7 +30,7 @@ BufferLoader.prototype.loadBuffer = function (url, index, recordingArrayBuffer) 
             function(buffer) {
                 console.log("new recording arrayBuffer being added");
                 loader.bufferList[index] = buffer;
-currentSong.tracks[index].decodedBuffer = buffer;
+                currentSong.tracks[index].decodedBuffer = buffer;
                 // Let's draw this decoded sample
                 loader.drawSample(buffer, index);
 
