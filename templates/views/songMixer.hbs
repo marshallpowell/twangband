@@ -108,7 +108,7 @@
                 </div>
                 <div class="col-sm-3">
                     <button id="btn_searchCollaborators" type="button" class="btn btn-default btn-lg"
-                            onclick="searchCollaborators();">
+                            onclick="MixerUtil.searchCollaborators();">
                         <span class="glyphicon glyphicon-search"
                               style="vertical-align:middle; display: inline-block"></span>
                     </button>
@@ -163,61 +163,54 @@
         <div id="masterTools" class="row" style="text-align:center">
 
 
-            <a href="#" onclick="toggleEditSong();" ><span ng-bind="songName" class="glyphicon glyphicon-pencil"></span></a>
+            <a href="#" onclick="MixerUtil.toggleEditSong();" ><span ng-bind="songName" class="glyphicon glyphicon-pencil"></span></a>
 
             <button id="bcollaborators" type="button" class="btn btn-default btn-sm"
-                    onclick="toggleSearchUsers();"
+                    onclick="MixerUtil.toggleSearchUsers();"
                     title="Find collaborators to add tracks to this song"
                     >
                 <span class="glyphicon glyphicon-user"></span>
             </button>
 
             <button id="bsaveSong" type="button" class="btn btn-default btn-sm"
-                    onclick="saveSong();"
+                    onclick="mixer.saveSong();"
                     title="Save song"
                     >
                 <span class="glyphicon glyphicon-floppy-disk"></span>
             </button>
 
             <button id="bplay" type="button" class="btn btn-default btn-sm"
-                    onclick="playAllTracks(0);"
-                    title="Play song"
-                    disabled>
-                <span class="glyphicon glyphicon-play"></span>
+                    onclick="mixer.playPauseAll();"
+                    title="Play song" >
+                <span class="glyphicon glyphicon-play"></span><span class="glyphicon glyphicon-pause"></span>
             </button>
 
-            <button id="bpause"
-                    onclick="pauseAllTracks();"
-                    title="Pause Song"
-                    disabled type="button"
-                    class="btn btn-default btn-sm">
-                <span class="glyphicon glyphicon-pause"></span>
-            </button>
+
 
             <button id="bstop"
-                    onclick="stopAllTracks();"
+                    onclick="mixer.stopAll();"
                     title="Stop playing"
-                    type="button" class="btn btn-default btn-sm" disabled>
+                    type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-stop"></span>
             </button>
 
             <button id="brecordMix"
-                    onclick=" if(!AUDIO_INITIALIZED){initAudio();} else { toggleRecording(this);}" type="button"
+                    onclick=" if(!AUDIO_INITIALIZED){initAudio();} else { MixerUtil.toggleRecording(this);}" type="button"
                     title="Click to start recording."
-                    class="btn btn-default btn-sm" disabled>
+                    class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-record"></span>
             </button>
 
 
-            <button id="bsound"
-                    onclick="masterMuteUnmute(this);"
+            <button id="bmute"
+                    onclick="mixer.toggleMuteSong();"
                     title="Mute song"
                     type="button"
                     class="btn btn-default btn-sm master">
                 <span class="glyphicon glyphicon-volume-up"></span>
             </button>
 
-            <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='changeMasterVolume();'/></span>
+            <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span>
 
 
 
@@ -241,14 +234,10 @@
         <div style="display:none;"><!--can show the equalizer that mt5 produces-->  <canvas id="waveCanvas"></canvas></div>
 
 
-        <div id="scroll"  style="overflow-x:visible; overflow-y: visible; padding-bottom:10px; display:inline;">
+        <div id="scroll">
 
             <div class="col-md-2"></div>
             <div id="tracksTop" class="col-md-10"></div>
-
-            <canvas id="frontCanvas" style="z-index: 1"></canvas>
-
-            <canvas id="myCanvas" width="840px" height="400" style="display:none;"></canvas>
 
         </div>
 
@@ -271,12 +260,14 @@
     </p>
 </div>
 
+<script src="js/lib/util/Logger.js"></script>
 
-<script src="js/wavesurfer/wavesurfer.min.js"></script>
-<script src="js/wavesurfer/wavesurfer.regions.js"></script>
-<script src="js/mixer.js"></script>
-<script src="js/mixerUtils.js"></script>
-
+<script src="js/lib/wavesurfer/wavesurfer.min.js"></script>
+<script src="js/lib/wavesurfer/wavesurfer.regions.js"></script>
+<script src="js/lib/mixer/TrackMixer.js"></script>
+<script src="js/lib/mixer/SongMixer.js"></script>
+<script src="js/lib/mixer/MixerUtil.js"></script>
+<script src="js/lib/mixer/Mic.js"></script>
 
 <script src="js/lib/models/SearchCriteriaDto.js"></script>
 <script src="js/lib/models/SongDto.js"></script>
@@ -284,9 +275,15 @@
 <script src="js/lib/util/AppConstants.js"></script>
 <script src="js/lib/validation/SongValidation.js"></script>
 
+
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="styles/mt5/style.css"/>
 <script language="JavaScript">
+
+    var mixer;
+    var tags = {};
+    var log = new Logger('DEBUG');
+    var app = angular.module('app', []);
 
         {{#if songJSON}}
         var songDto = {{{songJSON}}};
@@ -304,9 +301,7 @@
         var user = null;
         {{/unless}}
 
-    var app = angular.module('app', []);
 
-    var tags = {};
     $(document).ready(function () {
 
         tags = new Bloodhound({
@@ -338,14 +333,15 @@
             }
         });
 
-        init(songDto);
+        mixer = new SongMixer(songDto).init();
+        //sound.js ... init(songDto);
 
         $('button').tooltip({
-            'delay': { show: 50, hide: 50 }
+            'delay': { show: 10, hide: 10 }
         });
 
         if(songDto == null){
-            toggleEditSong();
+            MixerUtil.toggleEditSong();
         }
 
 

@@ -34,7 +34,7 @@ exports = module.exports = function(req, res) {
         var index = parseInt(req.files[key].fieldname.replace("newTrack_", ""));
 
         //TODO move track to new location or ideally fix multer
-        mv('/tmp/'+req.files[key].name, global.UPLOADS_DIR+req.files[key].name, function(err) {
+        mv(global.TEMPDIR+req.files[key].name, global.UPLOADS_DIR+req.files[key].name, function(err) {
             if(err){
                 logger.debug('error uploading file: ' + err);
             }

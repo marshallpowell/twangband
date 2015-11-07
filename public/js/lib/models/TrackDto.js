@@ -10,6 +10,12 @@ function TrackDto(){
     this.creator;
     this.dateCreated;
     this.viewOrder;
+    this.tags=[];
+
+    //transient properties
+    this.uiId;
+    this.trackMixer;
+    this.removed;
 
     //from View Track
     this.peaks;
@@ -23,9 +29,9 @@ function TrackDto(){
     this.encoding;
     this.size;
     this.fileName;
-    this.delete; //TODO
 
-    this.tags=[];
+
+
 
 }
 

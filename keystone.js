@@ -3,7 +3,8 @@
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 
-mongodb_connection_string = 'mongodb://localhost/cluckoldhen';
+mongodb_connection_string = 'mongodb://192.168.99.101/cluckoldhen';
+
 //take advantage of openshift env vars when available:
 if(process.env.OPENSHIFT_MONGODB_DB_URL){
     mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
@@ -101,7 +102,16 @@ var path = require('path');
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
 global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
-global.UPLOADS_DIR = "/var/www/uploads/";
+//global.UPLOADS_DIR = "/var/www/uploads/";
+global.UPLOADS_DIR  = "/Users/marshallpowell/dev/musicilo2/uploads/";
+global.TEMPDIR = '/tmp/';
+
+if(process.env.TMPDIR){
+	global.TEMPDIR = process.env.TMPDIR;
+}
+
+
+console.log("****** global.TEMPDIR: " + global.TEMPDIR);
 
 global.FB_CLIENTID = '1558894697697443';
 global.FB_CALLBACKURL = 'http://local.cluckoldhen.com:3000/auth/facebook/callback';

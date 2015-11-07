@@ -64,7 +64,8 @@ exports = module.exports = function(app) {
 
     app.use(expressSession({
         secret: 'keyboard cat',
-
+        saveUninitialized: true,
+        resave: true,
         cookie: { secure: false }
     }));
 
@@ -73,10 +74,10 @@ exports = module.exports = function(app) {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    var uploads = multer({ dest: './uploads/'});
+    var uploads = multer({ dest: '/tmp/'});
 
 
-    var userProfileUploads = multer({ dest: './uploads' });
+    var userProfileUploads = multer({ dest: '/tmp/' });
 
     app.use("/uploads", express.static(UPLOADS_DIR));
 
