@@ -10,6 +10,7 @@
 
 var _ = require('underscore');
 var hbs = require('handlebars');
+var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 
 hbs.registerHelper('json', function(context) {
     return JSON.stringify(context);
@@ -25,7 +26,9 @@ hbs.registerHelper('json', function(context) {
 */
 
 exports.initLocals = function(req, res, next) {
-	
+
+	logger.debug("register locals");
+
 	var locals = res.locals;
     locals.user = req.user;
 
@@ -38,7 +41,7 @@ exports.initLocals = function(req, res, next) {
 
 	];
 
-
+	logger.debug("locals.navLinks: " + JSON.stringify(locals.navLinks));
 	
 	next();
 	
