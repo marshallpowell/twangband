@@ -7,9 +7,7 @@ MixerUtil.selectedTrackDtoForNewSong = null;
 MixerUtil.btn = {};
 MixerUtil.btn.play = 'bplay';
 MixerUtil.btn.stop = 'bstop';
-MixerUtil.btn.mute = 'bmute';
 MixerUtil.btn.record = 'brecordMix';
-MixerUtil.btn.volume = 'masterVolume';
 MixerUtil.btn.saveSong = 'bsaveSong';
 MixerUtil.btn.searchCollaborators = 'bcollaborators';
 MixerUtil.buttonsIds=[];
@@ -383,4 +381,4 @@ MixerUtil.toggleRecording = function(){
 
     }
 
-}
+};

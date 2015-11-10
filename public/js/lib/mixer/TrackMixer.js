@@ -1,6 +1,14 @@
-var TrackMixer = function(){
+var TrackMixer = function(audioContext){
 
+    var my = this;
+    this.audioContext = audioContext;
     this.wavesurfer = null;
+    this.volume=1;
+
+    this.setVolume=function(vol){
+        this.volume = vol;
+        this.wavesurfer.setVolume(this.volume);
+    }
 
     /**
      * Loads a URL into wavesurfer
@@ -37,12 +45,16 @@ var TrackMixer = function(){
             minPxPerSec: 30,
             scrollParent: true,
             autoCenter:false,
-            waveColor: '#A8DBA8',
-            progressColor: '#EEEECC',
+            height:76,
+            waveColor: '#1989D4',
+            progressColor: '#2BAD1D ',
             hideScrollbar: true,
             barWidth: 1,
-            pixelRatio: 1
+            pixelRatio: 1,
+            audioContext: my.audioContext
         });
+
+        this.wavesurfer.setVolume(this.volume);
     }
 
 }

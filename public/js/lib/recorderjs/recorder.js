@@ -82,9 +82,26 @@
               command: 'exportWAVArrayBuffer',
               type: type
           });
-      }
+      };
 
-
+    /**
+     *
+     * @param cb
+     * @param type
+     * @param buffers
+     * @param totalLength
+     */
+    this.exportWavFromBuffers = function(cb, buffers, totalLength){
+      currCallback = cb || config.callback;
+      var type = config.type || 'audio/wav';
+      if (!currCallback) throw new Error('Callback not set');
+      worker.postMessage({
+        command: 'exportWavFromBuffers',
+        type: type,
+        buffers : buffers,
+        totalLength : totalLength
+      });
+    };
 
     worker.onmessage = function(e){
       var blob = e.data;

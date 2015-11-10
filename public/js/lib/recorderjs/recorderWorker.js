@@ -23,6 +23,9 @@ this.onmessage = function(e){
     case 'exportWAVArrayBuffer':
         exportWAVArrayBuffer(e.data.type);
       break;
+    case 'exportWavFromBuffers':
+      exportWavFromBuffers(e.data.type, e.data.buffers, e.data.totalLength)
+      break;
   }
 };
 
@@ -39,6 +42,20 @@ function record(inputBuffer){
   recLength += inputBuffer[0].length;
 }
 
+/**
+ *
+ * @param type
+ * @param buffers - array of buffers
+ */
+function exportWavFromBuffers(type, buffers, totalLength){
+
+  console.log("enter exporWavFromBuffers");
+  var float32Array = mergeBuffers(buffers, totalLength);
+  var dataview = encodeWAV(float32Array);
+  var audioBlob = new Blob([dataview], { type: type });
+
+  this.postMessage(audioBlob);
+}
 /**
  * New function which returns an ArrayBuffer after encoding
  * @param type
