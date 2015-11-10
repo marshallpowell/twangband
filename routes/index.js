@@ -23,7 +23,9 @@ require(APP_LIB + 'auth/FacebookPassportStrategy');
 
 var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 
-
+// Common Middleware - this doesn't seem to get the req.user
+keystone.pre('routes', middleware.initLocals);
+keystone.pre('render', middleware.flashMessages);
 
 // Import Route Controllers
 var routes = {
@@ -87,9 +89,6 @@ exports = module.exports = function(app) {
         next();
     });
 
-    // Common Middleware - this doesn't seem to get the req.user
-    keystone.pre('routes', middleware.initLocals);
-    keystone.pre('render', middleware.flashMessages);
 
     // Views
     app.get('/', routes.views.index);
