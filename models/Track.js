@@ -1,7 +1,9 @@
 /**
  * Created by mpowell on 4/16/2015.
  */
-
+/*
+This class should be able to be deleted now. Added mongoose Schema in TrackDao
+ */
 /*
  {"newTrack_0":{"fieldname":"newTrack_0","originalname":"song.wav","name":"04672459aabed00af9b021b822c9f13.wav","encoding":"7bit","mimetype":"audio/wav","path"
  :"/tmp/046792459aabed00af9b021b822c9f13.wav","extension":"wav","size":147500,"truncated":false,"buffer":null}
@@ -51,5 +53,5 @@ Track.schema.virtual('canAccessKeystone').get(function() {
  * Registration
  */
 
-Track.register();
+//Track.register();
 

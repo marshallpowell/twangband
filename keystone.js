@@ -1,23 +1,29 @@
-// Simulate config options from your production environment by
-// customising the .env file in your project's root folder.
+
+//set properties based on environment var MUSICILO_ENV
+if(!process.env.MUSICILO_ENV || !process.env.MUSICILO_ENV_CONFIG_DIR){
+	console.log("process.env.MUSICILO_ENV variables must be set, exiting");
+	return;
+}
+else{
+	console.log("config for env: " + process.env.MUSICILO_ENV + ' with config dir: ' + process.env.MUSICILO_ENV_CONFIG_DIR);
+}
+
+require('dotenv').load(process.env.MUSICILO_ENV_CONFIG_DIR);
+
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 
-mongodb_connection_string = 'mongodb://192.168.99.101/cluckoldhen';
+
+mongodb_connection_string = process.env.MONGO_URL;
 
 //take advantage of openshift env vars when available:
 if(process.env.OPENSHIFT_MONGODB_DB_URL){
     mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
 }
 
-require('dotenv').load();
-
-
 // Require keystone
 var keystone = require('keystone'),
 	handlebars = require('express-handlebars');
-
-//var DateUtil = require('./util/DateUtil.js');
 
 
 // Initialise Keystone with your project's configuration.
@@ -61,8 +67,6 @@ process.on('SIGINT', function() {
 });
 
 
-//keystone.connect(mongoose);
-
 keystone.init({
 
 	'name': 'musicilo',
@@ -93,11 +97,6 @@ keystone.init({
 });
 
 
-
-
-//handlebars.registerPartial('auth', fs.readFileSync('templates/views/layouts/auth.hbs', 'utf8'));
-
-
 var path = require('path');
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
@@ -117,15 +116,17 @@ global.FB_CLIENTID = '1558894697697443';
 global.FB_CALLBACKURL = 'http://local.cluckoldhen.com:3000/auth/facebook/callback';
 global.FB_CLIENTSECRET = '964ee6d698f152d81cc9e8dadaed50e3';
 global.BASE_URL = 'http://local.cluckoldhen.com:3000';
+global.ENV = 'local';
 
 if(process.env.OPENSHIFT_DATA_DIR){
 
+	global.FFMPEG = process.env.OPENSHIFT_DATA_DIR+'bin/ffmpeg';
     global.UPLOADS_DIR =  process.env.OPENSHIFT_DATA_DIR + "uploads/";
-
     global.FB_CLIENTID = '1558893454364234';
     global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
     global.FB_CLIENTSECRET = '1992cb3d2ab570277129e9f8911b63a4';
     global.BASE_URL = 'http://nodejs-musicilo.rhcloud.com';
+	global.ENV = 'openshift';
 }
 
 var winston = require('winston');
@@ -159,53 +160,6 @@ keystone.set('locals', {
 // Load your project's Routes
 
 keystone.set('routes', require('./routes'));
-
-// Setup common locals for your emails. The following are required by Keystone's
-// default email templates, you may remove them if you're using your own.
-
-keystone.set('email locals', {
-	logo_src: '/images/logo-email.gif',
-	logo_width: 194,
-	logo_height: 76,
-	theme: {
-		email_bg: '#f9f9f9',
-		link_color: '#2697de',
-		buttons: {
-			color: '#fff',
-			background_color: '#2697de',
-			border_color: '#1a7cb7'
-		}
-	}
-});
-
-// Setup replacement rules for emails, to automate the handling of differences
-// between development a production.
-
-// Be sure to update this rule to include your site's actual domain, and add
-// other rules your email templates require.
-
-keystone.set('email rules', [{
-	find: '/images/',
-	replace: (keystone.get('env') == 'production') ? 'http://www.your-server.com/images/' : 'http://localhost:3000/images/'
-}, {
-	find: '/keystone/',
-	replace: (keystone.get('env') == 'production') ? 'http://www.your-server.com/keystone/' : 'http://localhost:3000/keystone/'
-}]);
-
-// Load your project's email test routes
-
-keystone.set('email tests', require('./routes/emails'));
-
-// Configure the navigation bar in Keystone's Admin UI
-
-keystone.set('nav', {
-	'posts': ['posts', 'post-categories'],
-	'galleries': 'galleries',
-	'enquiries': 'enquiries',
-	'users': 'users',
-	'instruments': ['instruments', 'instrument-categories']
-});
-
 
 
 // Start Keystone to connect to your database and initialise the web server

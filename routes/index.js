@@ -21,7 +21,7 @@ keystone.import('models');
 
 require(APP_LIB + 'auth/FacebookPassportStrategy');
 
-var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
+var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 
 // Common Middleware - this doesn't seem to get the req.user
 keystone.pre('routes', middleware.initLocals);
@@ -48,7 +48,7 @@ var redirectHome = function(req, res, next){
     }
     else{
         res.locals.user = req.user;
-        logger.debug("user in redirect home: " + req.user.firstName);
+        log.debug("user in redirect home: " + req.user.firstName);
         res.redirect("/");
     }
 
@@ -123,6 +123,12 @@ exports = module.exports = function(app) {
 
     app.get('/listData', routes.services.listData);
 
+    app.get('/compress', function(req, res, next){
+
+        log.debug('entered compress with: ' + req.query.track);
+        res.json({name : req.query.track+'____success'});
+        return;
+    });
 
 
     //404's
@@ -158,12 +164,12 @@ exports = module.exports = function(app) {
 
 
     passport.serializeUser(function(user, done) {
-        logger.debug("serializeUser: " + JSON.stringify(user));
+        log.debug("serializeUser: " + JSON.stringify(user));
         done(null, user);
     });
 
     passport.deserializeUser(function(user, done) {
-        logger.debug("deserializeUser");
+        log.debug("deserializeUser");
 
         done(null, user);
     });

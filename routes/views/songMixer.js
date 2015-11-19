@@ -27,7 +27,7 @@ exports = module.exports = function(req, res) {
     }
     else{
 
-        view.render('mixer');
+        view.render('songMixer');
     }
 
 };

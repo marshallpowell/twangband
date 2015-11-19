@@ -46,6 +46,8 @@ var SongMixer = function(songDto){
         }
         else {
             log.debug("create a new SongDto");
+            MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, true);
+            MixerUtil.enableOrDisableButtons([MixerUtil.btn.saveSong,MixerUtil.btn.record,MixerUtil.btn.searchCollaborators], false);
             this.currentSongDto = new SongDto();
         }
 
