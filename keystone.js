@@ -1,6 +1,7 @@
 
 //set properties based on environment var MUSICILO_ENV
-if(!process.env.MUSICILO_ENV || !process.env.MUSICILO_ENV_CONFIG_DIR){
+var configDir = './';
+if(!process.env.MUSICILO_ENV){
 	console.log("process.env.MUSICILO_ENV variables must be set, exiting");
 	return;
 }
@@ -8,7 +9,13 @@ else{
 	console.log("config for env: " + process.env.MUSICILO_ENV + ' with config dir: ' + process.env.MUSICILO_ENV_CONFIG_DIR);
 }
 
-require('dotenv').load(process.env.MUSICILO_ENV_CONFIG_DIR);
+if(process.env.MUSICILO_ENV='OPENSHIFT'){
+	configDir = process.env.OPENSHIFT_DATA_DIR;
+}
+else{
+	configDir = './'
+}
+require('dotenv').load(configDir);
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
