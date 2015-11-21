@@ -3,11 +3,86 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
-    <title>Sign into cluckoldhen</title>
+    <title>Sign into musicilo</title>
     <link rel="stylesheet" href="/keystone/styles/auth.min.css">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+      <link href="/styles/site.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+      <link href="/styles/bootstrap-tagsinput.css" rel="stylesheet">
+
+      {{!-- This file provides the default styling for the KeystoneJS Content Editor
+          - only renders when user is logged in and admin--}}
+      {{{isAdminEditorCSS user}}}
+
+      {{!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+      //- Safely remove this block if you are not targeting IE8 --}}
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js" />
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js" />
+
+      <![endif]-->
+
+      {{!--
+          //- jQuery 1.11.1 is included by default, and required by both Bootstrap
+          //- and the KeystoneJS Content Editor. If you are not targeting IE8,
+          //- you can upgrade to 2.1.1 (also bundled) for better performance.
+      --}}
+      <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
+
+
+      {{!--
+          //- Customise which Bootstrap javascript files are served by including
+          //- them specifically here, instead of bootstrap-3.2.0.min.js
+      --}}
+
+      <script src="/js/lib/bootstrap/bootstrap-3.2.0.min.js"></script>
+      <script src="/js/lib/angular/angular.min.js"></script>
+      <script src="/js/lib/notify.min.js"></script>
+
+      <script src="/js/lib/bootstrap-tagsinput.js"></script>
+      <script src="/js/lib/bootstrap-tagsinput-angular.js"></script>
+      <script src="/js/lib/typeahead.bundle.js"></script>
   </head>
   <body>
-{{{body}}}
+  <div id="flash-messages" class="container">
+  </div>
+  {{#if messages}}
+
+      {{#if messages.info}}
+          <div class="alert alert-info">
+              <a class="panel-close close" data-dismiss="alert">×</a>
+              <i class="fa fa-coffee"></i>
+              {{messages.info}}
+          </div>
+      {{/if}}
+      {{#if messages.success}}
+          <div class="alert alert-success">
+              <a class="panel-close close" data-dismiss="alert">×</a>
+              <i class="fa fa-coffee"></i>
+              {{messages.success}}
+          </div>
+      {{/if}}
+      {{#if messages.warning}}
+          <div class="alert alert-warning">
+              <a class="panel-close close" data-dismiss="alert">×</a>
+              <i class="fa fa-coffee"></i>
+              {{ messages.warning}}
+          </div>
+      {{/if}}
+      {{#if messages.error}}
+          <div class="alert alert-danger">
+              <a class="panel-close close" data-dismiss="alert">×</a>
+              <i class="fa fa-coffee"></i>
+              {{messages.error}}
+          </div>
+      {{/if}}
+  {{/if}}
+  <!-- The content block should contain the body of your template's content-->
+  {{{body}}}
+  </div>
   </body>
 </html>

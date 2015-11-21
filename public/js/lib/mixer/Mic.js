@@ -78,15 +78,10 @@ function gotBuffers( buffers ) {
  */
 function doneEncoding( arrayBuffer ) {
 
-    //console.log("doneEncoding " + Object.prototype.toString.call(arrayBuffer) + " length: " + arrayBuffer.length);
-
-    if(confirm("Do you want to keep this recording?")){
-
         //had to put this into a delay for modal to work properly
         setTimeout(function() {
             mixer.addNewRecording(new Blob([arrayBuffer], {type: "audio/wav"}));
         },1000);
-    }
 
 };
 

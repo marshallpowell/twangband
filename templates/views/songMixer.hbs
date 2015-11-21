@@ -22,28 +22,28 @@
                     <label for="songName">Song Name</label>
                 </div>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="songName" ng-model="songName"
+                    <input type="text" class="form-control" name="Song Name" id="songName" ng-model="songName"
                            placeholder="Enter a name for this song"/>
                 </div>
                 <div class="col-sm-4">
                     <label for="songName">Description</label>
                 </div>
                 <div class="col-sm-8">
-                                <textarea class="form-control" id="songDescription" ng-model="songDescription"
+                                <textarea class="form-control" name="Song Description" id="songDescription" ng-model="songDescription"
                                           placeholder="Enter a description for this song"></textarea>
                 </div>
                 <div class="col-sm-4">
                     <label for="trackName">Make Song Public</label>
                 </div>
                 <div class="col-sm-8">
-                    <input type="checkbox" class="form-control" id="songIsPublic" ng-model="songIsPublic"/>
+                    <input type="checkbox" class="form-control" name="Make Song Public" id="songIsPublic" ng-model="songIsPublic"/>
                 </div>
                 <div class="col-sm-4">
                     <label for="trackName">Tag Your Song</label>
                 </div>
                 <div class="col-sm-8">
 
-                    <select name="songTags" id="songTags" ng-model="songTags" ng-options="option.name for option in songTags track by option.id" multiple>
+                    <select name="Song Tags" id="songTags" ng-model="songTags" ng-options="option.name for option in songTags track by option.id" multiple>
 
                     </select>
 
@@ -127,21 +127,21 @@
                     <label for="trackName">Track Name</label>
                 </div>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="trackName" ng-model="trackName"
+                    <input type="text" class="form-control" name="Track Name" id="trackName" ng-model="trackName"
                            placeholder="Enter a name for this track"/>
                 </div>
                 <div class="col-sm-4">
                     <label for="trackName">Description</label>
                 </div>
                 <div class="col-sm-8">
-                                <textarea class="form-control" id="trackDescription" ng-model="trackDescription"
+                                <textarea class="form-control" name="Track Description" id="trackDescription" ng-model="trackDescription"
                                           placeholder="Enter a description for this track"></textarea>
                 </div>
                 <div class="col-sm-4">
                     <label for="trackName">Make Track Public</label>
                 </div>
                 <div class="col-sm-8">
-                    <input type="checkbox" class="form-control" id="trackIsPublic" />
+                    <input type="checkbox" class="form-control" name="Make Track Public" id="trackIsPublic" />
                 </div>
 
                 <div class="col-sm-4">
@@ -149,11 +149,18 @@
                 </div>
                 <div class="col-sm-8">
 
-                    <select name="trackTags" id="trackTags" multiple>
+                    <select name="Track Tags" id="trackTags" multiple>
 
                     </select>
 
                 </div>
+            </div>
+        </div>
+
+        <div id="recordingDialog">
+            <div class="row">
+                <div id="startTimer" class="col-lg-12"></div>
+                <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span id="countdownTimer" style="background-color: #FFFF00"></span></div>
             </div>
         </div>
 
@@ -210,21 +217,11 @@
     </div>
     <div class="row" style="background-color: #fff">
 
-        <div id="recordingDialog" style="display:none;">
-            <div id="timer" class="col-lg-12"></div>
-        </div>
-
         <div id="recordingWav" style="display:none;">
             <div id="viz" class="col-lg-12">
                 <canvas id="analyser" width="500" height="200"></canvas>
             </div>
         </div>
-
-
-
-
-        <div style="display:none;"><!--can show the equalizer that mt5 produces-->  <canvas id="waveCanvas"></canvas></div>
-
 
         <div id="scroll">
 
@@ -264,6 +261,7 @@
 <script src="js/lib/models/SearchCriteriaDto.js"></script>
 <script src="js/lib/models/SongDto.js"></script>
 <script src="js/lib/models/TrackDto.js"></script>
+<script src="js/lib/models/EditDto.js"></script>
 <script src="js/lib/util/AppConstants.js"></script>
 <script src="js/lib/validation/SongValidation.js"></script>
 
@@ -295,6 +293,17 @@
 
 
     $(document).ready(function () {
+
+        //attach onChange event handler to all form elements
+        $('input').change(function(){
+            MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
+        });
+
+        $('textarea').change(function(){
+            MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
+        });
+
+        $.notify.defaults({autoHide : true, className : 'info'});
 
         tags = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -332,7 +341,6 @@
         if(songDto == null){
             MixerUtil.toggleEditSong();
         }
-
 
 
     });
@@ -379,19 +387,29 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                Musicilo
+                <span class="mblue">music</span><span class="mgreen">ilo</span>
                 <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
 
             </div>
             <div class="modal-body" >
                 <div id="notificationBody"><p id="foo"></p></div>
             </div>
-            <div class="modal-footer" style="text-align:center">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="modalCloseBtn" value="Close">Close</button>
-            </div>
+
         </div>
 
     </div>
 </div>
+
+<div id="savingModal" class="modal fade" >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" >
+                <div id="notificationBody"><p id="foo"><span class="fa fa-spinner fa-pulse"></span> Saving...</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div id="trash" style="display:none"></div>

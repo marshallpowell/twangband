@@ -5,6 +5,7 @@ var SongMixer = function(songDto){
 
     var mixer = this; //use in ajax call backs
 
+    this.newEdits=[];
     //the current song that was loaded
     this.currentSongDto;
     //array of users who created tracks here
@@ -150,8 +151,7 @@ var SongMixer = function(songDto){
 
         log.debug("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(formData));
 
-        $('#notificationBody').html("Saving...");
-        $('#myModal').modal('toggle');
+        $('#savingModal').modal('toggle');
 
         $.ajax({
             url: '/song/save',
@@ -206,6 +206,11 @@ var SongMixer = function(songDto){
     };
 
 
+    this.toggleActiveClass = function(el,uiId){
+
+        log.trace("enter toggleMuteSong");
+        $(el).toggleClass("activated");
+    };
     /**
      *
      * @param el - the html element which called the function
@@ -215,10 +220,13 @@ var SongMixer = function(songDto){
 
         log.trace("enter toggleMuteSong");
         this.getTrackByUiId(uiId).trackMixer.wavesurfer.toggleMute();
+        this.toggleActiveClass(el);
     };
 
     this.toggleSoloTrack = function(el, uiId){
 
+        log.trace("enter toggleSoloTrack");
+        $(el).toggleClass("activated");
         if(this.soloTrack == null){
             this.soloTrack = this.getTrackByUiId(uiId);
         }
@@ -235,9 +243,9 @@ var SongMixer = function(songDto){
      * @param volume
      */
     this.adjustTrackVolume = function(trackUiId, volume){
-        log.trace("enter adjustTrackVolume");
-        var trackDto = getTrackByUiId(trackUiId);
-        trackDto.trackMixer.wavesurfer.setVolume(val/100);
+        log.trace("enter adjustTrackVolume with volume: " + volume);
+        var trackDto = this.getTrackByUiId(trackUiId);
+        trackDto.trackMixer.wavesurfer.setVolume(volume/100);
     };
 
 
@@ -287,6 +295,8 @@ var SongMixer = function(songDto){
      * @returns {*}
      */
     this.getTrackByUiId = function(uiId){
+
+        log.trace("enter getTrackByUiId with: " + uiId);
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 
@@ -345,7 +355,7 @@ var SongMixer = function(songDto){
             " <button class='solo' id='bsolo" + trackDto.uiId + "' onclick='mixer.toggleSoloTrack(this,\"" + trackDto.uiId + "\");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
 
         if (!isNewRecording) {
-            trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackDto.uiId + "' onclick='MixerUtil.selectTrackForNewSong(" + JSON.stringify(trackDto) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
+            trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackDto.uiId + "' onclick='MixerUtil.selectTrackForNewSong(\"" + trackDto.uiId + "\");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
         }
         trackInfo += " <button class='removeTrack' id='removeTrack" + trackDto.uiId + "' onclick='MixerUtil.removeTrackFromSong(\"" + trackDto.uiId + "\");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
 
@@ -366,15 +376,15 @@ var SongMixer = function(songDto){
             " <div id='trackInfo" + trackDto.uiId + "'> " +
             "    <div class='form-group row'> " +
             "        <div class='col-sm-4'><label for='trackName" + trackDto.uiId + "'>Track Name</label></div> " +
-            "        <div class='col-sm-8'><input type='text' class='form-control' id='trackName" + trackDto.uiId + "' class='trackName' value='" + trackDto.name + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
-            "        <div class='col-sm-4'><label for='trackDescription'>Description</label></div> " +
-            "        <div class='col-sm-8'><textarea class='form-control' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track'>" + trackDto.description + "</textarea></div> " +
-            "        <div class='col-sm-4'><label for='trackDescription'>What type of intrument(s) is on this track?</label></div> " +
-            "        <div class='col-sm-8'><select name='trackTags" + trackDto.uiId + "' id='trackTags" + trackDto.uiId + "' multiple>"+trackTags+"</select></div> " +
+            "        <div class='col-sm-8'><input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' class='trackName' value='" + trackDto.name + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
+            "        <div class='col-sm-4'><label for='trackDescription" + trackDto.uiId + "''>Description</label></div> " +
+            "        <div class='col-sm-8'><textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track'>" + trackDto.description + "</textarea></div> " +
+            "        <div class='col-sm-4'><label for='trackTags" + trackDto.uiId + "''>What type of intrument(s) is on this track?</label></div> " +
+            "        <div class='col-sm-8'><select name='Track Tags" + trackDto.uiId + "' id='trackTags" + trackDto.uiId + "' multiple>"+trackTags+"</select></div> " +
             "    </div> " +
             "  </div> " +
             "</div> " +
-            "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackDto.uiId + "' min='0' max = '100' value='100' style='width:150px' oninput='setVolumeOfTrackDependingOnSliderValue(\"" + trackDto.uiId + "\");'/></span>" +
+            "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackDto.uiId + "' min='0' max = '100' value='100' style='width:150px' oninput='mixer.adjustTrackVolume(\"" + trackDto.uiId + "\", this.value);'/></span>" +
             "</div>" +
             "</div>";
 
@@ -412,6 +422,20 @@ var SongMixer = function(songDto){
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC
        // trackDto.trackMixer.wavesurfer.backend.gainNode.disconnect(); -- this gave some odd results
         trackDto.trackMixer.wavesurfer.backend.gainNode.connect(this.masterGainNode);
+
+        MixerUtil.enableOrDisableButtons([MixerUtil.btn.play], false);
+
+        var inputNames=["trackDescription", "trackName", "trackTags"];
+
+        for(var i = 0; i < inputNames.length; i++){
+            $('#'+inputNames[i]+trackDto.uiId).change(function(){
+                MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
+            });
+        }
+
+        if(isNewRecording) {
+            MixerUtil.notifyOfChanges('Added new track');
+        }
 
     };
 

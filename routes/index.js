@@ -105,7 +105,7 @@ exports = module.exports = function(app) {
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
 
-    app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login'}));
+    app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login', failureFlash: true}));
 
 
     app.all('/songMixer', routes.views.songMixer);
@@ -174,12 +174,15 @@ exports = module.exports = function(app) {
         done(null, user);
     });
 
-    passport.use(new LocalStragey(function(username, password, done){
+    passport.use('local',new LocalStragey({passReqToCallback : true},function(req, username, password, done)
+    {
 
         userDao.authenticate(username, password).then(function(userDto){
             return done(null, userDto);
         }, function(err){
-            return done(err);
+            log.debug('returning err: ' + err);
+
+            return done(null, false, req.flash('error', err));
         });
     }));
 

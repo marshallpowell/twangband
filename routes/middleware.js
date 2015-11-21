@@ -53,7 +53,9 @@ exports.initLocals = function(req, res, next) {
 */
 
 exports.flashMessages = function(req, res, next) {
-	
+
+	logger.debug('flash messages error length: ' + req.flash('error').length);
+
 	var flashMessages = {
 		info: req.flash('info'),
 		success: req.flash('success'),
@@ -62,7 +64,8 @@ exports.flashMessages = function(req, res, next) {
 	};
 	
 	res.locals.messages = _.any(flashMessages, function(msgs) { return msgs.length; }) ? flashMessages : false;
-	
+
+
 	next();
 	
 };

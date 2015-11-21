@@ -1,19 +1,11 @@
-{{!< default}}
-
-    {{!< auth}}
+{{!< auth}}
     <div class="auth-wrapper">
-      <div class="alert alert-placeholder">
-  {{#if messages}}
-    {{messages.error}}
-  {{/if}}
-
-      </div>
       <div class="auth-body">
         <h1 class="sr-only">sign in</h1>
         <div class="auth-box">
           <div class="auth-box-col">
             <div>
-                <h1><span class="mblue">music</span><span class="mgreen">ilo</span> sign in</h1>
+                <h1><span class="mblue">music</span><span class="mgreen">ilo</span><br/>sign in</h1>
             </div>
               <p><a href="/forgot">Forgot Your Password?</a></p>
               <p><a href="/">home</a></p>
@@ -21,7 +13,7 @@
           <div class="auth-box-col">
           
             {{#if user}}
-			  You are already logged in as {{user.name.first}}
+			  You are already logged in as {{user.firstName}}
 			{{/if}}
 			{{#unless user}}
 

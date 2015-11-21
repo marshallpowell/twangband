@@ -19,6 +19,15 @@ for(var key in MixerUtil.btn){
 //TODO implement better browser detection logic
 var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? document.body : '#myModal';
 
+MixerUtil.notifyOfChanges = function(editAlert){
+
+    log.trace('enter notifyOfChanges');
+    $("#bsaveSong").notify("You have un-saved changes", { position:"top", autoHide:false });
+    var editDto = new EditDto(user.id, editAlert);
+    mixer.newEdits.push();
+
+    $.notify(editAlert);
+};
 /**
  * Enable or disable the buttons
  * @param btnIdArray button id array
@@ -71,15 +80,7 @@ MixerUtil.updateTrackLabel = function(value, index){
 
 };
 
-/**
- *
- * @param trackDto
- */
-MixerUtil.selectTrackForNewSong = function(trackDto){
 
-    MixerUtil.selectedTrackDtoForNewSong = trackDto;
-    MixerUtil.toggleNotification($("#newSongFromTrack"));
-};
 
 /**
  *
@@ -89,6 +90,7 @@ MixerUtil.removeTrackFromSong = function(uiId){
 
     if(!confirm("Are you sure you want to remove this track")){
         return;
+
     }
 
     log.debug("before mixer.currentSongDto tracks size: " + mixer.currentSongDto.tracks.length + " \n" + JSON.stringify(mixer.currentSongDto.tracks));
@@ -96,6 +98,7 @@ MixerUtil.removeTrackFromSong = function(uiId){
     for(var i =0; i < mixer.currentSongDto.tracks.length; i++){
         if(mixer.currentSongDto.tracks[i].uiId == uiId){
             log.debug('removing track: ' + $("#"+uiId).html());
+            MixerUtil.notifyOfChanges('Removed Track: ' + mixer.currentSongDto.tracks[i].name);
             document.getElementById(uiId).style.display='none';
             mixer.currentSongDto.tracks.splice(i,1);
             break;
@@ -107,20 +110,43 @@ MixerUtil.removeTrackFromSong = function(uiId){
 
 };
 
+/*
+Edit song
+Edit track
+ Add track
+ Remove track
+Add collaborator
+
+ */
+
+/**
+ *
+ * @param uiId -- track uiId
+ */
+MixerUtil.selectTrackForNewSong = function(uiId){
+
+    MixerUtil.selectedTrackUiId = uiId;
+    MixerUtil.toggleNotification($("#newSongFromTrack"));
+};
+
 /**
  * Create a new song with the selected track
  */
 MixerUtil.createNewSongFromTrack = function(){
+
+    log.trace("enter createNewSongFromTrack");
+
     var newSongDto = new SongDto();
     newSongDto.name = document.getElementById('newSongName').value;
     newSongDto.description = document.getElementById('newSongDescription').value;
-    newSongDto.tracks.push(selectedTrackDtoForNewSong);
+
+    var trackDto = mixer.getTrackByUiId(MixerUtil.selectedTrackUiId);
+    newSongDto.tracks.push(trackDto);
 
     var formData = new FormData();
     formData.append("song", JSON.stringify(newSongDto));
 
-    $('#notificationBody').html("Saving...");
-    $('#myModal').modal('toggle');
+    $('#savingModal').modal('toggle');
 
     $.ajax({
         url: '/song/save',
@@ -145,7 +171,7 @@ MixerUtil.createNewSongFromTrack = function(){
         }
     });
 
-}
+};
 
 /**
  *
@@ -311,17 +337,26 @@ MixerUtil.toggleSearchUsers = function(closeMe){
 
 MixerUtil.toggleRecording = function(){
 
+    var countDownTimerEl = document.getElementById('countdownTimer');
+    var countDownInfoEl = document.getElementById('countdownInfo');
+    var recordingAnalyzerEl = document.getElementById("recordingWav");
+    var modalXCloseEl =document.getElementById("modalXCloseBtn");
+
     if(MixerUtil.isRecordingOn){
         //stop recording and close dialog
         MixerUtil.isRecordingOn=false;
 
-        document.getElementById("recordingWav").style.display="none";
-        $('#myModal').modal('toggle');
-        document.getElementById("modalCloseBtn").style.display="inline";
-        document.getElementById("modalXCloseBtn").style.display="inline";
+        countDownInfoEl.textContent='';
+        countDownTimerEl.textContent='';
+        recordingAnalyzerEl.style.display="none";
+        modalXCloseEl.style.display="inline";
         $(keyEventElement).off('keypress', MixerUtil.toggleRecording);
+        $('#myModal').modal('toggle');
+
         //stop the equalizer
         cancelAnalyserUpdates();
+        //stop countdown
+        clearInterval(MixerUtil.countdownTimer);
         // stop recording
         audioRecorder.stop();
         audioRecorder.getBuffer( gotBuffers );
@@ -338,20 +373,26 @@ MixerUtil.toggleRecording = function(){
         MixerUtil.isRecordingOn=true;
         //start the equalizer
         var startRecording = 6;
-        var div = document.getElementById("timer");
+        var startTimerEl = document.getElementById("startTimer");
 
-        document.getElementById("recordingWav").style.display="block";
-        document.getElementById("modalCloseBtn").style.display="none";
-        document.getElementById("modalXCloseBtn").style.display="none";
-        $('#myModal').modal('toggle');
-        MixerUtil.toggleNotification(null, true);
+        recordingAnalyzerEl.style.display="block";
+        modalXCloseEl.style.display="none";
+
+        MixerUtil.toggleNotification($('#recordingDialog'));
+
+        var maxTrackDuration = 60 * 3;
+
         setInterval(function(){
 
             if(--startRecording > 0){
 
+                if(startRecording ==2){
+                    MixerUtil.startTimer(maxTrackDuration, countDownTimerEl); //timer has a one sec delay
+                }
                 if(startRecording == 1){
+
                     mixer.playPauseAll();
-                    div.innerHTML = "PLAY!";
+                    startTimerEl.textContent = "PLAY!";
 
                     // start recording
 
@@ -360,19 +401,22 @@ MixerUtil.toggleRecording = function(){
                     audioRecorder.clear();
                     audioRecorder.record();
 
-                    div.innerHTML="Press the space bar to stop recording";
 
+                    startTimerEl.textContent="Press the space bar to stop recording";
+                    countDownInfoEl.textContent = 'or recording will automatically end in';
                     $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
+
 
                 }
                 else{
-                    div.innerHTML = "Start playing in " + startRecording + "...";
+                    startTimerEl.textContent = "Start playing in " + startRecording + "...";
                 }
-                $('#notificationBody').html($('#recordingDialog').html());
+
 
             }
             else{
                 clearInterval();
+
             }
 
         },1000);
@@ -381,4 +425,31 @@ MixerUtil.toggleRecording = function(){
 
     }
 
+};
+
+/**
+ * Starts a timer and updates the UI element contents
+ * @param duration - length you want to countdown to
+ * @param el - html element to update it's textContent
+ */
+MixerUtil.startTimer = function(duration, el) {
+
+    var timer = duration, minutes, seconds;
+    MixerUtil.countdownTimer = setInterval(function () {
+        log.debug("updating timer");
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        el.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            log.debug("ending timer......");
+            timer = duration;
+            MixerUtil.toggleRecording();
+
+        }
+    }, 1000);
 };
