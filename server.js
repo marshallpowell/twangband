@@ -135,8 +135,6 @@ global.logger = new (winston.Logger)({
 
 require('./routes')(app);
 
-app.listen(server_port);
-
 app.listen( server_port, server_ip_address, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
 });
