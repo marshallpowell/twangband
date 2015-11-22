@@ -466,7 +466,7 @@ async.each(users, function(user, callback) {
 
 	//user = users[i];
 	
-	var instruments = new Array();
+	var instruments = [];
 	
 	for(i=0; i < user.instruments.length; i++){
 		
@@ -495,7 +495,7 @@ async.each(users, function(user, callback) {
 
 
 				var collection = db.collection('users');
-				console.log('inserting user: ' + user.email)
+				console.log('inserting user: ' + user.email);
 				collection.insert(user, function(err, result) {
 
 					console.log('error: ' + err);

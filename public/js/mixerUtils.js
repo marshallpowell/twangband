@@ -8,7 +8,7 @@ MixerUtil.addCollaboratorToUi = function(userDto) {
     img.appendTo(div);
     div.append("<div style='display:inline'>"+userDto.firstName+"</div>");
     div.appendTo('#collaborators');
-}
+};
 
 MixerUtil.toggleCollaboratorDialog = function (closeMe){
 
@@ -22,7 +22,7 @@ MixerUtil.toggleCollaboratorDialog = function (closeMe){
         document.getElementById("searchUsers").style.display="block";
     }
 
-}
+};
 
 MixerUtil.updateTrackLabel = function(value, index){
 
@@ -100,7 +100,7 @@ MixerUtil.createNewSongFromTrack = function(){
         }
     });
 
-}
+};
 
 MixerUtil.validateAndNotify = function(el, role){
 
@@ -124,7 +124,7 @@ MixerUtil.validateAndNotify = function(el, role){
     }
 
     return true;
-}
+};
 
 MixerUtil.isLoggedIn = function(el){
 
@@ -284,7 +284,7 @@ function UiTrack(id, data){
 
     this.onloaderror = function(){
         console.log("load error");
-    }
+    };
 
     this.src = 'local_'+id;
 }
@@ -572,8 +572,3 @@ function initAudio() {
 
     AUDIO_INITIALIZED=true;
 }
-
-
-
-
-//window.addEventListener('load', initAudio );

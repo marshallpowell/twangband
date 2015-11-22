@@ -25,7 +25,7 @@ NotificationUtil.notify = function(message, alertClass, appendMessage, divId){
 
     alertDiv.innerHTML = '<a class="panel-close close" data-dismiss="alert">×</a><i class="fa fa-coffee"></i> '+message;
     $("#"+parentDiv).append(alertDiv);
-}
+};
 
 /**
  * Error Notification
@@ -35,7 +35,7 @@ NotificationUtil.notify = function(message, alertClass, appendMessage, divId){
  */
 NotificationUtil.error = function(message, appendMessage, divId){
     NotificationUtil.notify(message, "alert-danger");
-}
+};
 
 /**
  * Success Notification
@@ -45,7 +45,7 @@ NotificationUtil.error = function(message, appendMessage, divId){
  */
 NotificationUtil.success = function(message, appendMessage, divId){
     NotificationUtil.notify(message, "alert-success");
-}
+};
 
 
 

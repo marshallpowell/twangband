@@ -14,7 +14,7 @@ function UiTrack(id, data){
 
     this.onloaderror = function(){
         console.log("load error");
-    }
+    };
 
     this.src = 'local_'+id;
 }
@@ -60,18 +60,13 @@ function saveAudio() {
     audioRecorder.exportWAV( doneEncoding );
     // could get mono instead by saying
     // audioRecorder.exportMonoWAV( doneEncoding );
-};
-
-
+}
 function gotBuffers( buffers ) {
 
-    Tools.debug("buffers[0].buffer is a  " + Object.prototype.toString.call(buffers[0].buffer));
     track = new UiTrack(recIndex++, buffers[0]);
 
     audioRecorder.exportWAVBufferArray( doneEncoding );
-};
-
-
+}
 /**
  * Called after the recording has completed and data has been encoded
  * @param arrayBuffer
@@ -83,9 +78,7 @@ function doneEncoding( arrayBuffer ) {
             mixer.addNewRecording(new Blob([arrayBuffer], {type: "audio/wav"}));
         },1000);
 
-};
-
-
+}
 function convertToMono( input ) {
     var splitter = audioContext.createChannelSplitter(2);
     var merger = audioContext.createChannelMerger(2);
@@ -94,13 +87,11 @@ function convertToMono( input ) {
     splitter.connect( merger, 0, 0 );
     splitter.connect( merger, 0, 1 );
     return merger;
-};
-
+}
 function cancelAnalyserUpdates() {
     window.cancelAnimationFrame( rafID );
     rafID = null;
-};
-
+}
 function updateAnalysers(time) {
 
     if (!analyserContext) {
@@ -139,8 +130,7 @@ function updateAnalysers(time) {
     }
 
     rafID = window.requestAnimationFrame( updateAnalysers );
-};
-
+}
 function toggleMono() {
     if (audioInput != realAudioInput) {
         audioInput.disconnect();
@@ -152,8 +142,7 @@ function toggleMono() {
     }
 
     audioInput.connect(inputPoint);
-};
-
+}
 function gotStream(stream) {
     inputPoint = audioContext.createGain();
 
@@ -177,8 +166,7 @@ function gotStream(stream) {
 
     MixerUtil.toggleRecording(document.getElementById('brecordMix'));
 
-};
-
+}
 var AUDIO_INITIALIZED=false;
 function initAudio() {
 
@@ -210,4 +198,4 @@ function initAudio() {
         });
 
     AUDIO_INITIALIZED=true;
-};
+}

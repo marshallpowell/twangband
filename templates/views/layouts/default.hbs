@@ -10,10 +10,6 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
         <link href="/styles/bootstrap-tagsinput.css" rel="stylesheet">
-
-        {{!-- This file provides the default styling for the KeystoneJS Content Editor
-            - only renders when user is logged in and admin--}}
-		{{{isAdminEditorCSS user}}}
 		
 		{{!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
 		//- Safely remove this block if you are not targeting IE8 --}}
@@ -55,7 +51,7 @@
 								<span class="sr-only">Toggle navigation</span>
 								<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
 							</button>
-							<a href="/" class="navbar-brand"><span class="mblue">music</span><span class="mgreen">ilo</span></a>
+							<a href="/" class="navbar-brand"><span class="mblue">music</span><span class="mgreen">ilo</span> {beta}</a>
 						</div>
 						<div class="collapse navbar-collapse">
 							<ul class="nav navbar-nav navbar-left">
@@ -126,16 +122,8 @@
 			</div>
 		</div>
 
-
-        <script src="/js/Tools.js">
-            Tools.isDebugEnabled = true;
-        </script>
-
         <script src="/js/lib/util/NotificationUtil.js"></script>
-
-        <script src="/js/lib/recorderjs/recorder.js"></script>
-
         <script src="/js/lib/util/ListUtil.js"></script>
-		{{{isAdminEditorJS user}}}
+
 	</body>
 </html>

@@ -24,4 +24,4 @@ ListUtil.initListData = function(type, mylist){
             }
         });
     }
-}
+};

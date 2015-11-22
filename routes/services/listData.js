@@ -12,6 +12,6 @@ exports = module.exports = function(req, res) {
 
         listData = tagDao.getInstruments();
         res.json(listData);
-        return;
+
     }
-}
+};

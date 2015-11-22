@@ -11,6 +11,8 @@
 var _ = require('underscore');
 var hbs = require('handlebars');
 var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
+var fs = require('fs');
+var path = require('path');
 
 hbs.registerHelper('json', function(context) {
     return JSON.stringify(context);
@@ -35,9 +37,7 @@ exports.initLocals = function(req, res, next) {
 	locals.navLinks = [
 		{ label: 'Home',		key: 'home',		href: '/' },
 		{ label: 'Songs',		key: 'songs',		href: '/song/user' },
-        { label: 'Record',		key: 'mixer',		href: '/songMixer' },
-		{ label: 'Contact',		key: 'contact',		href: '/contact' }
-
+        { label: 'Record',		key: 'mixer',		href: '/songMixer' }
 
 	];
 
@@ -84,4 +84,41 @@ exports.requireUser = function(req, res, next) {
 		next();
 	}
 	
+};
+
+/**
+ * Brought in from Keystone
+ * enables you to specify route paths like routes.views.services (see routes/index.js)
+ * @param rel__dirname
+ * @returns {importer}
+ */
+exports.dispatchImporter = function(rel__dirname) {
+
+	function importer(from) {
+		logger.debug('importing ' + from);
+		var imported = {};
+		var joinPath = function() {
+			return '.' + path.sep + path.join.apply(path, arguments);
+		};
+
+		var fsPath = joinPath(path.relative(process.cwd(), rel__dirname), from);
+		fs.readdirSync(fsPath).forEach(function(name) {
+			var info = fs.statSync(path.join(fsPath, name));
+			if (info.isDirectory()) {
+				imported[name] = importer(joinPath(from, name));
+			} else {
+				// only import files that we can `require`
+				var ext = path.extname(name);
+				var base = path.basename(name, ext);
+				if (require.extensions[ext]) {
+					imported[base] = require(path.join(rel__dirname, from, name));
+				}
+			}
+		});
+
+		return imported;
+	}
+
+	return importer;
+
 };

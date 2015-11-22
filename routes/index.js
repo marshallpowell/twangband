@@ -1,41 +1,26 @@
 /**
  * Routing logic for controllers
  */
+require(APP_LIB + 'auth/FacebookPassportStrategy');
 
-var keystone = require('keystone'),
-    middleware = require('./middleware'),
-    importRoutes = keystone.importer(__dirname),
+var middleware = require('./middleware'),
+    importRoutes = middleware.dispatchImporter(__dirname),
     authUtils = require(APP_LIB + 'util/AuthUtils'),
     passport = require('passport'),
     express = require('express'),
-    expressSession = require('express-session'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser'),
     fs = require('fs'),
     LocalStragey = require('passport-local').Strategy,
     userDao = require(APP_LIB + 'dao/UserDao'),
-    flash = require('express-flash'),
-    multer  = require('multer');
-
-keystone.import('models');
-
-require(APP_LIB + 'auth/FacebookPassportStrategy');
-
-var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
-
-// Common Middleware - this doesn't seem to get the req.user
-keystone.pre('routes', middleware.initLocals);
-keystone.pre('render', middleware.flashMessages);
-
+    multer  = require('multer'),
+    uploads = multer({ dest: global.TEMPDIR});
+log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 // Import Route Controllers
 var routes = {
     views: importRoutes('./views'),
     services: importRoutes('./services')
 };
 
-var locals;
 var initPassport = function(req, res, next){
-    locals = res.locals;
     passport.req = req;
     passport.res = res;
     next();
@@ -52,34 +37,16 @@ var redirectHome = function(req, res, next){
         res.redirect("/");
     }
 
-}
+};
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
-    app.use(express.static('public'));
-    app.use(cookieParser());
-    app.use(flash());
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
-    app.use(bodyParser.json());
-
-    app.use(expressSession({
-        secret: 'keyboard cat',
-        saveUninitialized: true,
-        resave: true,
-        cookie: { secure: false }
-    }));
-
-    //cookie: { secure: false } set to true above for SSL
 
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(middleware.initLocals);
+    app.use(middleware.flashMessages);
 
-    var uploads = multer({ dest: '/tmp/'});
-
-
-    var userProfileUploads = multer({ dest: '/tmp/' });
 
     app.use("/uploads", express.static(UPLOADS_DIR));
 
@@ -89,46 +56,27 @@ exports = module.exports = function(app) {
         next();
     });
 
-
     // Views
     app.get('/', routes.views.index);
-    app.get('/blog/:category?', routes.views.blog);
-    app.get('/blog/post/:post', routes.views.post);
-    app.get('/gallery', routes.views.gallery);
-    app.all('/contact', routes.views.contact);
 
-    app.all('/login', routes.views.signinCoh);
-    app.all('/logout', [authUtils.signOut, routes.views.signinCoh]);
+    app.all('/login', routes.views.signin);
+    app.all('/logout', [authUtils.signOut, routes.views.signin]);
     app.all('/forgot', routes.views.forgot);
     app.all('/reset/', routes.views.reset);
+    app.get('/user/profile/', routes.views.userProfile);
+    app.post('/user/save', uploads, routes.services.saveProfile);
 
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
-
     app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login', failureFlash: true}));
 
-
     app.all('/songMixer', routes.views.songMixer);
-    app.all('/mixer', routes.views.mixer);
     app.post('/song/save', uploads, routes.services.saveSong);
     app.post('/song/updateCollaborators', routes.services.updateCollaborators);
-   // app.all('/song/show',routes.services.getSong);
     app.all('/song/user/', routes.views.userSongs);
-   // app.post('/song/remove',routes.services.removeSong);
-    app.all('/search/', routes.services.search);
-
-    app.get('/user/profile/', uploads, routes.views.userProfile);
-
-    app.post('/user/save', routes.services.saveProfile);
 
     app.get('/listData', routes.services.listData);
-
-    app.get('/compress', function(req, res, next){
-
-        log.debug('entered compress with: ' + req.query.track);
-        res.json({name : req.query.track+'____success'});
-        return;
-    });
+    app.all('/search/', routes.services.search);
 
 
     //404's
@@ -185,9 +133,5 @@ exports = module.exports = function(app) {
             return done(null, false, req.flash('error', err));
         });
     }));
-
-
-
-
 
 };

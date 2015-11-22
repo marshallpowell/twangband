@@ -8,7 +8,7 @@ var TrackMixer = function(audioContext){
     this.setVolume=function(vol){
         this.volume = vol;
         this.wavesurfer.setVolume(this.volume);
-    }
+    };
 
     /**
      * Loads a URL into wavesurfer
@@ -18,7 +18,7 @@ var TrackMixer = function(audioContext){
      */
     this.initUrl = function(id, url){
 
-        this.createWaveSurfer(id)
+        this.createWaveSurfer(id);
         this.wavesurfer.load(url);
 
         return this;
@@ -32,7 +32,7 @@ var TrackMixer = function(audioContext){
      */
     this.initBlob = function(id, blob){
 
-        this.createWaveSurfer(id)
+        this.createWaveSurfer(id);
 
         this.wavesurfer.loadBlob(blob);
 
@@ -57,4 +57,4 @@ var TrackMixer = function(audioContext){
         this.wavesurfer.setVolume(this.volume);
     }
 
-}
+};

@@ -1,5 +1,5 @@
 
-
+//Not used anywhere, just saved for a reference pattern
 (function() {
 
     var Tools = {};
@@ -8,12 +8,12 @@
 
     Tools.debug = function(message){
         console.log(message);
-    }
+    };
 
     Tools.getClass = function(obj){
 
         return Object.prototype.toString.call(obj);
-    }
+    };
 
     if (typeof exports !== 'undefined') {
         exports.Tools = Tools;

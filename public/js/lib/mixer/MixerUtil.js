@@ -19,6 +19,11 @@ for(var key in MixerUtil.btn){
 //TODO implement better browser detection logic
 var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? document.body : '#myModal';
 
+/**
+ * Push notifications to UI showing which updates were made, and indicating un-saved changes
+ * Adds edit info to mixer to save
+ * @param editAlert
+ */
 MixerUtil.notifyOfChanges = function(editAlert){
 
     log.trace('enter notifyOfChanges');
@@ -28,6 +33,7 @@ MixerUtil.notifyOfChanges = function(editAlert){
 
     $.notify(editAlert);
 };
+
 /**
  * Enable or disable the buttons
  * @param btnIdArray button id array
@@ -45,6 +51,10 @@ MixerUtil.enableOrDisableButtons = function(btnIdArray, enableOrDisable){
     }
 };
 
+/**
+ * Updates UI with collaborator info
+ * @param userDto
+ */
 MixerUtil.addCollaboratorToUi = function(userDto) {
     log.debug("collaborator: " + JSON.stringify(userDto));
     var div = $('<div class="col-sm-2"></div>');
@@ -53,8 +63,12 @@ MixerUtil.addCollaboratorToUi = function(userDto) {
     img.appendTo(div);
     div.append("<div style='display:inline'>"+userDto.firstName+"</div>");
     div.appendTo('#collaborators');
-}
+};
 
+/**
+ * Open or close the collaborator dialog
+ * @param closeMe
+ */
 MixerUtil.toggleCollaboratorDialog = function (closeMe){
 
     if(closeMe){
@@ -67,7 +81,7 @@ MixerUtil.toggleCollaboratorDialog = function (closeMe){
         document.getElementById("searchUsers").style.display="block";
     }
 
-}
+};
 
 /**
  *
@@ -201,7 +215,7 @@ MixerUtil.validateAndNotify = function(el, role){
     }
 
     return true;
-}
+};
 
 /**
  *
@@ -279,7 +293,7 @@ MixerUtil.addCollaborator = function(userDto){
     mixer.currentSongDto.collaborators.push(collaboratorDto);
     MixerUtil.addCollaboratorToUi(userDto);
 
-}
+};
 
 
 /**
@@ -289,7 +303,7 @@ MixerUtil.addCollaborator = function(userDto){
 MixerUtil.toggleEditTrack = function(trackNumber){
 
     MixerUtil.toggleNotification($('#trackInfo'+trackNumber));
-}
+};
 
 /**
  *
@@ -319,7 +333,7 @@ MixerUtil.toggleNotification = function(content, doNotToggle){
  */
 MixerUtil.toggleEditSong = function(closeMe){
 
-    MixerUtil.toggleNotification($('#songInfo'));
+    MixerUtil.toggleNotification($('#songInfo'), closeMe);
 
 };
 
@@ -335,6 +349,9 @@ MixerUtil.toggleSearchUsers = function(closeMe){
     MixerUtil.toggleNotification($('#searchUsers'));
 };
 
+/**
+ * Stops or starts a new recording
+ */
 MixerUtil.toggleRecording = function(){
 
     var countDownTimerEl = document.getElementById('countdownTimer');
@@ -343,9 +360,9 @@ MixerUtil.toggleRecording = function(){
     var modalXCloseEl =document.getElementById("modalXCloseBtn");
 
     if(MixerUtil.isRecordingOn){
+
         //stop recording and close dialog
         MixerUtil.isRecordingOn=false;
-
         countDownInfoEl.textContent='';
         countDownTimerEl.textContent='';
         recordingAnalyzerEl.style.display="none";
@@ -361,9 +378,9 @@ MixerUtil.toggleRecording = function(){
         audioRecorder.stop();
         audioRecorder.getBuffer( gotBuffers );
 
-
     }
     else{
+
         if (!audioRecorder){
             $.notify("There was an error attempting to record. Please ensure your browser settings allow us to access your mic.", "error");
             return;
@@ -384,34 +401,27 @@ MixerUtil.toggleRecording = function(){
 
         setInterval(function(){
 
-            if(--startRecording > 0){
+            if(--startRecording >= 0){
 
-                if(startRecording ==2){
+                if(startRecording ==1){
                     MixerUtil.startTimer(maxTrackDuration, countDownTimerEl); //timer has a one sec delay
                 }
-                if(startRecording == 1){
+                if(startRecording == 0){
 
                     mixer.playPauseAll();
-                    startTimerEl.textContent = "PLAY!";
-
                     // start recording
-
                     updateAnalysers();
-
                     audioRecorder.clear();
                     audioRecorder.record();
-
 
                     startTimerEl.textContent="Press the space bar to stop recording";
                     countDownInfoEl.textContent = 'or recording will automatically end in';
                     $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
 
-
                 }
                 else{
                     startTimerEl.textContent = "Start playing in " + startRecording + "...";
                 }
-
 
             }
             else{
@@ -437,7 +447,7 @@ MixerUtil.startTimer = function(duration, el) {
     var timer = duration, minutes, seconds;
     MixerUtil.countdownTimer = setInterval(function () {
         log.debug("updating timer");
-        minutes = parseInt(timer / 60, 10)
+        minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
         minutes = minutes < 10 ? "0" + minutes : minutes;

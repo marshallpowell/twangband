@@ -1,57 +1,58 @@
 <div class="container">
-    <h1>Edit Profile</h1>
+    <h1>
+        {{#if user}}
+            Edit Profile
+        {{/if}}
+
+        {{#unless user}}
+            Create Account
+        {{/unless}}
+    </h1>
     <hr>
 
     <form class="form-horizontal" role="form" id="userForm">
-    <div class="row">
-        <!-- left column -->
-        <div class="col-md-3">
-            <div class="text-center">
-                <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar img-circle" alt="avatar">
-                <h6>Upload a different photo...</h6>
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-3">
+                <div class="text-center">
+                    <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar img-circle" alt="avatar">
+                    <h6>Upload a different photo...</h6>
 
-                <input type="file" class="form-control" name="profileImg" id="profileImg" />
+                    <input type="file" class="form-control" name="profileImg" id="profileImg"/>
+                </div>
             </div>
-        </div>
 
-        <!-- edit form column -->
-        <div class="col-md-9 personal-info">
+            <!-- edit form column -->
+            <div class="col-md-9 personal-info">
 
-            <h3>Personal info</h3>
-
+                <h3>Personal info</h3>
 
 
-                <input type="hidden" name="id" id="id" value="{{user.id}}" />
+                <input type="hidden" name="id" id="id" value="{{user.id}}"/>
+
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">First name:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" id="firstName" name="firstName" value="{{user.firstName}}">
-                    </div>
+                    <label control-label">First name:</label>
+                    <input class="form-control" type="text" id="firstName" name="firstName" value="{{user.firstName}}">
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Last name:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" id="lastName" name="lastName" value="{{user.lastName}}">
-                    </div>
+                    <label class="control-label">Last name:</label>
+                    <input class="form-control" type="text" id="lastName" name="lastName" value="{{user.lastName}}">
                 </div>
 
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Email:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" id="email" name="email" value="{{user.email}}">
-                    </div>
+                    <label class="control-label">Email:</label>
+                    <input class="form-control" type="text" id="email" name="email" value="{{user.email}}">
                 </div>
 
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">What Instruments and what type of music do you play? </label>
-                    <div class="col-lg-8">
-                        <select name="tags" id="tags"  multiple>
+                    <label class="control-label">Create tags for instruments and music you play </label>&nbsp;<i>(hit enter after each tag)</i>
+                    <br />
+                    <select name="tags" id="tags" multiple>
 
-                            {{#each user.tags}}
-                                <option value="{{this}}">{{this}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+                        {{#each user.tags}}
+                            <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
                 </div>
 
                 {{#if user}}
@@ -60,42 +61,38 @@
 
                 {{#unless user}}
 
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Password:</label>
-                    <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Password:</label>
                         <input class="form-control" type="password" id="password" name="password" value="{{password}}">
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Confirm Password:</label>
-                    <div class="col-md-8">
-                        <input class="form-control" type="password" id="confirmPassword" name="confirmPassword" value="{{password}}">
+                    <div class="form-group">
+                        <label class="control-label">Confirm Password:</label>
+                        <input class="form-control" type="password" id="confirmPassword" name="confirmPassword"
+                               value="{{password}}">
                     </div>
-                </div>
 
                 {{/unless}}
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
+                    <label class="control-label"></label>
+                    {{#if user}}
+                        <input type="button" class="btn btn-primary" id="saveUserBtn" value="Save Changes"
+                               onClick="UserProfile.saveUser();">
 
-                        {{#if user}}
-                            <input type="button" class="btn btn-primary" id="saveUserBtn" value="Save Changes" onClick="UserProfile.saveUser();">
+                    {{/if}}
+                    {{#unless user}}
 
-                        {{/if}}
-                        {{#unless user}}
+                        <input type="button" class="btn btn-primary" id="createUserBtn" value="Create Profile"
+                               onClick="UserProfile.saveUser();">
+                    {{/unless}}
 
-                            <input type="button" class="btn btn-primary" id="createUserBtn" value="Create Profile" onClick="UserProfile.saveUser();">
-                        {{/unless}}
 
-                        <span></span>
-                        <input type="reset" class="btn btn-default" value="Cancel">
-                    </div>
+                    <input type="reset" class="btn btn-default" value="Cancel">
                 </div>
 
+            </div>
         </div>
-    </div>
     </form>
 </div>
 <hr>
@@ -107,28 +104,28 @@
 <script language="JavaScript">
     $(document).ready(function () {
         var instruments = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        prefetch: {
-        url: '/listData?type=instruments',
-        filter: function(list) {
-            return $.map(list, function(instrument) {
-                return { name: instrument };
-            });
-        },
-            cache : false
-        }
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: '/listData?type=instruments',
+                filter: function (list) {
+                    return $.map(list, function (instrument) {
+                        return {name: instrument};
+                    });
+                },
+                cache: false
+            }
         });
         instruments.initialize();
 
         $('#tags').tagsinput({
-        typeaheadjs: {
-        name: 'instruments',
-        displayKey: 'name',
-        valueKey: 'name',
-            limit : 15,
-        source: instruments.ttAdapter()
-        }
+            typeaheadjs: {
+                name: 'instruments',
+                displayKey: 'name',
+                valueKey: 'name',
+                limit: 15,
+                source: instruments.ttAdapter()
+            }
         });
 
     });

@@ -1,159 +1,139 @@
-#!/bin/env node
-//  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
+
+var express = require('express'),
+    expressHbs = require('express-handlebars'),
+    http = require('http'),
+    path = require('path'),
+    mongoose = require('mongoose'),
+    winston = require('winston'),
+    helpers = require('./templates/views/helpers/index.js'),
+    expressSession = require('express-session'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    flash = require('express-flash'),
+    lessMiddleware = require('less-middleware');
+
+//set properties based on environment var MUSICILO_ENV
+var configDir = './';
+if(!process.env.MUSICILO_ENV){
+    console.log("process.env.MUSICILO_ENV variables must be set, exiting");
+    return;
+}
+
+if(process.env.MUSICILO_ENV='OPENSHIFT'){
+    configDir = process.env.OPENSHIFT_DATA_DIR;
+}
+else{
+    configDir = './'
+}
+require('dotenv').load(configDir);
+
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 
-/**
- *  Define the sample application.
+mongodb_connection_string = process.env.MONGO_URL;
+
+//take advantage of openshift env vars when available:
+if(process.env.OPENSHIFT_MONGODB_DB_URL){
+    mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
+}
+
+mongoose.connect(mongodb_connection_string, {
+    server: {
+        auto_reconnect: true,
+        socketOptions : {
+            keepAlive: 1
+        }
+    }
+});
+
+mongoose.set('debug', true);
+
+mongoose.connection.on('error', function(err){
+    console.log("error connecting to mongoose " + err);
+});
+
+mongoose.connection.on('open', function() {
+    console.log("connection to mongoose opened");
+});
+
+mongoose.connection.on('close', function() {
+    console.log("connection to mongoose closed");
+});
+
+process.on('SIGINT', function() {
+    mongoose.connection.close(function () {
+        console.log('SIGINT Mongoose connection closed');
+        process.exit(0);
+    });
+});
+
+global.COOKIE_SECRET = '-q)0od#zKS"|M9NsKTwc;c`-`m7VI?y/}ztgLM4*v;C1Su9s]h{d77"eXT3eH8/n';
+
+var app = express();
+app.set('views', __dirname+'/templates/views');
+app.engine('hbs', expressHbs({extname:'hbs', defaultLayout:'default.hbs',layoutsDir: __dirname + '/templates/views/layouts', helpers : helpers}));
+app.set('view engine', 'hbs');
+app.use(cookieParser()); //cookie: { secure: false } set to true above for SSL
+app.use(flash());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({strict : false}));
+app.use(lessMiddleware(path.join(__dirname, '/public'), {debug : false}));
+app.use(express.static(__dirname + '/public'));
+
+app.use(expressSession({
+    secret: global.COOKIE_SECRET,
+    saveUninitialized: true,
+    resave: true,
+    cookie: { secure: false }
+}));
+
+//TODO replace all globals with properties in the .env
+global.APP_ROOT = path.resolve(__dirname);
+global.APP_LIB = APP_ROOT + "/lib/";
+global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
+global.UPLOADS_DIR  = "/Users/marshallpowell/dev/musicilo2/uploads/";
+global.TEMPDIR = '/tmp/';
+global.LOGDIR = "/Users/marshallpowell/dev/musicilo2/logs";
+
+global.FB_CLIENTID = '1558894697697443';
+global.FB_CALLBACKURL = 'http://local.cluckoldhen.com:3000/auth/facebook/callback';
+global.FB_CLIENTSECRET = '964ee6d698f152d81cc9e8dadaed50e3';
+global.BASE_URL = 'http://local.cluckoldhen.com:3000';
+global.ENV = 'local';
+
+if(process.env.OPENSHIFT_DATA_DIR){
+    global.TEMPDIR = process.env.OPENSHIFT_DATA_DIR + "tmp/";
+    global.LOGDIR = process.env.OPENSHIFT_DATA_DIR + "logs/";
+    global.FFMPEG = process.env.OPENSHIFT_DATA_DIR+'bin/ffmpeg';
+    global.UPLOADS_DIR =  process.env.OPENSHIFT_DATA_DIR + "uploads/";
+    global.FB_CLIENTID = '1558893454364234';
+    global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
+    global.FB_CLIENTSECRET = '1992cb3d2ab570277129e9f8911b63a4';
+    global.BASE_URL = 'http://nodejs-musicilo.rhcloud.com';
+
+
+    global.ENV = 'openshift';
+}
+
+//todo can this be used globally? log file should be a property
+global.logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)({ level: 'debug' }),
+        new (winston.transports.File)({ filename: global.LOGDIR })
+    ]
+});
+
+/* multer is working correctly now??? so don't need this after all
+ if(process.env.TMPDIR){
+ global.TEMPDIR = process.env.TMPDIR;
+ console.log("****** global.TEMPDIR: " + global.TEMPDIR);
+
+ }
  */
-var SampleApp = function() {
-
-    //  Scope.
-    var self = this;
 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+require('./routes')(app);
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
-    };
-
-
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
-
-
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
-
-
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
-
-
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
-
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
-        });
-    };
-
-
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
-
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
-
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-        });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+app.listen(server_port);
+console.log('Running on http://localhost:' + server_port);

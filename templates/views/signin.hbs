@@ -1,0 +1,46 @@
+{{!< default}}
+
+<div class="container">
+    <div class="row" >
+
+
+        <div class="centeredBox">
+            <div class="row" >
+                <div class="col-md-4 col-md-offset-4">
+                    <h1><span class="mblue">music</span><span class="mgreen">ilo</span> sign in</h1>
+
+                </div>
+            </div>
+
+            <div class="row" >
+                <div class="col-md-4  col-md-offset-4">
+
+                    {{#if user}}
+                        You are already logged in as {{user.firstName}}
+                    {{/if}}
+                    {{#unless user}}
+
+
+                        <form method="post" action="/auth/local" novalidate class="auth-form">
+                            <input type="hidden" name="{{csrf_token_key}}" value="{{csrf_token_value}}">
+                            <div class="form-group">
+                                <label for="username">Email</label>
+                                <input type="text" name="username" id="username" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" name="password" id="password" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Sign In!</button> or <a href="/forgot">Forgot Your Password?</a>
+                        </form>
+
+                        <br />
+                        <div class='social_logins'>
+                            <a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
+                        </div>
+                    {{/unless}}
+                </div>
+            </div>
+    </div>
+    </div>
+</div>

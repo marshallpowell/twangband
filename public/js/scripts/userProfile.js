@@ -64,4 +64,4 @@ UserProfile.saveUser = function(){
         });
 
     }
-}
+};

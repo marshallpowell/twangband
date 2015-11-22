@@ -7,12 +7,11 @@ var mv = require('mv');
 
 exports = module.exports = function(req, res) {
 
-    logger.debug("enter search with criteria: " + req.body.searchCriteria);
-
-    var searchDto = JSON.parse(req.body.searchCriteria);
+    logger.debug("enter search with criteria: " + JSON.stringify(req.body));
+    var searchDto = req.body;
 
     var searchResults = {};
-    searchResults.data=[]
+    searchResults.data=[];
 
 
     if(searchDto.type=='SONG'){

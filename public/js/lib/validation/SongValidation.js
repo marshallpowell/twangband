@@ -17,7 +17,7 @@ SongValidation.isAdmin = function(userDto, songDto){
         return true;
     }
 
-}
+};
 
 SongValidation.canAddTrack = function(userDto, songDto){
 
@@ -57,7 +57,7 @@ SongValidation.canAddTrack = function(userDto, songDto){
 
 
     return false;
-}
+};
 
 
 

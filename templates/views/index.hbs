@@ -7,7 +7,9 @@
 
 <div class="container">
 	<div class="jumbotron">
-		<h1>welcome to <span class="mblue">music</span><span class="mgreen">ilo</span>!</h1>
+		<p>
+            <h1>welcome to <span class="mblue">music</span><span class="mgreen">ilo</span>!</h1>
+        </p>
 		<p><span class="mblue">music</span><span class="mgreen">ilo</span> is where musicians from around the world play, record and mix their music together online.</p>
 
 
@@ -15,7 +17,7 @@
             Welcome  {{user.firstName}}!  <img class="thumbnail" src="/uploads/users/profile/{{user.profilePic}}" />
         {{/if}}
         {{#unless user}}
-            <p><a href="/login" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a></p>
+            <p><a href="/login" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a> <a href="/user/profile" style="margin-right: 10px" class="btn btn-lg btn-primary">Create an account</a></p>
         {{/unless}}
 		<hr>
 

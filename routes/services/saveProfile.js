@@ -105,7 +105,7 @@ var uploadPic = function(profilePic, userDto){
 
         mv(global.TEMPDIR + profilePic, global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
             if (err) {
-                log.debug('mv ' + global.TEMPDIR + profilePic + ' ' + global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic)
+                log.debug('mv ' + global.TEMPDIR + profilePic + ' ' + global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic);
                 log.debug('error uploading file: ' + err);
             }
 
@@ -115,4 +115,4 @@ var uploadPic = function(profilePic, userDto){
     else {
         log.debug("no image uploaded");
     }
-}
+};

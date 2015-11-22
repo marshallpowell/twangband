@@ -6,7 +6,7 @@
     <div id="consoleForms" style="display:none;">
         <div id="songInfo">
             <div class="col-sm-12" style="text-align: center">
-                <h1>
+                <h2>
                     {{#if songJSON}}
                         Update your song information
                     {{/if}}
@@ -14,44 +14,37 @@
                     {{#unless songJSON}}
                         Create a new song!
                     {{/unless}}
-                </h1>
+                </h2>
             </div>
 
-            <div class="form-group row">
-                <div class="col-sm-4">
-                    <label for="songName">Song Name</label>
+            <div class="row">
+                <div class="form-group">
+                        <label for="songName">Song Name</label>
+                        <input type="text" class="form-control" name="Song Name" id="songName" ng-model="songName"
+                               placeholder="Enter a name for this song"/>
                 </div>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" name="Song Name" id="songName" ng-model="songName"
-                           placeholder="Enter a name for this song"/>
-                </div>
-                <div class="col-sm-4">
+                <div class="form-group">
                     <label for="songName">Description</label>
+                    <textarea class="form-control" name="Song Description" id="songDescription" ng-model="songDescription"
+                                              placeholder="Enter a description for this song"></textarea>
                 </div>
-                <div class="col-sm-8">
-                                <textarea class="form-control" name="Song Description" id="songDescription" ng-model="songDescription"
-                                          placeholder="Enter a description for this song"></textarea>
+                <div>
+                        <label for="trackName">Make Song Public</label>&nbsp;<input type="checkbox" name="Make Song Public" id="songIsPublic" ng-model="songIsPublic"/>
                 </div>
-                <div class="col-sm-4">
-                    <label for="trackName">Make Song Public</label>
-                </div>
-                <div class="col-sm-8">
-                    <input type="checkbox" class="form-control" name="Make Song Public" id="songIsPublic" ng-model="songIsPublic"/>
-                </div>
-                <div class="col-sm-4">
-                    <label for="trackName">Tag Your Song</label>
-                </div>
-                <div class="col-sm-8">
+                <div class="form-group">
+                        <label for="trackName">Tag Your Song</label>&nbsp;<i>(Hit enter after each tag)</i><br />
+                        <select name="Song Tags" id="songTags" ng-model="songTags" ng-options="option.name for option in songTags track by option.id" multiple>
 
-                    <select name="Song Tags" id="songTags" ng-model="songTags" ng-options="option.name for option in songTags track by option.id" multiple>
-
-                    </select>
-
+                        </select>
                 </div>
+                <div class="modal-footer" style="padding-top: 5px; text-align:center;">
+                        <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
+                </div>
+
             </div>
         </div>
 
-        <div id="newSongFromTrack">
+        <div id="newSongFromTrack"  class="modalDialogForm">
 
             <div class="form-group row">
                 <div class="col-sm-4">
@@ -70,7 +63,7 @@
                 </div>
 
             </div>
-            <div class="form-group row">
+            <div class="modal-footer">
 
                 <button id="btn_createNewSongFromTrack" type="button" class="btn btn-default btn-lg"
                         onclick="MixerUtil.createNewSongFromTrack();">
@@ -79,7 +72,7 @@
             </div>
         </div>
 
-        <div id="searchUsers">
+        <div id="searchUsers"  class="modalDialogForm">
 
             <div class="row">
                 <div class="col-sm-2"><h5>Collaborators: </h5></div>
@@ -116,11 +109,14 @@
 
             </div>
             <div id="searchUsersData" class="row"></div>
+            <div class="modal-footer" style="padding-top: 5px; text-align:center;">
+                <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
 
+            </div>
         </div>
 
 
-        <div id="trackInfo">
+        <div id="trackInfo"  class="modalDialogForm">
 
             <div class="form-group row">
                 <div class="col-sm-4">
@@ -154,10 +150,14 @@
                     </select>
 
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
+
+                </div>
             </div>
         </div>
 
-        <div id="recordingDialog">
+        <div id="recordingDialog" >
             <div class="row">
                 <div id="startTimer" class="col-lg-12"></div>
                 <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span id="countdownTimer" style="background-color: #FFFF00"></span></div>
@@ -167,7 +167,7 @@
     </div>
 
     <div class="row">
-        <div id="masterTools" class="row" style="text-align:left">
+        <div id="masterTools" class="row">
 
 
             <a href="#" onclick="MixerUtil.toggleEditSong();" ><span class="glyphicon glyphicon-pencil"></span> Edit Song: </span><span ng-bind="songName"></span></a>
@@ -233,11 +233,6 @@
     </div>
 
 
-
-
-
-
-
 </div>
 
 <div class="row">
@@ -250,7 +245,7 @@
 </div>
 
 <script src="js/lib/util/Logger.js"></script>
-
+<script src="/js/lib/recorderjs/recorder.js"></script>
 <script src="js/lib/wavesurfer/wavesurfer.min.js"></script>
 <script src="js/lib/wavesurfer/wavesurfer.regions.js"></script>
 <script src="js/lib/mixer/TrackMixer.js"></script>
@@ -267,7 +262,7 @@
 
 
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="styles/mt5/style.css"/>
+
 <script language="JavaScript">
 
     var mixer;
@@ -391,8 +386,8 @@
                 <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
 
             </div>
-            <div class="modal-body" >
-                <div id="notificationBody"><p id="foo"></p></div>
+            <div class="modal-body " >
+                <div id="notificationBody" class="modalNotificationBody"><p id="foo"></p></div>
             </div>
 
         </div>
@@ -405,7 +400,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-body" >
-                <div id="notificationBody"><p id="foo"><span class="fa fa-spinner fa-pulse"></span> Saving...</p></div>
+                <div id="notificationBody"><p><span class="fa fa-spinner fa-pulse"></span> Saving...</p></div>
             </div>
         </div>
     </div>

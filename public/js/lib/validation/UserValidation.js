@@ -1,5 +1,5 @@
 
-var UserValidation = {}
+var UserValidation = {};
 
 UserValidation.validateUser = function(user){
 
@@ -26,6 +26,6 @@ UserValidation.validateUser = function(user){
     }
 
     return errors;
-}
+};
 
 try{module.exports = UserValidation;} catch(err){}

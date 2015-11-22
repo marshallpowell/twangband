@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Musicilo Error</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link href="/styles/site.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <script src="/js/lib/jquery/jquery-2.1.1.min.js"></script>
+
+
+</head>
+<body>
+<div id="header">
+    <div class="container">
+        <div role="navigation" class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand"><span class="mblue">music</span><span class="mgreen">ilo</span> {beta}</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                        {{# each navLinks}}
+                            <li {{#ifeq ../section key}}class="active"{{else}}{{/ifeq}}>
+                                <a href="{{ href }}">{{ label }}</a>
+                            </li>
+                        {{/each}}
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {{#if user}}
+                            <li {{#ifeq section 'profile'}}class="active"{{else}}{{/ifeq}}><a href="/user/profile"><img class="thumbnailSmall" src="/uploads/users/profile/{{user.profilePic}}" />Your Profile</a></li>
+                            <li><a href="/logout">Sign Out {{user.name.first}}</a></li>
+                        {{else}}
+                            <li><a href="/login">Sign In</a></li>
+                        {{/if}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="body">
+    {{{body}}}
+</div>
+</body>
+</html>

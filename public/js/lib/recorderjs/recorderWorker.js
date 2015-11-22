@@ -24,7 +24,7 @@ this.onmessage = function(e){
         exportWAVArrayBuffer(e.data.type);
       break;
     case 'exportWavFromBuffers':
-      exportWavFromBuffers(e.data.type, e.data.buffers, e.data.totalLength)
+      exportWavFromBuffers(e.data.type, e.data.buffers, e.data.totalLength);
       break;
   }
 };

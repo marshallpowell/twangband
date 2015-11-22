@@ -66,7 +66,6 @@ var SongMixer = function(songDto){
         var d = $.Deferred();
 
         //load collaborators
-        var formData = new FormData();
         var searchDto = new SearchCriteriaDto();
         searchDto.type = "USER_IDS";
 
@@ -80,14 +79,12 @@ var SongMixer = function(songDto){
 
         searchDto.userIds.push(songDto.creatorId);
 
-        formData.append("searchCriteria", JSON.stringify(searchDto));
-
         //TODO we should load in the collaborator info server side
         $.ajax({
             url: '/search',
-            data: formData,
+            data: JSON.stringify(searchDto),
             cache: false,
-            contentType: false,
+            contentType: 'application/json',
             processData: false,
             type: 'POST',
             success: function(data){
@@ -281,13 +278,13 @@ var SongMixer = function(songDto){
 
 
         new Recorder(this.masterGainNode).exportWavFromBuffers(function (blob) {
-            var fileName = mixer.currentSongDto.name + ".wav"
+            var fileName = mixer.currentSongDto.name + ".wav";
             log.debug("Saved mix!");
             log.debug("file: " + fileName);
             Recorder.forceDownload(blob, fileName);
         }, channelDataArray, bufferSize);
 
-    }
+    };
 
     /**
      * Get a track based on it's uiId
@@ -321,6 +318,7 @@ var SongMixer = function(songDto){
         var trackDto = new TrackDto();
         trackDto.uiId="_uiId_"+Math.random().toString().replace(".","");
         trackDto.name="new track";
+        trackDto.description="";
         trackDto.blobData = blob;
 
         this.addTrack(trackDto, true);
@@ -343,7 +341,7 @@ var SongMixer = function(songDto){
        trackDto.trackMixer = new TrackMixer(this.audioContext);
 
 
-        var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='50' height='50' />";
+        var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='30' height='30' />";
 
         if (!isNewRecording) {
             creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + this.musicians[trackDto.creatorId].profilePic + "' width='50' height='50' />&nbsp;";
@@ -374,14 +372,15 @@ var SongMixer = function(songDto){
 
             "<div style='display:none'>" +
             " <div id='trackInfo" + trackDto.uiId + "'> " +
-            "    <div class='form-group row'> " +
-            "        <div class='col-sm-4'><label for='trackName" + trackDto.uiId + "'>Track Name</label></div> " +
-            "        <div class='col-sm-8'><input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' class='trackName' value='" + trackDto.name + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
-            "        <div class='col-sm-4'><label for='trackDescription" + trackDto.uiId + "''>Description</label></div> " +
-            "        <div class='col-sm-8'><textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track'>" + trackDto.description + "</textarea></div> " +
-            "        <div class='col-sm-4'><label for='trackTags" + trackDto.uiId + "''>What type of intrument(s) is on this track?</label></div> " +
-            "        <div class='col-sm-8'><select name='Track Tags" + trackDto.uiId + "' id='trackTags" + trackDto.uiId + "' multiple>"+trackTags+"</select></div> " +
+            "    <div class='row'> " +
+            "        <div class='form-group'><label for='trackName" + trackDto.uiId + "'>Track Name</label> " +
+            "        <input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' class='trackName' value='" + trackDto.name + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
+            "        <div class='form-group'><label for='trackDescription" + trackDto.uiId + "''>Description</label>" +
+            "        <textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track'>" + trackDto.description + "</textarea></div> " +
+            "        <div><label for='trackTags" + trackDto.uiId + "''>Intrument/genre tags</label>&nbsp;<i>(Hit enter after each tag)</i><br />" +
+            "        <select name='Track Tags' id='trackTags" + trackDto.uiId + "' multiple>"+trackTags+"</select></div><br />" +
             "    </div> " +
+            "    <div class='modal-footer modalNotificationFooter'><button type='button' class='btn btn-default' data-dismiss='modal'>Close</button></div>" +
             "  </div> " +
             "</div> " +
             "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackDto.uiId + "' min='0' max = '100' value='100' style='width:150px' oninput='mixer.adjustTrackVolume(\"" + trackDto.uiId + "\", this.value);'/></span>" +
