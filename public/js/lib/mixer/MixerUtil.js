@@ -177,7 +177,7 @@ MixerUtil.createNewSongFromTrack = function(){
             $('#notificationBody').html("Saved Successfully. Refreshing Page");
             $('#myModal').modal('toggle');
 
-            window.location.href="/mixer?song="+data.id;
+            window.location.href="/songMixer?song="+data.id;
 
         },
         fail: function(data){
@@ -241,7 +241,6 @@ MixerUtil.searchCollaborators = function(){
         return;
     }
 
-    var formData = new FormData();
     var searchDto = {
         type : "USER",
         firstName : document.getElementById("searchFirstName").value,
@@ -249,14 +248,11 @@ MixerUtil.searchCollaborators = function(){
         email : document.getElementById("searchEmail").value
     };
 
-    formData.append("searchCriteria", JSON.stringify(searchDto));
-
-
     $.ajax({
         url: '/search',
-        data: formData,
+        data : JSON.stringify(searchDto),
         cache: false,
-        contentType: false,
+        contentType: 'application/json',
         processData: false,
         type: 'POST',
         success: function(data){

@@ -1,9 +1,6 @@
-var keystone = require('keystone');
 var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var trackDao = require(APP_LIB + 'dao/TrackDao');
-var songDao = require(APP_LIB + 'dao/SongDao');
 var userDao = require(APP_LIB + 'dao/UserDao');
-var mv = require('mv');
 
 exports = module.exports = function(req, res) {
 
@@ -44,11 +41,11 @@ exports = module.exports = function(req, res) {
     }
     else if(searchDto.type=='USER_IDS'){
 
-        logger.debug("search type is for a user");
+        logger.debug("search type is for a user ids");
 
 
         userDao.getUsersById(searchDto.userIds).then( function(users){
-            logger.debug('getting ready to write users');
+            logger.debug('getting ready to write users: ' + JSON.stringify(users));
             res.json(users);
         }, handleError);
     }

@@ -1,4 +1,3 @@
-var keystone = require('keystone');
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var TrackService = require(APP_LIB + 'service/TrackService');
@@ -27,6 +26,9 @@ exports = module.exports = function(req, res) {
         res.json(savedSongDto);
     },function(err){
         log.debug('error saving song: ' + err);
+        res.json({error : err});
+    }).catch(function(err){
+        log.debug('exception thrown when saving song: ' + err);
         res.json({error : err});
     });
 

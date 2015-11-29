@@ -12,7 +12,8 @@ var method = SongTrackDto.prototype;
 function SongTrackDto(){
 
     this.name;
-    this.trackDto;
+    this.originalTrackId=null;
+    this.originalTrackDto={};
     this.volume;
     this.gain;
     this.position;

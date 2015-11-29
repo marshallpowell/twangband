@@ -1,4 +1,3 @@
-var keystone = require('keystone');
 var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var mv = require('mv');

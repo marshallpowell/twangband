@@ -29,7 +29,7 @@ hbs.registerHelper('json', function(context) {
 
 exports.initLocals = function(req, res, next) {
 
-	logger.debug("register locals");
+	logger.debug("enter initLocals");
 
 	var locals = res.locals;
     locals.user = req.user;
@@ -40,8 +40,6 @@ exports.initLocals = function(req, res, next) {
         { label: 'Record',		key: 'mixer',		href: '/songMixer' }
 
 	];
-
-	logger.debug("locals.navLinks: " + JSON.stringify(locals.navLinks));
 	
 	next();
 	
@@ -53,8 +51,6 @@ exports.initLocals = function(req, res, next) {
 */
 
 exports.flashMessages = function(req, res, next) {
-
-	logger.debug('flash messages error length: ' + req.flash('error').length);
 
 	var flashMessages = {
 		info: req.flash('info'),
@@ -95,7 +91,6 @@ exports.requireUser = function(req, res, next) {
 exports.dispatchImporter = function(rel__dirname) {
 
 	function importer(from) {
-		logger.debug('importing ' + from);
 		var imported = {};
 		var joinPath = function() {
 			return '.' + path.sep + path.join.apply(path, arguments);

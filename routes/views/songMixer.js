@@ -1,11 +1,9 @@
-var keystone = require('keystone');
 var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 
 exports = module.exports = function(req, res) {
 
-    var view = new keystone.View(req, res),
-        locals = res.locals;
+    var locals = res.locals;
 
     // Set locals
     locals.section = 'mixer';
@@ -17,17 +15,17 @@ exports = module.exports = function(req, res) {
                 locals['songJSON'] = JSON.stringify(song);
 
                 // Render the view
-                view.render('songMixer');
+                res.render('songMixer');
             },
             function (err) {
                 logger.debug("error retrieving songs: " + err);
                 // Render the view
-                view.render('songMixer');
+                res.render('songMixer');
             });
     }
     else{
 
-        view.render('songMixer');
+        res.render('songMixer');
     }
 
 };

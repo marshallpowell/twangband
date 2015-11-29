@@ -388,7 +388,6 @@ var SongMixer = function(songDto){
             "</div>";
 
         var waveDivId = 'track_waveform'+trackDto.uiId;
-        var trackUrl = '/uploads/'+trackDto.fileName;
 
         var trackCanvas = document.createElement('div');
         trackCanvas.className = "col-md-10 trackData";
@@ -415,7 +414,7 @@ var SongMixer = function(songDto){
             trackDto.trackMixer.initBlob(waveDivId, trackDto.blobData);
         }
         else{
-            trackDto.trackMixer.initUrl(waveDivId, trackUrl);
+            trackDto.trackMixer.initUrl(waveDivId, '/uploads/'+trackDto.originalTrackDto.fileName);
         }
 
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC
