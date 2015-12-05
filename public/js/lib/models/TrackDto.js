@@ -5,9 +5,9 @@ function TrackDto(){
 
     this.id=null;
     this.name;
-    this.description='';
+    this.description;
     this.blobData;
-    this.creator;
+    this.creatorId;
     this.dateCreated;
     this.viewOrder;
     this.tags=[];
@@ -16,6 +16,7 @@ function TrackDto(){
     this.uiId;
     this.trackMixer;
     this.removed;
+    this._currentUser={};
 
     //from View Track
     this.peaks;

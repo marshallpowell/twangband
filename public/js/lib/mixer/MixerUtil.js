@@ -112,7 +112,7 @@ MixerUtil.removeTrackFromSong = function(uiId){
     for(var i =0; i < mixer.currentSongDto.tracks.length; i++){
         if(mixer.currentSongDto.tracks[i].uiId == uiId){
             log.debug('removing track: ' + $("#"+uiId).html());
-            MixerUtil.notifyOfChanges('Removed Track: ' + mixer.currentSongDto.tracks[i].name);
+            MixerUtil.notifyOfChanges('Removed Track: ' + document.getElementById('trackName' + mixer.currentSongDto.tracks[i].uiId).value);
             document.getElementById(uiId).style.display='none';
             mixer.currentSongDto.tracks.splice(i,1);
             break;
@@ -180,8 +180,8 @@ MixerUtil.createNewSongFromTrack = function(){
             window.location.href="/songMixer?song="+data.id;
 
         },
-        fail: function(data){
-            alert('error');
+        fail: function(error){
+            alert('There was an error creating a song from this track: ' + error);
         }
     });
 
@@ -196,20 +196,20 @@ MixerUtil.createNewSongFromTrack = function(){
 MixerUtil.validateAndNotify = function(el, role){
 
     if(!user){
-        $(el).notify('You must login first', 'info');
+        $(el).notify('You must login first', 'error');
         return false;
     }
 
     if(role == AppConstants.ROLES.ADMIN){
         if(!SongValidation.isAdmin(user, songDto)){
-            $(el).notify('You must be an admin to perform this action', 'info');
+            $(el).notify('You must be an admin to perform this action', 'error');
             return false;
         }
     }
 
     if(role == AppConstants.ROLES.ADD_TRACK){
         if(!SongValidation.canAddTrack(user, songDto)){
-            $(el).notify('You must be collaborator to perform this action', 'info');
+            $(el).notify('You must be collaborator to perform this action', 'error');
             return false;
         }
     }

@@ -127,20 +127,34 @@ var SongMixer = function(songDto){
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 
-            var trackDto = this.currentSongDto.tracks[i];
-            trackDto.trackMixer=null;
-            if(!trackDto.removed) {
+            var songTrackDto = this.currentSongDto.tracks[i];
+            songTrackDto.trackMixer=null;
+            if(!songTrackDto.removed || songTrackDto.originalTrackDto !== undefined) {
 
-                trackDto.viewOrder = i;
-                trackDto.name = document.getElementById('trackName' + trackDto.uiId).value;
-                trackDto.description = document.getElementById('trackDescription' + trackDto.uiId).value;
+                songTrackDto.viewOrder = i;
+                var trackName = document.getElementById('trackName' + songTrackDto.uiId).value;
+                var trackDescription = document.getElementById('trackDescription' + songTrackDto.uiId).value;
 
-                trackDto.tags = $('#trackTags' + trackDto.uiId).val();
+                log.debug("trackName: " + trackName);
 
-                if (trackDto.blobData != undefined) {
-                    log.debug("adding rack blobData: " + trackDto.blobData + " for trackDto.uiId: " + trackDto.uiId);
-                    formData.append("newTrack_" + i, trackDto.blobData, "song.wav");
+                var trackTags = $('#trackTags' + songTrackDto.uiId).val();
+
+                if(songTrackDto.originalTrackDto !== undefined){
+                    log.debug('updating existing track');
+                    songTrackDto.originalTrackDto.name = trackName;
+                    songTrackDto.originalTrackDto.description = trackDescription;
+                    songTrackDto.originalTrackDto.tags = trackTags;
+                    songTrackDto.originalTrackDto.removed=true;
                 }
+                else{
+
+                    log.debug("adding new track");
+                    songTrackDto.name = trackName;
+                    songTrackDto.description = trackDescription;
+                    songTrackDto.tags = trackTags;
+                    formData.append("newTrack_" + i, songTrackDto.blobData, "song.wav");
+                }
+
             }
         }
 
@@ -359,26 +373,40 @@ var SongMixer = function(songDto){
 
         //add in tag info
         var trackTags='';
-        if (trackDto.tags) {
-            for (var i = 0; i < trackDto.tags.length; i++) {
+        var trackName='Track #' + this.currentSongDto.tracks.length;
+        var trackDescription='';
+        var disabled='';
+        if(trackDto.originalTrackDto !== undefined){
+            log.debug("originalTrackDto name: " + trackDto.originalTrackDto.name);
+            trackName = trackDto.originalTrackDto.name;
+            trackDescription = trackDto.originalTrackDto.description;
 
-                trackTags += '<option value="'+trackDto.tags[i]+'" selected>'+trackDto.tags[i]+'</option>\n';
+            if (trackDto.originalTrackDto.tags) {
+                for (var i = 0; i < trackDto.originalTrackDto.tags.length; i++) {
+                    trackTags += '<option value="'+trackDto.originalTrackDto.tags[i]+'" selected>'+trackDto.originalTrackDto.tags[i]+'</option>\n';
+                }
             }
+
+            if(trackDto.originalTrackDto.creatorId != user.id){
+                disabled='disabled';
+            }
+
+
         }
 
         trackInfo += "</div>" +
             "<div class='row'>" +
-            "<a href='#' onclick='MixerUtil.toggleEditTrack(\"" + trackDto.uiId + "\");' ><span id='trackLabelIcon" + trackDto.uiId + "' class='glyphicon glyphicon-pencil'></span> Edit: <span id='trackLabel" + trackDto.uiId + "'>" + trackDto.name.substring(0, 15) + "...</span></a>" +
+            "<a href='#' onclick='MixerUtil.toggleEditTrack(\"" + trackDto.uiId + "\");' ><span id='trackLabelIcon" + trackDto.uiId + "' class='glyphicon glyphicon-pencil'></span> Edit: <span id='trackLabel" + trackDto.uiId + "'>" + trackName.substring(0, 20) + "...</span></a>" +
 
             "<div style='display:none'>" +
             " <div id='trackInfo" + trackDto.uiId + "'> " +
             "    <div class='row'> " +
             "        <div class='form-group'><label for='trackName" + trackDto.uiId + "'>Track Name</label> " +
-            "        <input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' class='trackName' value='" + trackDto.name + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
-            "        <div class='form-group'><label for='trackDescription" + trackDto.uiId + "''>Description</label>" +
-            "        <textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track'>" + trackDto.description + "</textarea></div> " +
+            "        <input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' "+disabled+" class='trackName' value='" + trackName + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
+            "        <div class='form-group'><label for='trackDescription" + trackDto.uiId + "' >Description</label>" +
+            "        <textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track' " + disabled +" >" + trackDescription + "</textarea></div> " +
             "        <div><label for='trackTags" + trackDto.uiId + "''>Intrument/genre tags</label>&nbsp;<i>(Hit enter after each tag)</i><br />" +
-            "        <select name='Track Tags' id='trackTags" + trackDto.uiId + "' multiple>"+trackTags+"</select></div><br />" +
+            "        <select name='Track Tags' id='trackTags" + trackDto.uiId + "' multiple " + disabled + ">"+trackTags+"</select></div><br />" +
             "    </div> " +
             "    <div class='modal-footer modalNotificationFooter'><button type='button' class='btn btn-default' data-dismiss='modal'>Close</button></div>" +
             "  </div> " +

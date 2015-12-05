@@ -13,10 +13,13 @@ function SongDto(){
     this.collaborators = [];
     this.creatorId;
     this.dateCreated;
+    this.lastUpdatedBy;
     this.lastUpdated;
     this.delete; //TODO
     this.isPublic=true;
     this.tags=[];
+
+    this._currentUser; //_ = transient
 
 }
 
