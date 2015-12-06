@@ -106,6 +106,7 @@ if(process.env.OPENSHIFT_DATA_DIR){
     global.TEMPDIR = process.env.OPENSHIFT_DATA_DIR + "tmp/";
     global.LOGDIR = process.env.OPENSHIFT_DATA_DIR + "logs/";
     global.FFMPEG = process.env.OPENSHIFT_DATA_DIR+'bin/ffmpeg';
+    global.FFPROBE = process.env.OPENSHIFT_DATA_DIR+'bin/ffprobe';
     global.UPLOADS_DIR =  process.env.OPENSHIFT_DATA_DIR + "uploads/";
     global.FB_CLIENTID = '1558893454364234';
     global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
