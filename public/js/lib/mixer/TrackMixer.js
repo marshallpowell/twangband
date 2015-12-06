@@ -55,6 +55,7 @@ var TrackMixer = function(audioContext){
         });
 
         this.wavesurfer.setVolume(this.volume);
+
     }
 
 };

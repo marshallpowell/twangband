@@ -92,13 +92,13 @@ var SongMixer = function(songDto){
                 var musicians = {};
                 $( data ).each(function( index ) {
                     log.debug("loading musician: " + JSON.stringify(this));
-                    log.debug("parent.musicians: " + mixer.musicians);
+
                     MixerUtil.addCollaboratorToUi(this);
                     musicians[this.id]=this;
 
                 });
 
-                log.debug("musicians: " + JSON.stringify(mixer.musicians));
+                log.debug("musicians: " + JSON.stringify(musicians));
                 d.resolve(musicians);
 
             }
@@ -191,6 +191,10 @@ var SongMixer = function(songDto){
     this.playPauseAll = function(){
 
         log.trace("enter playPauseAll");
+        //$(".trackRow").trigger("playPauseAll");
+
+        MixerUtil.enableOrDisableButtons([MixerUtil.btn.stop], false);
+        //return;
 
         if(this.soloTrack !=null){
             this.soloTrack.trackMixer.wavesurfer.playPause();
@@ -199,17 +203,18 @@ var SongMixer = function(songDto){
 
             for(var i = 0; i < this.currentSongDto.tracks.length; i++){
                 this.currentSongDto.tracks[i].trackMixer.wavesurfer.playPause();
+                log.debug("*** playing track on the milli second: " + new Date().getMilliseconds());
             }
         }
 
-        MixerUtil.enableOrDisableButtons([MixerUtil.btn.stop], false);
+
     };
 
     /**
      *
      */
     this.stopAll = function(){
-        log.trace("enter playPauseAll");
+        log.trace("enter stop All");
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
             this.currentSongDto.tracks[i].trackMixer.wavesurfer.stop();
@@ -350,7 +355,7 @@ var SongMixer = function(songDto){
         log.trace("enter addTrack");
 
         log.debug("adding track: " + JSON.stringify(trackDto));
-
+        log.debug("adding original track: " + JSON.stringify(trackDto.originalTrackDto));
 
        trackDto.trackMixer = new TrackMixer(this.audioContext);
 
@@ -358,7 +363,7 @@ var SongMixer = function(songDto){
         var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='30' height='30' />";
 
         if (!isNewRecording) {
-            creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + this.musicians[trackDto.creatorId].profilePic + "' width='50' height='50' />&nbsp;";
+            creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + this.musicians[trackDto.originalTrackDto.creatorId].profilePic + "' width='50' height='50' />&nbsp;";
         }
 
         var trackInfo = "<div class='col-md-2'>" +
@@ -429,6 +434,8 @@ var SongMixer = function(songDto){
         trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
         $("#scroll").append(trackRow);
 
+
+
         $('#trackTags'+trackDto.uiId).tagsinput({
             typeaheadjs: {
                 name: 'instruments',
@@ -448,6 +455,19 @@ var SongMixer = function(songDto){
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC
        // trackDto.trackMixer.wavesurfer.backend.gainNode.disconnect(); -- this gave some odd results
         trackDto.trackMixer.wavesurfer.backend.gainNode.connect(this.masterGainNode);
+
+        /*
+        //I didn't see any sequence delay difference when calling the play based on an event vs just looping through them
+        //in fact it seemed like looping gave more consistant time results then the event driven approach
+        $('#'+trackDto.uiId).data('trackDto',trackDto);
+
+        $('#'+trackDto.uiId).on('playPauseAll',function(){
+            $(this).data('trackDto').trackMixer.wavesurfer.playPause();
+            log.debug("*** playing track on the milli second: " + new Date().getMilliseconds());
+        });
+
+        $(".trackRow").trigger('playPauseAll');
+        */
 
         MixerUtil.enableOrDisableButtons([MixerUtil.btn.play], false);
 

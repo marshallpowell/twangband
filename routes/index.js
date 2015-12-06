@@ -59,18 +59,18 @@ exports = module.exports = function(app) {
     // Views
     app.get('/', routes.views.index);
 
-    app.all('/login', routes.views.signin);
+    app.all('/login', middleware.requireHTTPS, routes.views.signin);
     app.all('/logout', [authUtils.signOut, routes.views.signin]);
     app.all('/forgot', routes.views.forgot);
     app.all('/reset/', routes.views.reset);
-    app.get('/user/profile/', routes.views.userProfile);
+    app.get('/user/profile/', middleware.requireHTTPS, routes.views.userProfile);
     app.post('/user/save', uploads, routes.services.saveProfile);
 
     app.get('/auth/facebook', passport.authenticate('facebook'));
     app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
     app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login', failureFlash: true}));
 
-    app.all('/songMixer', routes.views.songMixer);
+    app.all('/songMixer', middleware.requireHTTPS, routes.views.songMixer);
     app.post('/song/save', uploads, routes.services.saveSong);
     app.post('/song/updateCollaborators', routes.services.updateCollaborators);
     app.all('/song/user/', routes.views.userSongs);

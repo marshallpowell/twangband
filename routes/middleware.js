@@ -66,6 +66,20 @@ exports.flashMessages = function(req, res, next) {
 	
 };
 
+exports.requireHTTPS = function(req, res, next){
+
+    var schema = req.headers['x-forwarded-proto'];
+
+    if (schema === 'https' || global.ENV == 'local') {
+        log.debug("should be https, but since it is local, it is ok");
+        next();
+    }
+    else {
+        // Redirect to https.
+        res.redirect('https://' + req.headers.host + req.url);
+    }
+};
+
 
 /**
 	Prevents people from accessing protected pages when they're not signed in
