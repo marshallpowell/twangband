@@ -29,7 +29,7 @@ hbs.registerHelper('json', function(context) {
 
 exports.initLocals = function(req, res, next) {
 
-	logger.debug("enter initLocals");
+	//logger.debug("enter initLocals");
 
 	var locals = res.locals;
     locals.user = req.user;
