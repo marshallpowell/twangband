@@ -5,6 +5,25 @@ var userValidation = require(global.PUBLIC_APP_LIB+'validation/UserValidation.js
 var mv = require('mv');
 var path = require('path');
 
+var uploadPic = function(profilePic, userDto){
+
+    log.debug("enter uploadPic");
+
+    if (profilePic != null) {
+
+        log.debug("image uploaded : " + profilePic);
+
+        mv(global.TEMPDIR + profilePic, global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
+            if (err) {
+                log.debug('error uploading file: ' + err);
+            }
+        });
+    }
+    else {
+        log.debug("no image uploaded");
+    }
+};
+
 exports = module.exports = function(req, res) {
 
     log.debug("enter saveProfile with user: " + req.body.user);
@@ -16,6 +35,7 @@ exports = module.exports = function(req, res) {
        data.errors.push("There was an error processing your submission");
         res.json(data);
     }
+
     var userDto = JSON.parse(req.body.user);
 
     data.errors = userValidation.validateUser(userDto);
@@ -29,7 +49,6 @@ exports = module.exports = function(req, res) {
     var profilePic = null;
     for (var key in req.files) {
         log.debug("uploaded file is: " + req.files[key].name);
-
         profilePic = req.files[key].name;
         userDto.profilePic = Date.now()+ '-'+profilePic;
     }
@@ -44,9 +63,8 @@ exports = module.exports = function(req, res) {
             if (isUnique) {
                 logger.debug("email is unique");
 
-                uploadPic(profilePic, userDto);
-
                 userDao.updateProfile(userDto).then(function(updatedUser){
+                    uploadPic(profilePic, userDto);
                     data.user = updatedUser;
                     res.json(data);
                 });
@@ -70,15 +88,20 @@ exports = module.exports = function(req, res) {
         //ensure email is unique
         userDao.isUniqueEmail(userDto).then(function (isUnique) {
 
+
             if (isUnique) {
                 log.debug('email is good, create user for: ' + JSON.stringify(userDto));
-                userDao.createUser(userDto).then(function (newuserDto) {
+                userDao.createUser(userDto).then(function (userDto) {
 
                     log.debug("created user now check for profile pic");
 
-                    uploadPic(profilePic, newUserDto);
+                    log.debug("userDto: " + JSON.stringify(userDto));
 
-                    data.user = newuserDto;
+                    log.debug("profilePic: " + profilePic);
+
+                    uploadPic(profilePic, userDto);
+
+                    data.user = userDto;
                     res.json(data);
 
                 }, function (err) {
@@ -95,24 +118,5 @@ exports = module.exports = function(req, res) {
             }
         });
 
-    }
-};
-
-var uploadPic = function(profilePic, userDto){
-
-    if (profilePic != null) {
-        log.debug("image uploaded : " + profilePic);
-
-        mv(global.TEMPDIR + profilePic, global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
-            if (err) {
-                log.debug('mv ' + global.TEMPDIR + profilePic + ' ' + global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic);
-                log.debug('error uploading file: ' + err);
-            }
-
-        });
-
-    }
-    else {
-        log.debug("no image uploaded");
     }
 };
