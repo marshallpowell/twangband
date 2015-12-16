@@ -121,7 +121,7 @@ if(process.env.OPENSHIFT_DATA_DIR){
 global.logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({ level: 'debug', handleExceptions: true, humanReadableUnhandledException: true}),
-        new (winston.transports.File)({ filename: global.LOGDIR + '/app.log', level: 'debug', handleExceptions: true, humanReadableUnhandledException: true, maxsize : 20000, maxFiles : 10})
+        new (winston.transports.File)({ filename: global.LOGDIR + '/app.log', level: 'debug', handleExceptions: true, humanReadableUnhandledException: true, maxsize : 200000, maxFiles : 10})
     ]
 });
 
