@@ -120,18 +120,10 @@ if(process.env.OPENSHIFT_DATA_DIR){
 //todo can this be used globally? log file should be a property
 global.logger = new (winston.Logger)({
     transports: [
-        new (winston.transports.Console)({ level: 'debug' }),
-        new (winston.transports.File)({ filename: global.LOGDIR })
+        new (winston.transports.Console)({ level: 'debug', handleExceptions: true, humanReadableUnhandledException: true}),
+        new (winston.transports.File)({ filename: global.LOGDIR + '/app.log', level: 'debug', handleExceptions: true, humanReadableUnhandledException: true, maxsize : 20000, maxFiles : 10})
     ]
 });
-
-/* multer is working correctly now??? so don't need this after all
- if(process.env.TMPDIR){
- global.TEMPDIR = process.env.TMPDIR;
- console.log("****** global.TEMPDIR: " + global.TEMPDIR);
-
- }
- */
 
 
 require('./routes')(app);

@@ -33,7 +33,6 @@ var redirectHome = function(req, res, next){
     }
     else{
         res.locals.user = req.user;
-        log.debug("user in redirect home: " + req.user.firstName);
         res.redirect("/");
     }
 
@@ -84,12 +83,11 @@ exports = module.exports = function(app) {
 
         //serve a default image if the user has no profile image
         if((/^\/uploads\/users\/profile/).test(req.path)){
-            console.log("no profile image found");
+
             var img = fs.readFileSync(APP_ROOT + '/public/img/defaultProfile.jpg');
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
             return;
-
         }
 
         res.status(404);
@@ -112,19 +110,16 @@ exports = module.exports = function(app) {
 
 
     passport.serializeUser(function(user, done) {
-        log.debug("serializeUser: " + JSON.stringify(user));
         done(null, user);
     });
 
     passport.deserializeUser(function(user, done) {
-        log.debug("deserializeUser");
 
         done(null, user);
     });
 
     passport.use('local',new LocalStragey({passReqToCallback : true},function(req, username, password, done)
     {
-
         userDao.authenticate(username, password).then(function(userDto){
             return done(null, userDto);
         }, function(err){

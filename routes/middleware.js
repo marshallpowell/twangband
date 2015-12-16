@@ -29,8 +29,6 @@ hbs.registerHelper('json', function(context) {
 
 exports.initLocals = function(req, res, next) {
 
-	//logger.debug("enter initLocals");
-
 	var locals = res.locals;
     locals.user = req.user;
 
@@ -71,7 +69,6 @@ exports.requireHTTPS = function(req, res, next){
     var schema = req.headers['x-forwarded-proto'];
 
     if (schema === 'https' || global.ENV == 'local') {
-        log.debug("should be https, but since it is local, it is ok");
         next();
     }
     else {

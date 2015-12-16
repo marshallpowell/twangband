@@ -174,6 +174,13 @@ var SongMixer = function(songDto){
             success: function(data){
 
                 //TODO need to handle errors too
+                if(data.error){
+                    log.debug('error saving song: ' + data.error);
+                    $('#savingModal').modal('toggle');
+                    $('#notificationBody').html("There was an error saving your song: " + data.error);
+                    $('#myModal').modal('toggle');
+                    return;
+                }
                 console.log("saved song: " + data);
 
                 $('#notificationBody').html("Saved Successfully. Refreshing Page");
