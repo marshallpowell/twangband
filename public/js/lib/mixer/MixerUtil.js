@@ -83,6 +83,8 @@ MixerUtil.toggleCollaboratorDialog = function (closeMe){
 
 };
 
+
+
 /**
  *
  * @param value
@@ -327,10 +329,26 @@ MixerUtil.toggleNotification = function(content, doNotToggle){
  * Show or hide the edit song dialog
  * @param closeMe
  */
+var songLoaded=false;
 MixerUtil.toggleEditSong = function(closeMe){
 
     MixerUtil.toggleNotification($('#songInfo'), closeMe);
 
+    if(!songLoaded){
+        setTimeout(function() {
+
+            var options = {
+                container     : document.getElementById('songWav'),
+                waveColor: '#1989D4',
+                progressColor: '#2BAD1D ',
+                cursorColor   : 'navy'
+            };
+
+            songWavesurfer.init(options);
+            songWavesurfer.load('/uploads/'+songDto.fileName);
+            songLoaded=true;
+        },500);
+    }
 };
 
 /**

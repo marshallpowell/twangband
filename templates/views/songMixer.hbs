@@ -4,9 +4,42 @@
 <div id="app" class="container" ng-app="app" ng-controller="myCtrl">
 
     <div id="consoleForms" style="display:none;">
+
+
         <div id="songInfo">
             <div class="col-sm-12" style="text-align: center">
-                <h2>
+                {{#if songJSON}}
+                <div class="row">
+                    <div id="songWav"></div>
+                </div>
+                <div class="row">
+                    <div class="controls">
+                        <button class="btn btn-primary btn-sm" data-action="back">
+                            <i class="glyphicon glyphicon-step-backward"></i>
+                            Backward
+                        </button>
+
+                        <button class="btn btn-primary btn-sm" data-action="play">
+                            <i class="glyphicon glyphicon-play"></i>
+                            Play
+                            /
+                            <i class="glyphicon glyphicon-pause"></i>
+                            Pause
+                        </button>
+
+                        <button class="btn btn-primary btn-sm" data-action="stop">
+                            <i class="glyphicon glyphicon-stop"></i> Stop
+                        </button>
+
+                        <button class="btn btn-primary btn-sm" data-action="forth">
+                            <i class="glyphicon glyphicon-step-forward"></i>
+                            Forward
+                        </button>
+
+                    </div>
+                </div>
+                {{/if}}
+                <h3>
                     {{#if songJSON}}
                         Update your song information
                     {{/if}}
@@ -14,7 +47,7 @@
                     {{#unless songJSON}}
                         Create a new song!
                     {{/unless}}
-                </h2>
+                </h3>
             </div>
 
             <div class="row">
@@ -172,42 +205,39 @@
 
             <a href="#" onclick="MixerUtil.toggleEditSong();" ><span class="glyphicon glyphicon-pencil"></span> Edit Song: </span><span ng-bind="songName"></span></a>
 
-            <button id="bcollaborators" type="button" class="btn btn-default btn-sm"
+            <button id="bcollaborators" type="button" class="btn btn-primary btn-sm"
                     onclick="MixerUtil.toggleSearchUsers();"
                     title="Find collaborators to add tracks to this song"
                     >
                 <span class="glyphicon glyphicon-user"></span> Collaborate
             </button>
 
-            <button id="bsaveSong" type="button" class="btn btn-default btn-sm"
+            <button id="bsaveSong" type="button" class="btn btn-primary btn-sm"
                     onclick="mixer.saveSong();"
                     title="Save song"
                     >
                 <span class="glyphicon glyphicon-floppy-disk"></span> Save
             </button>
 
-            <button id="bplay" type="button" class="btn btn-default btn-sm"
+            <button id="bplay" type="button" class="btn btn-primary btn-sm"
                     onclick="mixer.playPauseAll();"
                     title="Play song" >
                 <span class="glyphicon glyphicon-play"></span> Play / <span class="glyphicon glyphicon-pause"></span> Pause
             </button>
 
-
-
             <button id="bstop"
                     onclick="mixer.stopAll();"
                     title="Stop playing"
-                    type="button" class="btn btn-default btn-sm">
+                    type="button" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-stop"></span> Stop
             </button>
 
             <button id="brecordMix"
                     onclick=" if(!AUDIO_INITIALIZED){initAudio();} else { MixerUtil.toggleRecording(this);}" type="button"
                     title="Click to start recording."
-                    class="btn btn-default btn-sm">
+                    class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-record"></span> Record
             </button>
-
 
            <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
 
@@ -340,6 +370,7 @@
 
     });
 
+    var songWavesurfer = Object.create(WaveSurfer);
     app.controller('myCtrl', function ($scope) {
 
 
@@ -349,6 +380,38 @@
             $scope.songDescription = songDto.description;
             $scope.songIsPublic = songDto.isPublic;
             $scope.songTags = [];//songDto.tags;
+
+            if(songDto.fileName){
+
+                var GLOBAL_ACTIONS = {
+                    'play': function () {
+                        songWavesurfer.playPause();
+                    },
+
+                    'back': function () {
+                        songWavesurfer.skipBackward();
+                    },
+
+                    'forth': function () {
+                        songWavesurfer.skipForward();
+                    },
+
+                    'stop': function () {
+                        songWavesurfer.stop();
+                    }
+                };
+
+                [].forEach.call(document.querySelectorAll('[data-action]'), function (el) {
+                    el.addEventListener('click', function (e) {
+                        var action = e.currentTarget.dataset.action;
+                        if (action in GLOBAL_ACTIONS) {
+                            e.preventDefault();
+                            GLOBAL_ACTIONS[action](e);
+                        }
+                    });
+                });
+            }
+
 
             for(var i=0; i < songDto.tags.length; i++){
                 $scope.songTags.push({id : songDto.tags[i], name : songDto.tags[i]});

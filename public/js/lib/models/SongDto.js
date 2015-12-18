@@ -1,7 +1,3 @@
-/**
- * Created by mpowell on 6/4/2015.
- */
-
 var method = SongDto.prototype;
 
 function SongDto(){
@@ -15,13 +11,26 @@ function SongDto(){
     this.dateCreated;
     this.lastUpdatedBy;
     this.lastUpdated;
-    this.delete; //TODO
+    this.removed; //TODO
     this.isPublic=true;
     this.tags=[];
 
     this._currentUser; //_ = transient
 
+    //media info
+    this.fileName;
+    this.size;
+    this.formatName;
+    this.startTime;
+    this.duration;
+    this.bitRate;
+    this.codecName;
+    this.codecType;
+    this.sampleFormat;
+    this.sampleRate;
+    this.numberOfChannels;
+    this.channelLayout;
+
 }
 
 try{module.exports = SongDto;} catch(err){}
-

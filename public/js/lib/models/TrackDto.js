@@ -25,13 +25,19 @@ function TrackDto(){
     this.muted = false;
     this.solo = false;
 
-    //properties from a newly uploaded track
-    this.mimetype;
-    this.encoding;
-    this.size;
+    //media info
     this.fileName;
-
-
+    this.size;
+    this.formatName;
+    this.startTime;
+    this.duration;
+    this.bitRate;
+    this.codecName;
+    this.codecType;
+    this.sampleFormat;
+    this.sampleRate;
+    this.numberOfChannels;
+    this.channelLayout;
 
 
 }
