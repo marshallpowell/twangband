@@ -33,6 +33,7 @@ var redirectHome = function(req, res, next){
     }
     else{
         res.locals.user = req.user;
+
         res.redirect("/");
     }
 

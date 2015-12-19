@@ -17,6 +17,8 @@ exports = module.exports = function (req, res) {
     //songDto.creatorId = req.user.id;
     songDto._currentUser = req.user;
 
+    log.debug("********************************************* current user: " + JSON.stringify(req.user));
+
     for(var i = 0; i < songDto.tracks.length; i++){
 
         if(songDto.tracks[i].originalTrackDto !== undefined){

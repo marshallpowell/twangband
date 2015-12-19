@@ -7,6 +7,7 @@ var express = require('express'),
     winston = require('winston'),
     helpers = require('./templates/views/helpers/index.js'),
     expressSession = require('express-session'),
+    mongoStore = require('connect-mongo/es5')(expressSession),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     flash = require('express-flash'),
@@ -31,12 +32,13 @@ var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 
-mongodb_connection_string = process.env.MONGO_URL;
+var mongodb_connection_string = process.env.MONGO_URL;
 
 //take advantage of openshift env vars when available:
 if(process.env.OPENSHIFT_MONGODB_DB_URL){
     mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
 }
+
 
 mongoose.connect(mongodb_connection_string, {
     server: {
@@ -68,6 +70,7 @@ process.on('SIGINT', function() {
     });
 });
 
+
 global.COOKIE_SECRET = '-q)0od#zKS"|M9NsKTwc;c`-`m7VI?y/}ztgLM4*v;C1Su9s]h{d77"eXT3eH8/n';
 
 var app = express();
@@ -81,12 +84,33 @@ app.use(bodyParser.json({strict : false}));
 app.use(lessMiddleware(path.join(__dirname, '/public'), {debug : false}));
 app.use(express.static(__dirname + '/public'));
 
+/*
 app.use(expressSession({
     secret: global.COOKIE_SECRET,
     saveUninitialized: true,
     resave: true,
     cookie: { secure: false }
 }));
+ */
+
+var store = new mongoStore({ mongooseConnection: mongoose.connection });
+
+// Catch errors
+store.on('error', function(error) {
+    console.log(error);
+});
+
+app.use(expressSession({
+    secret: global.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    },
+    store: store
+}));
+
+
 
 //TODO replace all globals with properties in the .env
 global.APP_ROOT = path.resolve(__dirname);
