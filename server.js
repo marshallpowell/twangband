@@ -13,34 +13,13 @@ var express = require('express'),
     flash = require('express-flash'),
     lessMiddleware = require('less-middleware');
 
-//set properties based on environment var MUSICILO_ENV
-var configDir = './';
-if(!process.env.MUSICILO_ENV){
-    console.log("process.env.MUSICILO_ENV variables must be set, exiting");
-    return;
-}
+var server_port = 3000;
 
-if(process.env.MUSICILO_ENV='OPENSHIFT'){
-    configDir = process.env.OPENSHIFT_DATA_DIR;
-}
-else{
-    configDir = './'
-}
-require('dotenv').load(configDir);
-
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var mongoUrl=process.env.MONGO_SERVICE_HOST + ':' + process.env.MONGO_SERVICE_PORT + '/' + process.env.MONGO_DB_NAME;
+console.log("connect to mongo url " + mongoUrl);
 
 
-var mongodb_connection_string = process.env.MONGO_URL;
-
-//take advantage of openshift env vars when available:
-if(process.env.OPENSHIFT_MONGODB_DB_URL){
-    mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + "nodejs";
-}
-
-
-mongoose.connect(mongodb_connection_string, {
+mongoose.connect(mongoUrl, {
     server: {
         auto_reconnect: true,
         socketOptions : {
@@ -116,42 +95,28 @@ app.use(expressSession({
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
 global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
-global.UPLOADS_DIR  = "/Users/marshallpowell/dev/musicilo2/uploads/";
 global.TEMPDIR = '/tmp/';
-global.LOGDIR = "/Users/marshallpowell/dev/musicilo2/logs";
-
-global.FB_CLIENTID = '1558894697697443';
-global.FB_CALLBACKURL = 'http://local.cluckoldhen.com:3000/auth/facebook/callback';
-global.FB_CLIENTSECRET = '964ee6d698f152d81cc9e8dadaed50e3';
-global.BASE_URL = 'http://local.cluckoldhen.com:3000';
-global.ENV = 'local';
-
-if(process.env.OPENSHIFT_DATA_DIR){
-    global.TEMPDIR = process.env.OPENSHIFT_DATA_DIR + "tmp/";
-    global.LOGDIR = process.env.OPENSHIFT_DATA_DIR + "logs/";
-    global.FFMPEG = process.env.OPENSHIFT_DATA_DIR+'bin/ffmpeg';
-    global.FFPROBE = process.env.OPENSHIFT_DATA_DIR+'bin/ffprobe';
-    global.UPLOADS_DIR =  process.env.OPENSHIFT_DATA_DIR + "uploads/";
-    global.FB_CLIENTID = '1558893454364234';
-    global.FB_CALLBACKURL = 'http://nodejs-musicilo.rhcloud.com/auth/facebook/callback';
-    global.FB_CLIENTSECRET = '1992cb3d2ab570277129e9f8911b63a4';
-    global.BASE_URL = 'http://nodejs-musicilo.rhcloud.com';
-
-
-    global.ENV = 'openshift';
-}
-
+global.FB_CLIENTID = process.env.FB_CLIENTID;
+global.FB_CALLBACKURL = process.env.FB_CALLBACKURL;
+global.FB_CLIENTSECRET = process.env.FB_CLIENTSECRET;
+global.BASE_URL = process.env.BASE_URL;
+global.ENV='local';
 //todo can this be used globally? log file should be a property
 global.logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({ level: 'debug', handleExceptions: true, humanReadableUnhandledException: true}),
-        new (winston.transports.File)({ filename: global.LOGDIR + '/app.log', level: 'debug', handleExceptions: true, humanReadableUnhandledException: true, maxsize : 200000, maxFiles : 10})
+        new (winston.transports.File)({ filename: process.env.LOG_DIR + 'app.log', level: 'debug', handleExceptions: true, humanReadableUnhandledException: true, maxsize : 200000, maxFiles : 10})
     ]
 });
 
 
 require('./routes')(app);
-
+/*
 app.listen( server_port, server_ip_address, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
+});
+*/
+
+app.listen( server_port, function() {
+    console.log((new Date()) + ' Server is listening on port 3000');
 });

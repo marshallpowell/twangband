@@ -47,8 +47,7 @@ exports = module.exports = function(app) {
     app.use(middleware.initLocals);
     app.use(middleware.flashMessages);
 
-
-    app.use("/uploads", express.static(UPLOADS_DIR));
+    app.use("/uploads", express.static(process.env.UPLOADS_DIR));
 
     app.use(function(req, res, next) {
         //this puts the user obj in the locals scope for the tempates

@@ -157,7 +157,7 @@ function gotStream(stream) {
     analyserNode.fftSize = 2048;
     inputPoint.connect( analyserNode );
 
-    audioRecorder = new Recorder( inputPoint );
+    audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : newRecordingDto});
 
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;
@@ -167,35 +167,32 @@ function gotStream(stream) {
     MixerUtil.toggleRecording(document.getElementById('brecordMix'));
 
 }
-var AUDIO_INITIALIZED=false;
-function initAudio() {
 
+var AUDIO_INITIALIZED=false;
+var SYSTEM_CALLIBRATED=false;
+var newRecordingDto;
+
+if (!navigator.getUserMedia)
+    navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+if (!navigator.cancelAnimationFrame)
+    navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
+if (!navigator.requestAnimationFrame)
+    navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
+
+function initAudio(recordingDto) {
+
+    newRecordingDto = recordingDto;
     if(AUDIO_INITIALIZED){
         return;
     }
 
-    if (!navigator.getUserMedia)
-        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    if (!navigator.cancelAnimationFrame)
-        navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
-    if (!navigator.requestAnimationFrame)
-        navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
     navigator.getUserMedia(
-        {
-            "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
-                "optional": []
-            }
-        }, gotStream, function(e) {
+        {audio:{optional:[{echoCancellation:false}]}}, gotStream, function(e) {
             alert('Error getting audio');
             console.log(e);
         });
 
     AUDIO_INITIALIZED=true;
 }
+

@@ -6,19 +6,22 @@
     var config = cfg || {};
     var bufferLen = config.bufferLen || 4096;
     var numChannels = config.numChannels || 2;
+    var recordingDto = cfg.recordingDto;
     this.context = source.context;
     this.node = (this.context.createScriptProcessor ||
                  this.context.createJavaScriptNode).call(this.context,
                  bufferLen, numChannels, numChannels);
     var worker = new Worker(config.workerPath || WORKER_PATH);
-
+console.log("sample rate: " + this.context.sampleRate);
     worker.postMessage({
       command: 'init',
       config: {
         sampleRate: this.context.sampleRate,
-        numChannels: numChannels
+        numChannels: numChannels,
+        recordingDto: recordingDto
       }
     });
+
     var recording = false,
       currCallback;
 

@@ -1,0 +1,17 @@
+FROM          gcr.io/marshallpowell/twang-web-packages:latest
+
+EXPOSE  3000
+
+COPY ../../ /src
+WORKDIR /src
+ENV NODE_PATH=/node_modules
+RUN mv /src/node_modules / && \
+    yum -y install procps && \
+    npm install -g nodemon
+
+ENTRYPOINT ["/root/.nvm/versions/node/v5.3.0/bin/nodemon", " --watch /src", "server.js"]
+
+#docker build -t twang-web-local .
+#docker run -d -p 3000:3000 --link mongo --name twang-web-local -v /Users/marshallpowell/dev/musicilo2/uploads:/uploads -v /Users/marshallpowell/dev/musicilo2/musicilo:/src twang-web-local
+
+#docker run -d -p 3000:3000 --link mongo --name twang-web-local -v /Users/marshallpowell/dev/musicilo2/uploads:/uploads twang-web-local

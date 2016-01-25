@@ -11,6 +11,8 @@ MixerUtil.btn.record = 'brecordMix';
 MixerUtil.btn.saveSong = 'bsaveSong';
 MixerUtil.btn.searchCollaborators = 'bcollaborators';
 MixerUtil.buttonsIds=[];
+MixerUtil.latencyTimeSet=false;
+MixerUtil.latencyTime=0;
 
 for(var key in MixerUtil.btn){
     MixerUtil.buttonsIds.push(MixerUtil.btn[key]);
@@ -363,6 +365,7 @@ MixerUtil.toggleSearchUsers = function(closeMe){
     MixerUtil.toggleNotification($('#searchUsers'));
 };
 
+
 /**
  * Stops or starts a new recording
  */
@@ -393,8 +396,14 @@ MixerUtil.toggleRecording = function(){
         audioRecorder.getBuffer( gotBuffers );
 
     }
-    else{
+    else if(!MixerUtil.latencyTimeSet){
+        MixerUtil.toggleNotification($('#recordingDialog'));
+        document.getElementById("startTimer").textContent="Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed";
+        document.getElementById('countdownInfo').textContent = "<a href='#' onclick='MixerUtil.callibrateSystem();'>Callibrate System</a>";
 
+    }
+    else{
+        audioRecorder.clear();
         if (!audioRecorder){
             $.notify("There was an error attempting to record. Please ensure your browser settings allow us to access your mic.", "error");
             return;
@@ -422,19 +431,23 @@ MixerUtil.toggleRecording = function(){
                 }
                 if(startRecording == 0){
 
-                    mixer.playPauseAll();
                     // start recording
-                    updateAnalysers();
-                    audioRecorder.clear();
-                    audioRecorder.record();
 
-                    startTimerEl.textContent="Press the space bar to stop recording";
+                    audioRecorder.record();
+                    setTimeout(function() {
+
+                        mixer.playPauseAll();
+                        updateAnalysers();
+
+                    },50);
+
+                    document.getElementById("startTimer").textContent="Press the space bar to stop recording";
                     countDownInfoEl.textContent = 'or recording will automatically end in';
                     $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
 
                 }
                 else{
-                    startTimerEl.textContent = "Start playing in " + startRecording + "...";
+                    document.getElementById("startTimer").textContent = "Start playing in " + startRecording + "...";
                 }
 
             }
@@ -477,3 +490,136 @@ MixerUtil.startTimer = function(duration, el) {
         }
     }, 1000);
 };
+
+
+///////
+
+MixerUtil.latencyBufferLength = 16384;
+MixerUtil.latencyThreshold = 0.125;  // -18dB
+
+
+MixerUtil.callibrateSystem = function(){
+
+    navigator.getUserMedia(
+        {audio:{optional:[{echoCancellation:false}]}}, MixerUtil.testLatency, function(e) {
+            console.log(e);
+        });
+}
+
+MixerUtil.endTest = function(outTimes, inTimes) {
+    if (inTimes.length === 0) {
+        console.log('No input has been detected. Have you connected an output to an input?');
+        return;
+    }
+
+    if (outTimes.length < inTimes.length) {
+        console.log(inTimes.length + ' signals were detected, but only ' + outTimes.length + ' were sent. Is there a lot of noise in your system? Try and keep background noise below -18dB.');
+        return;
+    }
+
+    if (outTimes.length > inTimes.length) {
+        console.log('Only ' + inTimes.length + ' signals were detected, where ' + outTimes.length + ' were sent. Have you got your input gain turned up enough?');
+        return;
+    }
+
+    console.log('outTimes: ' +outTimes + 'inTimes: ' + inTimes);
+
+    var latencyTimes = [];
+    var n = outTimes.length;
+
+    while (n--) {
+        latencyTimes[n] = inTimes[n] - outTimes[n];
+    }
+
+    var min = Math.min.apply(Math, latencyTimes);
+    var max = Math.max.apply(Math, latencyTimes);
+    var range = max - min;
+
+    if (range > 128) {
+        // That's a lot of variance in the resulting times. Looks a bit suspect.
+        console.log('There\'s a LOT of variance in those results. They could be dodgy. Are you waving a mic around? Keep still! Try running the test again.');
+        return;
+    }
+
+    console.log(min, max);
+
+    var n = latencyTimes.length;
+    var avg = 0;
+
+    while (n--) {
+        avg += latencyTimes[n] / latencyTimes.length;
+    }
+
+    console.log('Average round-trip latency samples:', avg, 'ms:', avg / 44100);
+
+    MixerUtil.latencyTime = (avg / 44100);
+    MixerUtil.latencyTimeSet
+    document.getElementById("startTimer").textContent="Callibration is complete!";
+
+    var latency = Math.round(avg);
+    //console.log(false;
+    console.log('latency : ' + latency);
+}
+
+MixerUtil.testLatency = function(stream) {
+
+    gain = audioContext.createGain();
+    realAudioInput = audioContext.createMediaStreamSource(stream);
+    realAudioInput.connect(gain);
+
+    var node = audioContext.createScriptProcessor(MixerUtil.latencyBufferLength, 1, 1);
+    var frame = -1;
+    var inputTimes = [];
+    var outputTimes = [];
+
+    // Keep a reference to the node around to avoid Chrome's garbage
+    // collection.
+    window.hfiuxw4i8mwxvhmlu = node;
+
+    node.onaudioprocess = function(e){
+        var inputBuffer = e.inputBuffer;
+        var outputBuffer = e.outputBuffer;
+        var inputSamples = inputBuffer.getChannelData(0);
+        var outputSamples = outputBuffer.getChannelData(0);
+        var first = false;
+
+        ++frame;
+
+        if (frame > 12) {
+            // Last frame. End the test...
+            MixerUtil.endTest(outputTimes, inputTimes);
+            gain.disconnect();
+            node.disconnect();
+        }
+
+        if (frame % 3 - 1 === 0) {
+            // Every third frame, give the samples an impulse
+            outputSamples[0] = 1;
+            outputSamples[1] = 1;
+            first = true;
+            outputTimes.push(MixerUtil.latencyBufferLength * frame + MixerUtil.latencyBufferLength);
+        }
+        else {
+            // The rest of the time send silence
+            outputSamples[0] = 0;
+            outputSamples[1] = 0;
+        }
+
+        var n = -1;
+        var l = inputSamples.length;
+
+        // Detect an impulse. Leave frame 0 out to avoid click noise.
+        if (frame > 0) {
+            while (++n < l) {
+                if (Math.abs(inputSamples[n]) > MixerUtil.latencyThreshold) {
+                    inputTimes.push(MixerUtil.latencyBufferLength * frame + n - MixerUtil.latencyBufferLength);
+                    // Dont detect any more than one peak per frame.
+                    return;
+                }
+            }
+        }
+    };
+
+    gain.connect(node);
+    node.connect(audioContext.destination);
+}

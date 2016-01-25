@@ -13,7 +13,7 @@ var uploadPic = function(profilePic, userDto){
 
         log.debug("image uploaded : " + profilePic);
 
-        mv(global.TEMPDIR + profilePic, global.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
+        mv(global.TEMPDIR + profilePic, process.env.UPLOADS_DIR + 'users/profile/' + userDto.profilePic, function (err) {
             if (err) {
                 log.debug('error uploading file: ' + err);
             }

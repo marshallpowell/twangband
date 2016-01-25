@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: web
+  name: web-controller
+spec:
+  replicas: 1
+  selector:
+    name: web
+  template:
+    metadata:
+      labels:
+        name: web
+    spec:
+      containers:
+      - name: web
+        image: gcr.io/marshallpowell/twang-web:latest
+        env:
+        - name: FB_CLIENTID
+          value: '1558893454364234'
+        - name: FB_CALLBACKURL
+          value: https://twangband.com/auth/facebook/callback
+        - name: FB_CLIENTSECRET
+          value: 1992cb3d2ab570277129e9f8911b63a4
+        - name: BASE_URL
+          value: http://twangband.com
+        - name: MONGO_URL
+          value: mongo
+        - name: MONGO_DB_NAME
+          value: twangband
+        - name: LOG_DIR
+          value: /logs/
+        - name: UPLOADS_DIR
+          value: /uploads/
+        - name: UPLOADS_BUCKET
+          value: dev-twangband
+        ports:
+        - containerPort: 3000
+          name: http-server
+        securityContext:
+          privileged: true
+        volumeMounts:
+            - name: dev-uploads-persistent-storage
+              mountPath: /data/db
+      volumes:
+        - name: dev-uploads-persistent-storage
+          gcePersistentDisk:
+            pdName: dev-uploads-disk
+            fsType: ext4

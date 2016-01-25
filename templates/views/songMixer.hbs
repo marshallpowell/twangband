@@ -233,10 +233,17 @@
             </button>
 
             <button id="brecordMix"
-                    onclick=" if(!AUDIO_INITIALIZED){initAudio();} else { MixerUtil.toggleRecording(this);}" type="button"
+                    onclick=" if(!AUDIO_INITIALIZED){initAudio(recordingDto);} else { MixerUtil.toggleRecording(this);}" type="button"
                     title="Click to start recording."
                     class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-record"></span> Record
+            </button>
+
+            <button id="bstop"
+                    onclick="callibrateSystem();"
+                    title="Stop playing"
+                    type="button" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-stop"></span> Callibrate
             </button>
 
            <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
@@ -287,6 +294,7 @@
 <script src="js/lib/models/SongDto.js"></script>
 <script src="js/lib/models/TrackDto.js"></script>
 <script src="js/lib/models/EditDto.js"></script>
+<script src="js/lib/models/RecordingDto.js"></script>
 <script src="js/lib/util/AppConstants.js"></script>
 <script src="js/lib/validation/SongValidation.js"></script>
 
@@ -296,26 +304,31 @@
 <script language="JavaScript">
 
     var mixer;
+    var recordingDto = new RecordingDto();
     var tags = {};
     var log = new Logger('DEBUG');
     var app = angular.module('app', []);
 
         {{#if songJSON}}
         var songDto = {{{songJSON}}};
+
+        recordingDto.userId = songDto.id;
+
         {{/if}}
 
         {{#unless songJSON}}
         var songDto = null;
+
         {{/unless}}
 
         {{#if user}}
         var user = {{{json user}}};
+        recordingDto.songId = user.id;
         {{/if}}
 
         {{#unless user}}
         var user = null;
         {{/unless}}
-
 
     $(document).ready(function () {
 

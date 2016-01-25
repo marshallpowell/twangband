@@ -123,7 +123,7 @@ var SongMixer = function(songDto){
         this.currentSongDto.name = $("#songName").val();
         this.currentSongDto.description = $("#songDescription").val();
         this.currentSongDto.tags = $("#songTags").val();
-
+        this.currentSongDto.isPublic = $("#songIsPublic").is(':checked');
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 

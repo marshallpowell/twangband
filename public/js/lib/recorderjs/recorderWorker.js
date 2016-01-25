@@ -1,7 +1,9 @@
 var recLength = 0,
   recBuffers = [],
   sampleRate,
-  numChannels;
+  numChannels,
+  ws,
+  recordingDto;
 
 this.onmessage = function(e){
   switch(e.data.command){
@@ -32,7 +34,25 @@ this.onmessage = function(e){
 function init(config){
   sampleRate = config.sampleRate;
   numChannels = config.numChannels;
+  recordingDto = config.recordingDto;
+
   initBuffers();
+  createWs();
+}
+
+function createWs(){
+  ws = new WebSocket('ws://localhost:3001');
+  ws.onmessage = function (event) {
+    console.log(JSON.stringify(event));
+    //updateStats(JSON.parse(event.data));
+  };
+
+  ws.onopen = function open() {
+    console.log('connected');
+    ws.send('--start-recording--', {mask: true});
+    ws.send(JSON.stringify(recordingDto), {mask: true});
+  };
+
 }
 
 function record(inputBuffer){
@@ -40,6 +60,23 @@ function record(inputBuffer){
     recBuffers[channel].push(inputBuffer[channel]);
   }
   recLength += inputBuffer[0].length;
+
+  ws.binaryType = "arraybuffer";
+  ws.send(convertFloat32ToInt16(inputBuffer[0]), {mask: true});
+}
+
+/**
+ * new function ref: https://subvisual.co/blog/posts/39-tutorial-html-audio-capture-streaming-to-node-js-no-browser-extensions
+ * @param buffer
+ * @returns {ArrayBuffer}
+ */
+function convertFloat32ToInt16(buffer) {
+  l = buffer.length;
+  buf = new Int16Array(l);
+  while (l--) {
+    buf[l] = Math.min(1, buffer[l])*0x7FFF;
+  }
+  return buf.buffer;
 }
 
 /**
@@ -62,6 +99,8 @@ function exportWavFromBuffers(type, buffers, totalLength){
  */
 function exportWAVArrayBuffer(type) {
 
+    ws.send('--end-recording--', {mask: true});
+    ws.close();
     console.log("exportWavArrayBuffer");
     var buffers = [];
     for (var channel = 0; channel < numChannels; channel++){

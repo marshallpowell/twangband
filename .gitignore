@@ -23,9 +23,12 @@ build/Release
 # Deployed apps should consider commenting this line out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules
+node_modules_local
 
 # Ignore .env configuration files
 .env
 
 # Ignore .DS_Store files on OS X
 .DS_Store
+
+gcloud_credentials.json

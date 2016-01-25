@@ -1,0 +1,13 @@
+*.md
+.gitignore
+.jshintrc
+Dockerfile
+uploads
+node_modules
+.openshift
+conversion
+docker
+.git
+.idea
+.DS_Store
+startLocalDev.sh
