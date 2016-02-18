@@ -348,9 +348,16 @@ var SongMixer = function(songDto){
         trackDto.blobData = blob;
 
         this.addTrack(trackDto, true);
-
         this.currentSongDto.tracks.push(trackDto);
+    };
 
+    /**
+     * adds new track that has been saved on server and compressed
+     * @param trackDto
+     */
+    this.addNewTrack = function(trackDto){
+        this.addTrack(trackDto, false);
+        this.currentSongDto.tracks.push(trackDto);
     };
 
 
@@ -364,7 +371,7 @@ var SongMixer = function(songDto){
         log.debug("adding track: " + JSON.stringify(trackDto));
         log.debug("adding original track: " + JSON.stringify(trackDto.originalTrackDto));
 
-       trackDto.trackMixer = new TrackMixer(this.audioContext);
+       trackDto.trackMixer = new TrackMixer('track_waveform'+trackDto.uiId, this.audioContext);
 
 
         var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='30' height='30' />";
@@ -427,12 +434,12 @@ var SongMixer = function(songDto){
             "</div>" +
             "</div>";
 
-        var waveDivId = 'track_waveform'+trackDto.uiId;
+
 
         var trackCanvas = document.createElement('div');
         trackCanvas.className = "col-md-10 trackData";
-        trackCanvas.id = waveDivId;
-
+        trackCanvas.id = trackDto.trackMixer.id;
+        trackCanvas.innerHTML +='<p id="'+trackDto.trackMixer.messageId+'"><span class="fa fa-spinner fa-pulse"></span> Loading...</p>'
 
         var trackRow =  document.createElement('div');
         trackRow.className="row trackRow";
@@ -453,10 +460,10 @@ var SongMixer = function(songDto){
         });
 
         if(isNewRecording){
-            trackDto.trackMixer.initBlob(waveDivId, trackDto.blobData);
+            trackDto.trackMixer.initBlob(trackDto.blobData);
         }
         else{
-            trackDto.trackMixer.initUrl(waveDivId, '/uploads/'+trackDto.originalTrackDto.fileName);
+            trackDto.trackMixer.initUrl('/uploads/'+trackDto.originalTrackDto.fileName);
         }
 
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC
@@ -492,19 +499,6 @@ var SongMixer = function(songDto){
 
     };
 
-    /**
-     *
-     */
-    this.removeTrack = function(){
-        log.trace("enter removeTrack");
-    };
 
-    /**
-     *
-     * @param userDto
-     */
-    this.addCollaborator = function(userDto){
-        log.trace("enter addCollaborator");
-    };
 
 };//end SongMixer

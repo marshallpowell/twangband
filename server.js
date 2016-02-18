@@ -90,8 +90,6 @@ app.use(expressSession({
 }));
 
 
-
-//TODO replace all globals with properties in the .env
 global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
 global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
@@ -101,7 +99,7 @@ global.FB_CALLBACKURL = process.env.FB_CALLBACKURL;
 global.FB_CLIENTSECRET = process.env.FB_CLIENTSECRET;
 global.BASE_URL = process.env.BASE_URL;
 global.ENV='local';
-//todo can this be used globally? log file should be a property
+
 global.logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({ level: 'debug', handleExceptions: true, humanReadableUnhandledException: true}),

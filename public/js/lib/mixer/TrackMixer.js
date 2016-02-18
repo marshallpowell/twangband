@@ -1,9 +1,11 @@
-var TrackMixer = function(audioContext){
+var TrackMixer = function(id, audioContext){
 
     var my = this;
     this.audioContext = audioContext;
     this.wavesurfer = null;
     this.volume=1;
+    this.id=id;
+    this.messageId=this.id+'_message';
 
     this.setVolume=function(vol){
         this.volume = vol;
@@ -12,13 +14,12 @@ var TrackMixer = function(audioContext){
 
     /**
      * Loads a URL into wavesurfer
-     * @param id
      * @param url
      * @returns {TrackMixer}
      */
-    this.initUrl = function(id, url){
+    this.initUrl = function(url){
 
-        this.createWaveSurfer(id);
+        this.createWaveSurfer(my.id);
         this.wavesurfer.load(url);
 
         return this;
@@ -26,17 +27,24 @@ var TrackMixer = function(audioContext){
 
     /**
      * Loads a blob into wavesurfer
-     * @param id
      * @param blob
      * @returns {TrackMixer}
      */
-    this.initBlob = function(id, blob){
+    this.initBlob = function(blob){
 
-        this.createWaveSurfer(id);
+        this.createWaveSurfer(my.id);
 
         this.wavesurfer.loadBlob(blob);
 
         return this;
+    };
+
+    this.showLoadingMessage = function(){
+        //my.wavesurfer.container.innerHTML +='<p id="'+my.messageId+'"><span class="fa fa-spinner fa-pulse"></span> Loading...</p>';
+    };
+
+    this.removeLoadingMessage = function(){
+        document.getElementById(my.messageId).remove();
     };
 
     this.createWaveSurfer=function(id){
@@ -53,6 +61,11 @@ var TrackMixer = function(audioContext){
             pixelRatio: 1,
             audioContext: my.audioContext
         });
+
+        //this.wavesurfer.on('loading', this.showLoadingMessage);
+        this.wavesurfer.on('ready', this.removeLoadingMessage);
+        this.wavesurfer.on('destroy', this.removeLoadingMessage);
+        this.wavesurfer.on('error', this.removeLoadingMessage);
 
         this.wavesurfer.setVolume(this.volume);
 

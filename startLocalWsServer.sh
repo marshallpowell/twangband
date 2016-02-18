@@ -10,7 +10,5 @@ export FB_CLIENTID=1558894697697443
 export FB_CALLBACKURL=https://local.twangband.com/auth/facebook/callback
 export FB_CLIENTSECRET=964ee6d698f152d81cc9e8dadaed50e3
 export BASE_URL=https://local.twangband.com
-export DISQUS_API_SECRET=o0gPCh8Z0pMaoHe7ZQpHXTTkPDr8sizCQdtuReaOhTSE3gJJQQ7Z5Rwo3Rz2WNpm
-export DISQUS_API_PUBLIC_KEY=MQsaIfAKop1vGYWcFYcL45ScnhzQ5L5h74IxnzTUe9ovGArKHHRfxMZ5jLx19f4W
 
-node server.js
+node wsServer.js

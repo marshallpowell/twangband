@@ -13,6 +13,7 @@ function UserDto(){
     this.password;
     this.confirmPassword;
     this.id;
+    this.profilePic;
     this.instruments=[];
     this.tags=[];
 

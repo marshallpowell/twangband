@@ -185,7 +185,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
-
                 </div>
             </div>
         </div>
@@ -194,6 +193,22 @@
             <div class="row">
                 <div id="startTimer" class="col-lg-12"></div>
                 <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span id="countdownTimer" style="background-color: #FFFF00"></span></div>
+            </div>
+        </div>
+
+        <div id="callibrationDialog" >
+            <div class="row">
+                <div id="callibrationDirections" class="col-lg-12">Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed</div>
+                <div id="callibrationResults" class="col-lg-12"></div>
+                <div id="" class="col-lg-12">
+
+                    <button id="bcallibrate"
+                            onclick="MixerUtil.callibrateSystem();"
+                            title="Callibrate System"
+                            type="button" class="btn btn-primary btn-sm">
+                        <span class="glyphicon glyphicon-time"></span> Callibrate Your System
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -233,17 +248,10 @@
             </button>
 
             <button id="brecordMix"
-                    onclick=" if(!AUDIO_INITIALIZED){initAudio(recordingDto);} else { MixerUtil.toggleRecording(this);}" type="button"
+                    onclick="initAudio();" type="button"
                     title="Click to start recording."
                     class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-record"></span> Record
-            </button>
-
-            <button id="bstop"
-                    onclick="callibrateSystem();"
-                    title="Stop playing"
-                    type="button" class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-stop"></span> Callibrate
             </button>
 
            <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
@@ -272,14 +280,82 @@
 
 </div>
 
-<div class="row">
-    <br />
-    <p align="center">
-        <a href="http://www.mozilla.org/en-US/" title="Download the Mozilla Firefox Web Browser" target="_blank"><img src="/img/firefoxLogo.png" alt="Download the Mozilla Firefox Web Browser" height="71" border="0" width="204"></a>&nbsp;&nbsp; <a href="https://www.google.com/intl/en/chrome/#cds" title="Download the Google Chrome Web Browser" target="_blank"><img src="/img/chromeLogo.png" alt="Download the Google Chrome Web Browser" height="69" border="0" width="251"></a>
-        <br />We currently only support Google Chrome and Firefox
+<div class="container">
+    <div class="row">
+        <div id="disqus_thread"></div>
+        <script>
+            /**
+             * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+             * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+             */
 
-    </p>
+            var disqus_config = function () {
+
+                this.page.url = '{{pageUrl}}';
+                this.page.identifier = '{{disqusTopicId}}';
+                this.page.remote_auth_s3 = '{{disqusAuth}}';
+                this.page.api_key = '{{DISQUS_API_PUBLIC_KEY}}';
+
+                // This adds the custom login/logout functionality
+                this.sso = {
+                    name:   "twangband",
+                    button:  "http://twangband.com/images/facebook_login.png",
+                    //icon:     "http://example.com/favicon.png",
+                    url:        "http://twangband.com/login/",
+                    logout:  "http://twangband.com/logout/",
+                    width:   "200",
+                    height:  "50"
+                };
+            };
+
+            (function() { // DON'T EDIT BELOW THIS LINE
+                var d = document, s = d.createElement('script');
+
+                s.src = '//twangband.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+
+
+    </div>
+
+    <div class="row">
+        <br />
+        <p align="center">
+            <a href="http://www.mozilla.org/en-US/" title="Download the Mozilla Firefox Web Browser" target="_blank"><img src="/img/firefoxLogo.png" alt="Download the Mozilla Firefox Web Browser" height="71" border="0" width="204"></a>&nbsp;&nbsp; <a href="https://www.google.com/intl/en/chrome/#cds" title="Download the Google Chrome Web Browser" target="_blank"><img src="/img/chromeLogo.png" alt="Download the Google Chrome Web Browser" height="69" border="0" width="251"></a>
+            <br />We currently only support Google Chrome and Firefox
+
+        </p>
+    </div>
 </div>
+<script language="JavaScript">
+{{#if songJSON}}
+var songDto = {{{songJSON}}};
+{{/if}}
+
+{{#unless songJSON}}
+var songDto = null;
+{{/unless}}
+
+{{#if user}}
+var user = {{{json user}}};
+{{/if}}
+
+{{#unless user}}
+var user = null;
+{{/unless}}
+</script>
+
+<script src="js/lib/models/SearchCriteriaDto.js"></script>
+<script src="js/lib/models/SongDto.js"></script>
+<script src="js/lib/models/TrackDto.js"></script>
+<script src="js/lib/models/EditDto.js"></script>
+<script src="js/lib/models/RecordingDto.js"></script>
+<script src="js/lib/models/RecordingResponseDto.js"></script>
+<script src="js/lib/util/AppConstants.js"></script>
+<script src="js/lib/validation/SongValidation.js"></script>
 
 <script src="js/lib/util/Logger.js"></script>
 <script src="/js/lib/recorderjs/recorder.js"></script>
@@ -290,45 +366,13 @@
 <script src="js/lib/mixer/MixerUtil.js"></script>
 <script src="js/lib/mixer/Mic.js"></script>
 
-<script src="js/lib/models/SearchCriteriaDto.js"></script>
-<script src="js/lib/models/SongDto.js"></script>
-<script src="js/lib/models/TrackDto.js"></script>
-<script src="js/lib/models/EditDto.js"></script>
-<script src="js/lib/models/RecordingDto.js"></script>
-<script src="js/lib/util/AppConstants.js"></script>
-<script src="js/lib/validation/SongValidation.js"></script>
-
-
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 
 <script language="JavaScript">
-
     var mixer;
-    var recordingDto = new RecordingDto();
     var tags = {};
     var log = new Logger('DEBUG');
     var app = angular.module('app', []);
-
-        {{#if songJSON}}
-        var songDto = {{{songJSON}}};
-
-        recordingDto.userId = songDto.id;
-
-        {{/if}}
-
-        {{#unless songJSON}}
-        var songDto = null;
-
-        {{/unless}}
-
-        {{#if user}}
-        var user = {{{json user}}};
-        recordingDto.songId = user.id;
-        {{/if}}
-
-        {{#unless user}}
-        var user = null;
-        {{/unless}}
 
     $(document).ready(function () {
 
@@ -448,7 +492,6 @@
     });
 
 
-
 </script>
 
 <!-- Modal -->
@@ -484,3 +527,7 @@
 
 
 <div id="trash" style="display:none"></div>
+
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+<script id="dsq-count-scr" src="//twangband.disqus.com/count.js" async></script>

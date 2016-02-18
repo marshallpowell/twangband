@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: websocket
+  name: websocket-controller
+spec:
+  replicas: 1
+  selector:
+    name: websocket
+  template:
+    metadata:
+      labels:
+        name: websocket
+    spec:
+      containers:
+      - name: websocket
+        image: gcr.io/marshallpowell/twang-web:latest
+        env:
+        - name: ENABLE_WEBSOCKETS
+          value: 'true'
+        - name: MONGO_URL
+          value: mongo
+        - name: MONGO_DB_NAME
+          value: twangband
+        - name: LOG_DIR
+          value: /logs/
+        - name: UPLOADS_DIR
+          value: /uploads/
+        - name: UPLOADS_BUCKET
+          value: dev-twangband
+        ports:
+        - containerPort: 3001
+          name: http-server
+        securityContext:
+          privileged: true

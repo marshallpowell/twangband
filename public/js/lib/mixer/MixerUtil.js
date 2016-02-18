@@ -11,8 +11,8 @@ MixerUtil.btn.record = 'brecordMix';
 MixerUtil.btn.saveSong = 'bsaveSong';
 MixerUtil.btn.searchCollaborators = 'bcollaborators';
 MixerUtil.buttonsIds=[];
-MixerUtil.latencyTimeSet=false;
-MixerUtil.latencyTime=0;
+MixerUtil.latencyTime=null;
+MixerUtil.recordingDto=null;
 
 for(var key in MixerUtil.btn){
     MixerUtil.buttonsIds.push(MixerUtil.btn[key]);
@@ -384,7 +384,15 @@ MixerUtil.toggleRecording = function(){
         countDownTimerEl.textContent='';
         recordingAnalyzerEl.style.display="none";
         modalXCloseEl.style.display="inline";
-        $(keyEventElement).off('keypress', MixerUtil.toggleRecording);
+
+        $(keyEventElement).off('keypress', function(){
+
+            alert("WTF");
+            MixerUtil.toggleRecording();
+        });
+
+
+
         $('#myModal').modal('toggle');
 
         //stop the equalizer
@@ -393,24 +401,27 @@ MixerUtil.toggleRecording = function(){
         clearInterval(MixerUtil.countdownTimer);
         // stop recording
         audioRecorder.stop();
-        audioRecorder.getBuffer( gotBuffers );
+        //audioRecorder.getBuffer( gotBuffers );
 
-    }
-    else if(!MixerUtil.latencyTimeSet){
-        MixerUtil.toggleNotification($('#recordingDialog'));
-        document.getElementById("startTimer").textContent="Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed";
-        document.getElementById('countdownInfo').textContent = "<a href='#' onclick='MixerUtil.callibrateSystem();'>Callibrate System</a>";
+        audioRecorder.endRecording(finishedProcessing);
 
     }
     else{
-        audioRecorder.clear();
+        console.log("start recording");
         if (!audioRecorder){
             $.notify("There was an error attempting to record. Please ensure your browser settings allow us to access your mic.", "error");
             return;
         }
+        if (MixerUtil.latencyTime==null){
+            $.notify("There was an error attempting to record. You need to re-callibrate your system before recording.", "error");
+            MixerUtil.toggleCallibrateDialog();
+            return;
+        }
+
 
         //start recording
         MixerUtil.isRecordingOn=true;
+
         //start the equalizer
         var startRecording = 6;
         var startTimerEl = document.getElementById("startTimer");
@@ -420,7 +431,17 @@ MixerUtil.toggleRecording = function(){
 
         MixerUtil.toggleNotification($('#recordingDialog'));
 
-        var maxTrackDuration = 60 * 3;
+        var maxTrackDuration = 180; //60 * 3;
+
+        $(keyEventElement).keydown( function(e) {
+
+            alert("WTF");
+            //MixerUtil.toggleRecording();
+
+        });
+
+
+        document.getElementById("startTimer").textContent="Connected!";
 
         setInterval(function(){
 
@@ -434,6 +455,7 @@ MixerUtil.toggleRecording = function(){
                     // start recording
 
                     audioRecorder.record();
+
                     setTimeout(function() {
 
                         mixer.playPauseAll();
@@ -441,9 +463,12 @@ MixerUtil.toggleRecording = function(){
 
                     },50);
 
+
                     document.getElementById("startTimer").textContent="Press the space bar to stop recording";
                     countDownInfoEl.textContent = 'or recording will automatically end in';
-                    $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
+                   // $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
+
+
 
                 }
                 else{
@@ -497,6 +522,9 @@ MixerUtil.startTimer = function(duration, el) {
 MixerUtil.latencyBufferLength = 16384;
 MixerUtil.latencyThreshold = 0.125;  // -18dB
 
+MixerUtil.toggleCallibrateDialog = function(){
+    MixerUtil.toggleNotification($('#callibrationDialog'));
+};
 
 MixerUtil.callibrateSystem = function(){
 
@@ -504,25 +532,27 @@ MixerUtil.callibrateSystem = function(){
         {audio:{optional:[{echoCancellation:false}]}}, MixerUtil.testLatency, function(e) {
             console.log(e);
         });
-}
+};
 
 MixerUtil.endTest = function(outTimes, inTimes) {
+
+    var elInfoId = 'callibrationResults';
     if (inTimes.length === 0) {
-        console.log('No input has been detected. Have you connected an output to an input?');
+        document.getElementById(elInfoId).textContent="No input has been detected. Have you connected an output to an input?";
         return;
     }
 
-    if (outTimes.length < inTimes.length) {
-        console.log(inTimes.length + ' signals were detected, but only ' + outTimes.length + ' were sent. Is there a lot of noise in your system? Try and keep background noise below -18dB.');
+    else if (outTimes.length < inTimes.length) {
+        document.getElementById(elInfoId).textContent=inTimes.length + ' signals were detected, but only ' + outTimes.length + ' were sent. Is there a lot of noise in your system? Try and keep background noise below -18dB.';
         return;
     }
 
-    if (outTimes.length > inTimes.length) {
-        console.log('Only ' + inTimes.length + ' signals were detected, where ' + outTimes.length + ' were sent. Have you got your input gain turned up enough?');
+    else if (outTimes.length > inTimes.length) {
+        document.getElementById(elInfoId).textContent='Only ' + inTimes.length + ' signals were detected, where ' + outTimes.length + ' were sent. Have you got your input gain turned up enough?';
         return;
     }
 
-    console.log('outTimes: ' +outTimes + 'inTimes: ' + inTimes);
+    log.debug('outTimes: ' +outTimes + 'inTimes: ' + inTimes);
 
     var latencyTimes = [];
     var n = outTimes.length;
@@ -537,11 +567,11 @@ MixerUtil.endTest = function(outTimes, inTimes) {
 
     if (range > 128) {
         // That's a lot of variance in the resulting times. Looks a bit suspect.
-        console.log('There\'s a LOT of variance in those results. They could be dodgy. Are you waving a mic around? Keep still! Try running the test again.');
+        document.getElementById(elInfoId).textContent='There is too much varience in the callibration. Please make sure you are in a quiet room, and the mic is still and try running the test again.';
         return;
     }
 
-    console.log(min, max);
+    log.debug(min, max);
 
     var n = latencyTimes.length;
     var avg = 0;
@@ -550,16 +580,15 @@ MixerUtil.endTest = function(outTimes, inTimes) {
         avg += latencyTimes[n] / latencyTimes.length;
     }
 
-    console.log('Average round-trip latency samples:', avg, 'ms:', avg / 44100);
+    log.debug('Average round-trip latency samples:', avg, 'ms:', avg / 44100);
 
-    MixerUtil.latencyTime = (avg / 44100);
-    MixerUtil.latencyTimeSet
-    document.getElementById("startTimer").textContent="Callibration is complete!";
 
-    var latency = Math.round(avg);
-    //console.log(false;
-    console.log('latency : ' + latency);
-}
+    MixerUtil.latencyTime=(avg / 44100);
+    document.getElementById(elInfoId).textContent="Callibration is complete! You may start recording now.";
+    MixerUtil.setCookie('systemLatency', (avg / 44100));
+
+    log.debug('latency : ' + MixerUtil.recordingDto.latency);
+};
 
 MixerUtil.testLatency = function(stream) {
 
@@ -622,4 +651,21 @@ MixerUtil.testLatency = function(stream) {
 
     gain.connect(node);
     node.connect(audioContext.destination);
-}
+};
+
+MixerUtil.setCookie = function(cname, cvalue) {
+    document.cookie = cname + "=" + cvalue + "; ";
+};
+
+MixerUtil.getCookie =function(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0)
+            console.log('found cookie with value: ' +c.substring(name.length, c.length));
+            return c.substring(name.length, c.length);
+    }
+    return null;
+};

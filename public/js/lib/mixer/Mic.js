@@ -65,7 +65,20 @@ function gotBuffers( buffers ) {
 
     track = new UiTrack(recIndex++, buffers[0]);
 
-    audioRecorder.exportWAVBufferArray( doneEncoding );
+    audioRecorder.endRecording(finishedProcessing);
+    //audioRecorder.exportWAVBufferArray( doneEncoding );
+}
+
+/**
+ * Called after recording has completed and song has finished processing on the server
+ * @param responseDto
+ */
+function finishedProcessing(responseDto){
+
+    setTimeout(function() {
+        console.log('finishedProcessing, adding new track: ' + JSON.stringify(responseDto));
+        mixer.addNewTrack(responseDto.track);
+    },1000);
 }
 /**
  * Called after the recording has completed and data has been encoded
@@ -157,21 +170,36 @@ function gotStream(stream) {
     analyserNode.fftSize = 2048;
     inputPoint.connect( analyserNode );
 
-    audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : newRecordingDto});
+    MixerUtil.recordingDto = new RecordingDto(user.id, songDto.id, MixerUtil.latencyTime);
+    audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : MixerUtil.recordingDto});
 
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;
     inputPoint.connect( zeroGain );
     zeroGain.connect( audioContext.destination );
 
-    MixerUtil.toggleRecording(document.getElementById('brecordMix'));
 
 }
 
-var AUDIO_INITIALIZED=false;
-var SYSTEM_CALLIBRATED=false;
-var newRecordingDto;
+function waitForWsConnection(){
 
+    if(audioRecorder.hasConnection()){
+        console.log("open toggleRecording");
+        MixerUtil.toggleRecording();
+    }
+    else if(Date.now() > wsWaitTimeOut){
+        alert("error connectiong to server");
+        return;
+    }
+    else{
+        audioRecorder.waitForConnection();
+
+        setTimeout(waitForWsConnection, 500);
+    }
+}
+
+var AUDIO_INITIALIZED=false;
+var wsWaitTimeOut;
 if (!navigator.getUserMedia)
     navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 if (!navigator.cancelAnimationFrame)
@@ -179,20 +207,41 @@ if (!navigator.cancelAnimationFrame)
 if (!navigator.requestAnimationFrame)
     navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-function initAudio(recordingDto) {
+function initAudio() {
 
-    newRecordingDto = recordingDto;
-    if(AUDIO_INITIALIZED){
+    console.log("enter initAudio....");
+    MixerUtil.latencyTime=MixerUtil.getCookie('systemLatency');
+    //for some reason the keypress event is binding to this function.
+    if(MixerUtil.isRecordingOn){
+        console.log('MixerUtil.isRecordingOn: ' + MixerUtil.isRecordingOn);
+        MixerUtil.toggleRecording();
         return;
+    }
+    else if(MixerUtil.latencyTime == null){
+        MixerUtil.toggleCallibrateDialog();
+        return;
+    }
+    else if(!AUDIO_INITIALIZED){
+        navigator.getUserMedia(
+            {audio:{optional:[{echoCancellation:false}]}}, gotStream, function(e) {
+                alert('Error getting audio');
+                console.log(e);
+            });
+
+        AUDIO_INITIALIZED=true;
+
+        setTimeout(function(){
+            var wsWaitTimeOut=Date.now()+5000;
+            waitForWsConnection()
+
+        },1000);
+    }
+    else{
+        console.log("again createn new audioRecorder......");
+        audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : MixerUtil.recordingDto});
+        waitForWsConnection()
     }
 
 
-    navigator.getUserMedia(
-        {audio:{optional:[{echoCancellation:false}]}}, gotStream, function(e) {
-            alert('Error getting audio');
-            console.log(e);
-        });
-
-    AUDIO_INITIALIZED=true;
 }
 

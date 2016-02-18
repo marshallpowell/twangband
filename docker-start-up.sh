@@ -10,4 +10,11 @@
 gcsfuse --key-file=/src/gcloud_credentials.json ${UPLOADS_BUCKET} /uploads
 
 
-node /src/server.js
+# Env says we're using SSL
+if [ -n "${ENABLE_WEBSOCKETS+1}" ] && [ "${ENABLE_WEBSOCKETS,,}" = "true" ]; then
+    echo "Enabling WEBSOCKETS SERVER..."
+    node /src/wsServer.js
+else
+    echo "Enabling HTTP SERVER..."
+    node /src/server.js
+fi

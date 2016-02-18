@@ -3,7 +3,10 @@ var recLength = 0,
   sampleRate,
   numChannels,
   ws,
-  recordingDto;
+  recordingDto,
+  responseDto,
+  wsCompletedResponseReceived = false,
+  killTime;
 
 this.onmessage = function(e){
   switch(e.data.command){
@@ -28,6 +31,12 @@ this.onmessage = function(e){
     case 'exportWavFromBuffers':
       exportWavFromBuffers(e.data.type, e.data.buffers, e.data.totalLength);
       break;
+    case 'endRecording':
+      endRecording();
+      break;
+    case 'getWebSocketResponse':
+      getWebSocketResponse();
+      break;
   }
 };
 
@@ -41,10 +50,17 @@ function init(config){
 }
 
 function createWs(){
+
   ws = new WebSocket('ws://localhost:3001');
+
   ws.onmessage = function (event) {
-    console.log(JSON.stringify(event));
-    //updateStats(JSON.parse(event.data));
+
+    console.log(event.data);
+
+    responseDto = JSON.parse(event.data);
+
+    wsCompletedResponseReceived = true;
+    ws.close();
   };
 
   ws.onopen = function open() {
@@ -93,14 +109,44 @@ function exportWavFromBuffers(type, buffers, totalLength){
 
   this.postMessage(audioBlob);
 }
+
+function endRecording(){
+
+  ws.send('--end-recording--', {mask: true});
+
+  killTime=Date.now()+5000;
+  var timedOut=false;
+  console.log("sent end command, killTime: " + killTime);
+
+  this.postMessage({command: 'getWebSocketResponse'});
+}
+/**
+ * New function which waits on the sockets response and returns it.
+ */
+function getWebSocketResponse(){
+
+  if(wsCompletedResponseReceived){
+    console.log(JSON.stringify(responseDto));
+    this.postMessage(responseDto);
+  }
+    else if(Date.now() > killTime){
+      responseDto = {};
+      responseDto.status='ERROR';
+      responseDto.message ='We are sorry but our system is being very slow for some reason';
+      this.postMessage(responseDto);
+  }
+  else{
+    this.postMessage({command: 'getWebSocketResponse'});
+  }
+
+
+}
 /**
  * New function which returns an ArrayBuffer after encoding
  * @param type
  */
 function exportWAVArrayBuffer(type) {
 
-    ws.send('--end-recording--', {mask: true});
-    ws.close();
     console.log("exportWavArrayBuffer");
     var buffers = [];
     for (var channel = 0; channel < numChannels; channel++){

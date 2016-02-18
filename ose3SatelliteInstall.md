@@ -110,7 +110,7 @@ You should now be able to access your OSE3 quick-starts from a http local server
 
   https://github.com/tayterz/openshift-playbooks
   
-  https://github.com/tayterz/openshift-playbooks/tree/master/playbooks/installation
+  
   
 
     

@@ -1,31 +1,38 @@
 (function(window){
 
-  var WORKER_PATH = '/js/lib/recorderjs/recorderWorker.js';
-
+  //var WORKER_PATH = '/js/lib/recorderjs/recorderWorker.js';
+  var WORKER_PATH = '/js/lib/mixer/MicWorker.js';
   var Recorder = function(source, cfg){
     var config = cfg || {};
     var bufferLen = config.bufferLen || 4096;
     var numChannels = config.numChannels || 2;
     var recordingDto = cfg.recordingDto;
+    var my = this;
+
+    this.wsConnected=false;
+
     this.context = source.context;
+      console.log("sample rate: " + this.context.sampleRate);
     this.node = (this.context.createScriptProcessor ||
                  this.context.createJavaScriptNode).call(this.context,
                  bufferLen, numChannels, numChannels);
     var worker = new Worker(config.workerPath || WORKER_PATH);
-console.log("sample rate: " + this.context.sampleRate);
+
     worker.postMessage({
       command: 'init',
       config: {
         sampleRate: this.context.sampleRate,
         numChannels: numChannels,
-        recordingDto: recordingDto
+        recordingDto: recordingDto,
+        baseUrl : window.location.host
       }
     });
 
     var recording = false,
-      currCallback;
+        currCallback;
 
     this.node.onaudioprocess = function(e){
+
       if (!recording) return;
       var buffer = [];
       for (var channel = 0; channel < numChannels; channel++){
@@ -50,7 +57,12 @@ console.log("sample rate: " + this.context.sampleRate);
     };
 
     this.stop = function(){
+
       recording = false;
+    };
+
+    this.hasConnection = function(){
+          return this.wsConnected;
     };
 
     this.clear = function(){
@@ -87,6 +99,29 @@ console.log("sample rate: " + this.context.sampleRate);
           });
       };
 
+      this.waitForConnection = function(){
+          worker.postMessage({
+              command: 'waitForConnection'
+          });
+      };
+
+      /**
+       * New function which exports an ArrayBuffer instead of a blob like the original
+       * @param cb callback function
+       * @param type - type of encoding
+       */
+      this.endRecording = function(cb, type){
+
+          console.log("enter endRecording");
+          this.stop();
+          currCallback = cb;
+          type = type || config.type || 'audio/wav';
+          if (!currCallback) throw new Error('Callback not set');
+          worker.postMessage({
+              command: 'endRecording',
+              type: type
+          });
+      };
     /**
      *
      * @param cb
@@ -107,8 +142,28 @@ console.log("sample rate: " + this.context.sampleRate);
     };
 
     worker.onmessage = function(e){
-      var blob = e.data;
-      currCallback(blob);
+
+        switch(e.data.command){
+            case 'waitForWebSocketResponse':
+                worker.postMessage({command: 'waitForWebSocketResponse'});
+                break;
+            case 'waitForConnection':
+                worker.postMessage({command: 'waitForConnection'});
+                break;
+            case 'hasConnection':
+                console.log('connection is up');
+                my.wsConnected=true;
+                break;
+            case 'errorConnecting':
+                this.wsConnected=false;
+                console.log('there was an error connecting to the server');
+                alert('there was an error connecting to the server');
+                break;
+            default:
+                var blob = e.data;
+                currCallback(blob);
+        }
+
     };
 
     source.connect(this.node);

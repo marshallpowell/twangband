@@ -25,6 +25,10 @@ spec:
           value: 1992cb3d2ab570277129e9f8911b63a4
         - name: BASE_URL
           value: http://twangband.com
+        - name: DISQUS_API_SECRET
+          value: o0gPCh8Z0pMaoHe7ZQpHXTTkPDr8sizCQdtuReaOhTSE3gJJQQ7Z5Rwo3Rz2WNpm
+        - name: DISQUS_API_PUBLIC_KEY
+          value: MQsaIfAKop1vGYWcFYcL45ScnhzQ5L5h74IxnzTUe9ovGArKHHRfxMZ5jLx19f4W
         - name: MONGO_URL
           value: mongo
         - name: MONGO_DB_NAME
