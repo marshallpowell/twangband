@@ -1,5 +1,31 @@
 var SongValidation = {};
 
+
+SongValidation.validateUiFormData = function(name, divId){
+
+    var errors = SongValidation.validateSongFieldData(name);
+
+    if(errors.length){
+        NotificationUtil.error(errors.join("\n<br/> * "), true, divId);
+        return false;
+    }
+    else{
+        return true;
+    }
+};
+
+SongValidation.validateSongFieldData = function(name){
+
+    var errors = [];
+
+    if(name.trim() == ""){
+
+        errors.push("Name cannot be blank");
+    }
+
+    return errors;
+};
+
 SongValidation.isAdmin = function(userDto, songDto){
 
     //if unsaved song

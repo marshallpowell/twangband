@@ -6,21 +6,10 @@
 <link type="text/css" rel="stylesheet" property="stylesheet" href="/styles/site/mixer.css" />
 
 <div class="container">
-	<div class="jumbotron">
 
-		<p><span class="mblue">twang</span><span class="mgreen">band</span> is where musicians from around the world play, record and mix their music together online.</p>
+		<h2>Play, record and share homegrown music with friends on <span class="mblue">twang</span><span class="mgreen">band</span>.</h2>
 
-
-        {{#if user}}
-            Welcome  {{user.firstName}}!  <img class="thumbnail" src="/uploads/users/profile/{{user.profilePic}}" />
-        {{/if}}
-        {{#unless user}}
-            <p><a href="/login" style="margin-right: 10px" class="btn btn-lg btn-primary">Sign in</a> <a href="/user/profile" style="margin-right: 10px" class="btn btn-lg btn-primary">Create an account</a></p>
-        {{/unless}}
 		<hr>
-
-
-	</div>
 </div>
 
 <div>

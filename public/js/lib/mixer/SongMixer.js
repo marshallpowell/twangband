@@ -24,7 +24,7 @@ var SongMixer = function(songDto){
         this.masterGainNode = this.audioContext.createGain();
         this.masterGainNode.connect(this.audioContext.destination);
 
-        MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, true);
+        //MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, true);
 
         if (songDto != null) {
 
@@ -47,8 +47,8 @@ var SongMixer = function(songDto){
         }
         else {
             log.debug("create a new SongDto");
-            MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, true);
-            MixerUtil.enableOrDisableButtons([MixerUtil.btn.saveSong,MixerUtil.btn.record,MixerUtil.btn.searchCollaborators], false);
+            //MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, true);
+            //MixerUtil.enableOrDisableButtons([MixerUtil.btn.saveSong,MixerUtil.btn.record,MixerUtil.btn.searchCollaborators], false);
             this.currentSongDto = new SongDto();
         }
 
@@ -125,6 +125,7 @@ var SongMixer = function(songDto){
         this.currentSongDto.tags = $("#songTags").val();
         this.currentSongDto.isPublic = $("#songIsPublic").is(':checked');
 
+
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 
             var songTrackDto = this.currentSongDto.tracks[i];
@@ -183,10 +184,16 @@ var SongMixer = function(songDto){
                 }
                 console.log("saved song: " + data);
 
-                $('#notificationBody').html("Saved Successfully. Refreshing Page");
-                $('#myModal').modal('toggle');
+                $('#savingModal').modal('toggle');
 
-                window.location.href="/songMixer?song="+data.id;
+                //we only need to refresh the page for a new song
+                if(mixer.currentSongDto.id==null){
+                    window.location.href="/songMixer?song="+data.id;
+                }
+                else{
+                    $.notify('Changes saved successfully', 'success');
+                }
+
 
             }
         });

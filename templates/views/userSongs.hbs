@@ -1,72 +1,49 @@
 {{!< default}}
 
-<div class="container">
+<div class="container" ng-app="app">
 
     <div class="row">
-        <div class="col-md-12 page-header"><h2>Songs I am collaborating on</h2></div>
-
-        {{#if collaboratedSongs}}
-            <div class="col-md-4 header">
-                Song Name
-            </div>
-            <div class="col-md-4 header">
-                Tags
-            </div>
-            <div class="col-md-4 header">
-                Date Created
-            </div>
-            {{#each collaboratedSongs}}
-                <div class="row">
-                    <div class="col-md-4">
-                        <a href="/songMixer?song={{_id}}">{{name}}</a>
-                    </div>
-                    <div class="col-md-4">
-                        {{tags}}
-                    </div>
-                    <div class="col-md-4">
-                        {{formatDate dateCreated}}
-
-                    </div>
-                </div>
-            {{/each}}
-        {{/if}}
-
-        {{#unless collaboratedSongs}}
-            You are not collaborating on any songs yet
-        {{/unless}}
+        <ul class="nav nav-pills">
+            <li {{#if mySongs}}class="active"{{/if}}><a href="/song/user?search=mySongs">My Songs</a></li>
+            <li {{#if collaborator}}class="active"{{/if}}><a href="/song/user?search=collaborator">My Collaborations</a></li>
+            <li {{#if myTracks}}class="active"{{/if}}><a href="/song/user?search=myTracks">My Tracks</a></li>
+            <li {{#if latest}}class="active"{{/if}}><a href="/song/user?search=latest">Latest Songs</a></li>
+            <li {{#if following}}class="active"{{/if}}><a href="/song/user?search=following">Musicians I follow</a></li>
+            <li {{#if favoriteSongs}}class="active"{{/if}}><a href="/song/user?search=favoriteSongs">Songs I Like</a></li>
+            <li {{#if keyword}}class="active"{{/if}}><a href="/song/user?search=keyword">Search Songs</a></li>
+        </ul>
     </div>
 
     <div class="row">
-        <div class="col-md-12 page-header"><h2>My Songs</h2></div>
-        {{#if songs}}
-            <div class="col-md-4 header">
-                Song Name
-            </div>
-            <div class="col-md-4 header">
-                Tags
-            </div>
-            <div class="col-md-4 header">
-                Date Created
-            </div>
-            {{#each songs}}
-                <div class="row">
-                    <div class="col-md-4">
-                       <a href="/songMixer?song={{_id}}">{{name}}</a>
-                    </div>
-                    <div class="col-md-4">
-                        {{tags}}
-                    </div>
-                    <div class="col-md-4">
-                        {{formatDate dateCreated}}
-
-                    </div>
-                </div>
-            {{/each}}
-        {{/if}}
-
-        {{#unless songs}}
-            You do not have any songs recorded yet
-        {{/unless}}
+        <div class="col-md-12 page-header"><h1>{{title}}</h1></div>
     </div>
+    {{#each searchResults}}
+        {{> songSearchResult searchResult=this}}
+    {{/each}}
+
+    {{#unless songs}}
+        <div class="row"><span class="searchNoInfo">No songs found...</span></div>
+    {{/unless}}
 
 </div>
+<script src="/js/lib/util/Logger.js"></script>
+<script src="/js/lib/util/SearchUtil.js"></script>
+<script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
+<script src="/js/lib/wavesurfer/wavesurfer.regions.js"></script>
+{{> songSearchWavJS songDtos=songs}}
+
+
+<script language="JavaScript">
+    var log = new Logger('DEBUG');
+    var app = angular.module('app', []);
+
+    app.controller('myCtrl', function ($scope) {
+
+       // console.log("setting scope variables with name: " + songDto.name + ', tags length: '+songDto.tags.length);
+        //$scope.songName = songDto.name;
+
+
+
+    });
+
+</script>

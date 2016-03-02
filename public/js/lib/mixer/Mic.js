@@ -217,7 +217,7 @@ function initAudio() {
         MixerUtil.toggleRecording();
         return;
     }
-    else if(MixerUtil.latencyTime == null){
+    else if(MixerUtil.latencyTime == null || MixerUtil.latencyTime.length==0){
         MixerUtil.toggleCallibrateDialog();
         return;
     }

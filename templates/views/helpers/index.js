@@ -98,7 +98,18 @@ HbsHelpers.formatDate = function(date){
 		return "Unknown";
 	}
 	// These methods need to return a String
-	return date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
+	return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear();
 };
 
+HbsHelpers.truncateText = function(string, length){
+
+	if(string.length >  length){
+		return string.trim().substring(0, length)+'...';
+	}
+	else{
+		return string.trim();
+	}
+	// These methods need to return a String
+
+};
 

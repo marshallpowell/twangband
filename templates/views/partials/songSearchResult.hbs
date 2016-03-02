@@ -1,0 +1,44 @@
+<div class="row"">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song={{searchResult.song.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">{{searchResult.song.name}}</button></div>
+         </div>
+        <div class="row">
+        {{#if searchResult.song.fileName}}
+            <div class="col-md-12">
+                <div id="wav_{{searchResult.song.id}}"></div>
+                <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
+                    <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_{{searchResult.song.id}}">
+                        <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
+                    </button>
+                </div>
+            </div>
+        {{/if}}
+        {{#unless searchResult.song.fileName}}
+            <div class="col-md-12 searchNoInfo">
+                No Tracks Recorded Yet
+            </div>
+        {{/unless}}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="searchResultSubTitle1"> musicians </div>
+
+            {{#each searchResult.musicians}}
+            <div style='float:left;'>
+                {{> musicianInfoIcon userDto=this}}
+            </div>
+            {{/each}}
+
+
+        <div class="searchResultSubContent1">created: {{formatDate searchResult.song.dateCreated}}</div>
+        {{#if searchResult.tags}}
+
+        {{#each searchResult.tags}}
+            {{> tagInfo tag=this}}
+        {{/each}}
+
+        {{/if}}
+        <div class="searchResultSubContent2" style="background:rgb(248, 247, 243)">{{truncateText searchResult.song.description 100}}</div>
+    </div>
+</div>

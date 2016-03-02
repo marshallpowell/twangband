@@ -17,6 +17,8 @@ global.APP_ROOT = path.resolve(__dirname);
 global.APP_LIB = APP_ROOT + "/lib/";
 global.PUBLIC_APP_LIB = APP_ROOT + "/public/js/lib/";
 
+
+//see this thread for error MongoError: topology was destroyed -- http://stackoverflow.com/questions/30909492/mongoerror-topology-was-destroyed
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var mongoUrl=process.env.MONGO_SERVICE_HOST + ':' + process.env.MONGO_SERVICE_PORT + '/' + process.env.MONGO_DB_NAME;
 var trackService = require(APP_LIB + 'service/TrackService');

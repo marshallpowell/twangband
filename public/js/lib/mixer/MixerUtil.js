@@ -98,7 +98,19 @@ MixerUtil.updateTrackLabel = function(value, index){
 
 };
 
+MixerUtil.createOrUpdateSongInfo = function(){
 
+    var errors = SongValidation.validateSongFieldData(document.getElementById('songName').value);
+
+    if(errors.length){
+        NotificationUtil.error(errors.join("\n<br/> * "), true, 'songFormNotifications');
+        return;
+    }
+    else{
+        mixer.saveSong();
+        return;
+    }
+};
 
 /**
  *
@@ -217,6 +229,7 @@ MixerUtil.validateAndNotify = function(el, role){
             return false;
         }
     }
+
 
     return true;
 };
@@ -386,8 +399,6 @@ MixerUtil.toggleRecording = function(){
         modalXCloseEl.style.display="inline";
 
         $(keyEventElement).off('keypress', function(){
-
-            alert("WTF");
             MixerUtil.toggleRecording();
         });
 
@@ -433,12 +444,6 @@ MixerUtil.toggleRecording = function(){
 
         var maxTrackDuration = 180; //60 * 3;
 
-        $(keyEventElement).keydown( function(e) {
-
-            alert("WTF");
-            //MixerUtil.toggleRecording();
-
-        });
 
 
         document.getElementById("startTimer").textContent="Connected!";
@@ -584,10 +589,10 @@ MixerUtil.endTest = function(outTimes, inTimes) {
 
 
     MixerUtil.latencyTime=(avg / 44100);
-    document.getElementById(elInfoId).textContent="Callibration is complete! You may start recording now.";
+    document.getElementById(elInfoId).innerHTML="<b>Callibration is complete! You may start recording now.</b>" + '<button type="button" class="btn btn-primary btn-sm" id="modalCloseBtn" data-dismiss="modal">Close</button>';
     MixerUtil.setCookie('systemLatency', (avg / 44100));
 
-    log.debug('latency : ' + MixerUtil.recordingDto.latency);
+    log.debug('latency : ' + MixerUtil.recordingDto.latencyTime);
 };
 
 MixerUtil.testLatency = function(stream) {

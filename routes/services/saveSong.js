@@ -1,6 +1,7 @@
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var TrackService = require(APP_LIB + 'service/TrackService');
+var validationUtil = require(global.PUBLIC_APP_LIB+'validation/ValidationUtil.js');
 
 exports = module.exports = function (req, res) {
 
@@ -14,6 +15,9 @@ exports = module.exports = function (req, res) {
     log.debug("enter saveSong with songDto: " + JSON.stringify(req.body.song));
 
     var songDto = JSON.parse(req.body.song);
+    songDto.name = validationUtil.escapeHtml(songDto.name);
+    songDto.description = validationUtil.escapeHtml(songDto.description);
+
     //songDto.creatorId = req.user.id;
     songDto._currentUser = req.user;
 

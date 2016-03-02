@@ -54,7 +54,9 @@ global.COOKIE_SECRET = '-q)0od#zKS"|M9NsKTwc;c`-`m7VI?y/}ztgLM4*v;C1Su9s]h{d77"e
 
 var app = express();
 app.set('views', __dirname+'/templates/views');
-app.engine('hbs', expressHbs({extname:'hbs', defaultLayout:'default.hbs',layoutsDir: __dirname + '/templates/views/layouts', helpers : helpers}));
+var hbs = expressHbs.create({extname:'hbs', defaultLayout:'default.hbs',layoutsDir: __dirname + '/templates/views/layouts', helpers : helpers, partialsDir: [__dirname + '/templates/views/partials/']});
+
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.use(cookieParser()); //cookie: { secure: false } set to true above for SSL
 app.use(flash());

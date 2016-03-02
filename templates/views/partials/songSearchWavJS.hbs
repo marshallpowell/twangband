@@ -1,0 +1,25 @@
+<script language="JavaScript">
+
+    var wavesurfers = (wavesurfers)? wavesurfers : [];
+
+    {{#each songDtos}}
+    {{#if fileName}}
+        wavesurfers['{{id}}'] = WaveSurfer.create({
+            container: '#wav_{{id}}',
+            waveColor: '#1989D4',
+            progressColor: '#2BAD1D ',
+            scrollParent: false,
+            interact: false,
+            height: 75
+        });
+
+        wavesurfers['{{id}}'].load('/uploads/{{fileName}}');
+
+        document.getElementById('play_{{id}}').addEventListener('click', function (e) {
+            wavesurfers['{{id}}'].playPause();
+        });
+
+    {{/if}}
+
+    {{/each}}
+</script>

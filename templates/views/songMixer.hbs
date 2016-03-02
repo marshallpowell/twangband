@@ -7,38 +7,40 @@
 
 
         <div id="songInfo">
-            <div class="col-sm-12" style="text-align: center">
-                {{#if songJSON}}
-                <div class="row">
-                    <div id="songWav"></div>
+
+            {{#if songJSON}}
+            <div class="row">
+                <div id="songWav"></div>
+            </div>
+            <div class="row">
+                <div class="controls">
+                    <button class="btn btn-primary btn-sm" data-action="back">
+                        <i class="glyphicon glyphicon-step-backward"></i>
+                        Backward
+                    </button>
+
+                    <button class="btn btn-primary btn-sm" data-action="play">
+                        <i class="glyphicon glyphicon-play"></i>
+                        Play
+                        /
+                        <i class="glyphicon glyphicon-pause"></i>
+                        Pause
+                    </button>
+
+                    <button class="btn btn-primary btn-sm" data-action="stop">
+                        <i class="glyphicon glyphicon-stop"></i> Stop
+                    </button>
+
+                    <button class="btn btn-primary btn-sm" data-action="forth">
+                        <i class="glyphicon glyphicon-step-forward"></i>
+                        Forward
+                    </button>
+
                 </div>
-                <div class="row">
-                    <div class="controls">
-                        <button class="btn btn-primary btn-sm" data-action="back">
-                            <i class="glyphicon glyphicon-step-backward"></i>
-                            Backward
-                        </button>
+            </div>
+            {{/if}}
+            <div class="row">
 
-                        <button class="btn btn-primary btn-sm" data-action="play">
-                            <i class="glyphicon glyphicon-play"></i>
-                            Play
-                            /
-                            <i class="glyphicon glyphicon-pause"></i>
-                            Pause
-                        </button>
-
-                        <button class="btn btn-primary btn-sm" data-action="stop">
-                            <i class="glyphicon glyphicon-stop"></i> Stop
-                        </button>
-
-                        <button class="btn btn-primary btn-sm" data-action="forth">
-                            <i class="glyphicon glyphicon-step-forward"></i>
-                            Forward
-                        </button>
-
-                    </div>
-                </div>
-                {{/if}}
                 <h3>
                     {{#if songJSON}}
                         Update your song information
@@ -49,9 +51,13 @@
                     {{/unless}}
                 </h3>
             </div>
-
             <div class="row">
+                <div id="songFormNotifications"></div>
+            </div>
+            <div class="row">
+
                 <div class="form-group">
+
                         <label for="songName">Song Name</label>
                         <input type="text" class="form-control" name="Song Name" id="songName" ng-model="songName"
                                placeholder="Enter a name for this song"/>
@@ -71,7 +77,7 @@
                         </select>
                 </div>
                 <div class="modal-footer" style="padding-top: 5px; text-align:center;">
-                        <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" id="modalSaveBtn" onClick="MixerUtil.createOrUpdateSongInfo();">Save</button>
                 </div>
 
             </div>
@@ -198,10 +204,12 @@
 
         <div id="callibrationDialog" >
             <div class="row">
-                <div id="callibrationDirections" class="col-lg-12">Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed</div>
+                <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60" height="60" /></div>
+                <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed</div>
+            </div>
+            <div class="row">
                 <div id="callibrationResults" class="col-lg-12"></div>
                 <div id="" class="col-lg-12">
-
                     <button id="bcallibrate"
                             onclick="MixerUtil.callibrateSystem();"
                             title="Callibrate System"
@@ -214,6 +222,7 @@
 
     </div>
 
+    {{#if songJSON}}
     <div class="row">
         <div id="masterTools" class="row">
 
@@ -277,18 +286,9 @@
 
     </div>
 
-
-</div>
-
-<div class="container">
-    <div class="row">
+    <div class="row" style="background-color: #fff">
         <div id="disqus_thread"></div>
         <script>
-            /**
-             * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-             * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-             */
-
             var disqus_config = function () {
 
                 this.page.url = '{{pageUrl}}';
@@ -318,10 +318,23 @@
             })();
         </script>
 
+    </div>
+    {{/if}}
+
+    {{#unless songJSON}}
+    <div class="row"  style="background-color: #fff; text-align:center">
+        <h1>Create a new Song</h1>
+      <h5>Before you start recording a new song, you will need to perform the following steps:</h5>
+
+        <p>
+            <button type="button" class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Calibrate your system for recording (you will need a mic & speakers)</button><br /><br />
+            <button type="button" class="btn btn-primary btn-lg"onclick="MixerUtil.toggleEditSong()">Give your song a name and description</button>
+        </p>
 
     </div>
+    {{/unless}}
 
-    <div class="row">
+    <div class="row"  style="background-color: #fff">
         <br />
         <p align="center">
             <a href="http://www.mozilla.org/en-US/" title="Download the Mozilla Firefox Web Browser" target="_blank"><img src="/img/firefoxLogo.png" alt="Download the Mozilla Firefox Web Browser" height="71" border="0" width="204"></a>&nbsp;&nbsp; <a href="https://www.google.com/intl/en/chrome/#cds" title="Download the Google Chrome Web Browser" target="_blank"><img src="/img/chromeLogo.png" alt="Download the Google Chrome Web Browser" height="69" border="0" width="251"></a>
@@ -329,6 +342,12 @@
 
         </p>
     </div>
+
+</div>
+
+<div class="container">
+
+
 </div>
 <script language="JavaScript">
 {{#if songJSON}}
@@ -421,7 +440,7 @@ var user = null;
 
 
         if(songDto == null){
-            MixerUtil.toggleEditSong();
+          //  MixerUtil.toggleEditSong();
         }
 
 
@@ -501,7 +520,7 @@ var user = null;
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <span class="mblue">music</span><span class="mgreen">ilo</span>
+                <span class="mblue">twang</span><span class="mgreen">band</span>
                 <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
 
             </div>

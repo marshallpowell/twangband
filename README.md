@@ -52,8 +52,8 @@
     docker run  \
       -e ENABLE_SSL=true \
       -e ENABLE_BASIC_AUTH=false \
-      -e TARGET_SERVICE=192.168.1.13:3000 \
-      -e WS_TARGET_SERVICE=192.168.1.13:3001 \
+      -e TARGET_SERVICE=192.168.99.1:3000 \
+      -e WEBSOCKET_TARGET_SERVICE=192.168.99.1:3001 \
       --name=nginx \
       -v /Users/marshallpowell/dev/sslCert/twangband.com.crt:/etc/secrets/proxycert \
       -v /Users/marshallpowell/dev/sslCert/twangband.com.key:/etc/secrets/proxykey \
