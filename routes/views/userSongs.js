@@ -1,5 +1,6 @@
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
+var trackDao = require(APP_LIB + 'dao/TrackDao');
 var userDao = require(APP_LIB + 'dao/UserDao');
 var searchService = require(APP_LIB + 'service/SearchService');
 var Q = require('q');
@@ -33,10 +34,18 @@ exports = module.exports = function(req, res) {
         return deferred.promise;
     };
 
-    var successCb = function (songs) {
+    var successSongSearchCb = function (songs) {
         searchService.createSongSearchResult(songs).then(function(searchResults){
-            locals['searchResults'] = searchResults;
+            locals['songSearchResults'] = searchResults;
             locals['songs'] = songs;
+            res.render('userSongs');
+        });
+    };
+
+    var successTrackSearchCb = function (tracks) {
+        searchService.createTrackSearchResult(tracks).then(function(searchResults){
+            locals['trackSearchResults'] = searchResults;
+            locals['tracks'] = tracks;
             res.render('userSongs');
         });
     };
@@ -66,7 +75,7 @@ exports = module.exports = function(req, res) {
             updateLocals('Songs you have been invited to collaborate on', req.query.search)
             isLoggedIn();
             songDao.findUserCollaboratorSongs(req.user.id).then(
-                successCb,
+                successSongSearchCb,
                 failureCb
             );
         }
@@ -77,7 +86,7 @@ exports = module.exports = function(req, res) {
             isLoggedIn();
 
             songDao.findUserSongs(req.user.id).then(
-                successCb,
+                successSongSearchCb,
                 failureCb
             );
 
@@ -87,8 +96,8 @@ exports = module.exports = function(req, res) {
             updateLocals('All of your tracks', req.query.search);
             isLoggedIn();
 
-            songDao.findLatestPublicSongs().then(
-                successCb,
+            trackDao.findUserTracks(req.user).then(
+                successTrackSearchCb,
                 failureCb
             );
         }
@@ -98,7 +107,7 @@ exports = module.exports = function(req, res) {
             isLoggedIn();
 
             songDao.findLatestPublicSongs().then(
-                successCb,
+                successSongSearchCb,
                 failureCb
             );
         }
@@ -108,7 +117,7 @@ exports = module.exports = function(req, res) {
             isLoggedIn();
 
             songDao.findLatestPublicSongs().then(
-                successCb,
+                successSongSearchCb,
                 failureCb
             );
         }
@@ -119,17 +128,33 @@ exports = module.exports = function(req, res) {
                 var tags = [];
                 tags.push(req.query.tags)
                 songDao.findPublicSongsByTags(tags).then(
-                    successCb,
+                    successSongSearchCb,
                     failureCb
                 );
+            }
+            else{
+                var keywords = req.query.keywords || '';
+
+                updateLocals('Song Search for: '+keywords, req.query.search);
+
+                if(keywords.length){
+                    songDao.searchPublicSongs(keywords).then(
+                        successSongSearchCb,
+                        failureCb
+                    );
+                }
+                else{
+                    res.render('userSongs');
+                }
+
             }
 
         }
         //TODO latest public songs
         else {
-            updateLocals('Our latest songs', req.query.search);
+            updateLocals('Our latest songs', 'latest');
             songDao.findLatestPublicSongs(0,20).then(
-                successCb,
+                successSongSearchCb,
                 failureCb
             );
         }

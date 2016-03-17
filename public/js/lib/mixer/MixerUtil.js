@@ -86,6 +86,22 @@ MixerUtil.toggleCollaboratorDialog = function (closeMe){
 };
 
 
+MixerUtil.updateNewSongMessage = function(){
+
+    if(document.getElementById('createNewSong')){
+
+        var latency = MixerUtil.getCookie('systemLatency');
+
+        if(latency){
+            document.getElementById('checkLatencyMessage').style.display='none';
+            document.getElementById('createNewSongMessage').style.display='block';
+        }
+        else{
+            document.getElementById('checkLatencyMessage').style.display='block';
+            document.getElementById('createNewSongMessage').style.display='none';
+        }
+    }
+};
 
 /**
  *
@@ -260,9 +276,7 @@ MixerUtil.searchCollaborators = function(){
 
     var searchDto = {
         type : "USER",
-        firstName : document.getElementById("searchFirstName").value,
-        lastName : document.getElementById("searchLastName").value,
-        email : document.getElementById("searchEmail").value
+        keywords : document.getElementById("collaboratorSearchKeywords").value
     };
 
     $.ajax({
@@ -444,10 +458,6 @@ MixerUtil.toggleRecording = function(){
 
         var maxTrackDuration = 180; //60 * 3;
 
-
-
-        document.getElementById("startTimer").textContent="Connected!";
-
         setInterval(function(){
 
             if(--startRecording >= 0){
@@ -589,10 +599,13 @@ MixerUtil.endTest = function(outTimes, inTimes) {
 
 
     MixerUtil.latencyTime=(avg / 44100);
-    document.getElementById(elInfoId).innerHTML="<b>Callibration is complete! You may start recording now.</b>" + '<button type="button" class="btn btn-primary btn-sm" id="modalCloseBtn" data-dismiss="modal">Close</button>';
+    document.getElementById(elInfoId).innerHTML="<h3>Callibration is complete! You may start recording now.</h3>";
+    document.getElementById('callibrateDialogFooter').innerHTML = '<button type="button" class="btn btn-primary btn-sm" id="modalCloseBtn" data-dismiss="modal">Close</button>';
+    MixerUtil.updateNewSongMessage();
+
     MixerUtil.setCookie('systemLatency', (avg / 44100));
 
-    log.debug('latency : ' + MixerUtil.recordingDto.latencyTime);
+    log.debug('latency : ' + MixerUtil.latencyTime);
 };
 
 MixerUtil.testLatency = function(stream) {

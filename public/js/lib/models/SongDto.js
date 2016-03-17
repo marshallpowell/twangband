@@ -14,6 +14,8 @@ function SongDto(){
     this.removed; //TODO
     this.isPublic=true;
     this.tags=[];
+    this.allTags=[];
+    this.allMusicians=[];
 
     this._currentUser; //_ = transient
 

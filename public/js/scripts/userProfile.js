@@ -12,23 +12,19 @@ UserProfile.saveUser = function(){
     user.email = $("#email").val();
     user.userName = $("#userName").val();
     user.password = $("#password").val();
-    user.confirmPassword = $("#confirmPassword").val();
     user.id = $("#id").val();
+    user.socialId = $("#socialId").val();
     user.tags = $("#tags").val();
 
-    console.log("here 1");
     var errors = UserValidation.validateUser(user);
 
-    console.log("here 2");
     if(errors.length){
 
-        var message = "there were errors with your submission:\n<br /> * "+errors.join("\n<br/> * ");
+        var message = "There were errors with your submission:\n * "+errors.join("\n * ");
 
-        console.log("here 3");
-        NotificationUtil.error(message);
+        $.notify(message, {autoHide: false, arrowShow:true, className: 'error'});
     }
     else{
-        console.log("here 4");
         var formData = new FormData();
         formData.append("user", JSON.stringify(user));
 
@@ -46,12 +42,21 @@ UserProfile.saveUser = function(){
             success : function(data){
 
                 if(data.errors.length){
-                    var message = "there were errors with your submission:\n<br /> * "+data.errors.join("\n<br/> * ");
-                    NotificationUtil.error(message);
+                    var message = "There were errors with your submission:\n<br /> * "+data.errors.join("\n * ");
+                    //NotificationUtil.error(message);
+                    $.notify(message, {autoHide: false, arrowShow:true, className: 'error'});
                 }
                 else{
-                    NotificationUtil.success("Your profile has been created/updated. Click <b></b><a href='/login'>here</a></b> to sign in");
-                    $("#id").val(data.user.id);
+
+                    if($("#id").val().length){
+                       // NotificationUtil.success("Your profile has been updated.");
+                        $.notify('Your profile has been updated.', 'success');
+                    }
+                    else{
+                        NotificationUtil.success("Your profile has been created. Click <b></b><a href='/login'>here</a></b> to sign in");
+                        $("#id").val(data.user.id);
+                    }
+
                 }
 
 

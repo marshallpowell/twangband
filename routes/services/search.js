@@ -26,7 +26,7 @@ exports = module.exports = function(req, res) {
         logger.debug("search type is for a user");
 
 
-        userDao.findUser(searchDto).then( function(users){
+        userDao.searchUsers(searchDto.keywords).then( function(users){
 
             logger.debug("found users list size: " + users.length);
 

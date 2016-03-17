@@ -145,6 +145,7 @@
 
         switch(e.data.command){
             case 'waitForWebSocketResponse':
+                $('#savingModal').modal('show');
                 worker.postMessage({command: 'waitForWebSocketResponse'});
                 break;
             case 'waitForConnection':
@@ -160,6 +161,7 @@
                 alert('there was an error connecting to the server');
                 break;
             default:
+                $('#savingModal').modal('hide');
                 var blob = e.data;
                 currCallback(blob);
         }

@@ -22,23 +22,28 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="searchResultSubTitle1"> musicians </div>
+        <div class="row">
+            <div class="searchResultSubTitle1"> musicians </div>
 
-            {{#each searchResult.musicians}}
-            <div style='float:left;'>
-                {{> musicianInfoIcon userDto=this}}
-            </div>
+                {{#each searchResult.musicians}}
+                <div style='float:left;'>
+                    {{> musicianInfoIcon userDto=this}}
+                </div>
+                {{/each}}
+
+
+            <div class="searchResultSubContent1">created: {{formatDate searchResult.song.dateCreated}}</div>
+            {{#if searchResult.song.allTags}}
+
+            {{#each searchResult.song.allTags}}
+                {{> tagInfo tag=this}}
             {{/each}}
 
-
-        <div class="searchResultSubContent1">created: {{formatDate searchResult.song.dateCreated}}</div>
-        {{#if searchResult.tags}}
-
-        {{#each searchResult.tags}}
-            {{> tagInfo tag=this}}
-        {{/each}}
-
+            {{/if}}
+        </div>
+        {{#if searchResult.song.description}}
+            <div class="row searchResultSubContent2">{{truncateText searchResult.song.description 100}}</div>
         {{/if}}
-        <div class="searchResultSubContent2" style="background:rgb(248, 247, 243)">{{truncateText searchResult.song.description 100}}</div>
+
     </div>
 </div>

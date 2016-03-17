@@ -13,7 +13,6 @@ function SongTrackDto(){
 
     this.name;
     this.originalTrackId=null;
-    this.originalTrackCreatorId;
     this.originalTrackDto={};
     this.volume;
     this.gain;

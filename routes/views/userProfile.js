@@ -1,9 +1,9 @@
-var logger = require(APP_LIB + 'util/Logger').getLogger(__filename);
+var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var userDao = require(APP_LIB + 'dao/UserDao');
 
 exports = module.exports = function(req, res) {
 
-    logger.debug("enter userSongs with user id: " + JSON.stringify(req.user));
+    log.debug("enter userProfile with user id: " + JSON.stringify(req.user));
 
         locals = res.locals;
 
@@ -13,24 +13,35 @@ exports = module.exports = function(req, res) {
 
     //if not logged in don't show errors
 
-    if(!req.user){
+    if(req.newUser){
+        log.debug("new user being created: " + JSON.stringify(req.newUser));
+        locals['user'] = req.newUser;
         res.render('userProfile');
         return;
     }
+    else if(!req.user){
+        res.render('userProfile');
+        return;
+    }
+    else{
 
-//55d0e7ba362d156128264e70
-    //req.user.id
-    userDao.findUserById(req.user.id).then(
-        function(user){
-            logger.debug("found user:  " + JSON.stringify(user));
-            locals['user'] = user;
-            // Render the view
-            res.render('userProfile');
-        },
-        function(err){
-            logger.debug("error retrieving songs: " + err);
-            // Render the view
-            res.render('userProfile');
-        });
+        userDao.findUserById(req.user.id).then(
+            function(user){
+                log.debug("found user:  " + JSON.stringify(user));
+                locals['user'] = user;
+                // Render the view
+                res.render('userProfile');
+            },
+            function(err){
+                log.debug("error retrieving songs: " + err);
+                // Render the view
+                res.render('userProfile');
+            });
+    }
+
+
+
+
+
 
 };

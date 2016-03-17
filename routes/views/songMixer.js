@@ -6,6 +6,13 @@ exports = module.exports = function(req, res) {
 
     var locals = res.locals;
 
+    if (!req.user) {
+
+        req.flash('error', 'You must be logged in to view this page');
+        res.render('signin');
+        return;
+    }
+
     // Set locals
     locals.section = 'mixer';
 

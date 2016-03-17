@@ -78,6 +78,7 @@
                 </div>
                 <div class="modal-footer" style="padding-top: 5px; text-align:center;">
                         <button type="button" class="btn btn-default" id="modalSaveBtn" onClick="MixerUtil.createOrUpdateSongInfo();">Save</button>
+                        <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
@@ -126,24 +127,16 @@
                     </div>
                 </div>
 
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="searchFirstName" ng-model="searchFirstName"
-                           placeholder="First Name"/>
-                </div>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="searchLastName" ng-model="searchLastName"
-                           placeholder="Last Name"/>
-                </div>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="searchEmail" ng-model="searchEmail"
-                           placeholder="email"/>
-                </div>
-                <div class="col-sm-3">
-                    <button id="btn_searchCollaborators" type="button" class="btn btn-default btn-lg"
-                            onclick="MixerUtil.searchCollaborators();">
-                        <span class="glyphicon glyphicon-search"
-                              style="vertical-align:middle; display: inline-block"></span>
-                    </button>
+                <div class="col-sm-12">
+                    <form role="search" onsubmit="MixerUtil.searchCollaborators(); return false;">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="collaboratorSearchKeywords"
+                                   placeholder="search musicians by name, email, instrument, genre... "/>
+                             <div class="input-group-btn">
+                                 <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                              </div>
+                        </div>
+                    </form>
                 </div>
 
             </div>
@@ -209,14 +202,14 @@
             </div>
             <div class="row">
                 <div id="callibrationResults" class="col-lg-12"></div>
-                <div id="" class="col-lg-12">
-                    <button id="bcallibrate"
-                            onclick="MixerUtil.callibrateSystem();"
-                            title="Callibrate System"
-                            type="button" class="btn btn-primary btn-sm">
-                        <span class="glyphicon glyphicon-time"></span> Callibrate Your System
-                    </button>
-                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; text-align:center;" id="callibrateDialogFooter">
+                <button id="bcallibrate"
+                        onclick="MixerUtil.callibrateSystem();"
+                        title="Callibrate System"
+                        type="button" class="btn btn-primary btn-lg">
+                    <span class="glyphicon glyphicon-time"></span> Callibrate Your System
+                </button>
             </div>
         </div>
 
@@ -322,26 +315,24 @@
     {{/if}}
 
     {{#unless songJSON}}
-    <div class="row"  style="background-color: #fff; text-align:center">
-        <h1>Create a new Song</h1>
-      <h5>Before you start recording a new song, you will need to perform the following steps:</h5>
-
-        <p>
-            <button type="button" class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Calibrate your system for recording (you will need a mic & speakers)</button><br /><br />
-            <button type="button" class="btn btn-primary btn-lg"onclick="MixerUtil.toggleEditSong()">Give your song a name and description</button>
-        </p>
-
+    <div class="row"  style="background-color: #fff;" id="createNewSong">
+        <div class="col-sm-2"></div>
+         <div class="col-sm-8">
+            <h1>Create a new Song</h1>
+            <div id="checkLatencyMessage" style="display: none">
+                <h3>Before you can begin recording, you must calibrate your system for recording (you will need a mic & speakers)</h3>
+                <button id='btnCheckLatencyDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin</button><br /><br />
+            </div>
+             <div id="createNewSongMessage" style="display: none">
+                <button id='btnCreateNewSongDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleEditSong()">Give your song a name and description</button>
+            </div>
+         </div>
+        <div class="col-sm-2"></div>
     </div>
+
+
     {{/unless}}
 
-    <div class="row"  style="background-color: #fff">
-        <br />
-        <p align="center">
-            <a href="http://www.mozilla.org/en-US/" title="Download the Mozilla Firefox Web Browser" target="_blank"><img src="/img/firefoxLogo.png" alt="Download the Mozilla Firefox Web Browser" height="71" border="0" width="204"></a>&nbsp;&nbsp; <a href="https://www.google.com/intl/en/chrome/#cds" title="Download the Google Chrome Web Browser" target="_blank"><img src="/img/chromeLogo.png" alt="Download the Google Chrome Web Browser" height="69" border="0" width="251"></a>
-            <br />We currently only support Google Chrome and Firefox
-
-        </p>
-    </div>
 
 </div>
 
@@ -395,6 +386,7 @@ var user = null;
 
     $(document).ready(function () {
 
+
         //attach onChange event handler to all form elements
         $('input').change(function(){
             MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
@@ -440,7 +432,7 @@ var user = null;
 
 
         if(songDto == null){
-          //  MixerUtil.toggleEditSong();
+            MixerUtil.updateNewSongMessage();
         }
 
 
@@ -455,7 +447,7 @@ var user = null;
             $scope.songName = songDto.name;
             $scope.songDescription = songDto.description;
             $scope.songIsPublic = songDto.isPublic;
-            $scope.songTags = [];//songDto.tags;
+            $scope.songTags = [];
 
             if(songDto.fileName){
 
@@ -489,10 +481,17 @@ var user = null;
             }
 
 
-            for(var i=0; i < songDto.tags.length; i++){
-                $scope.songTags.push({id : songDto.tags[i], name : songDto.tags[i]});
-                console.log('tag name: ' + $scope.songTags[i].name);
+            if(songDto.tags.length){
+
+                for(var i=0; i < songDto.tags.length; i++){
+                    $scope.songTags.push({id : songDto.tags[i], name : songDto.tags[i]});
+                    console.log('tag name: ' + $scope.songTags[i].name);
+                }
             }
+            else{
+                $scope.songTags.push({id : '', name : ''});
+            }
+
 
         }
         else{

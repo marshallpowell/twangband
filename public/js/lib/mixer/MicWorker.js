@@ -119,7 +119,7 @@ function endRecording(){
     console.log("enter endRecording, socket status is: "+ws.readyState);
     ws.send('--end-recording--', {mask: true});
 
-    killTime=Date.now()+5000;
+    killTime=Date.now()+10000;
     console.log("sent end command, killTime: " + killTime);
 
     this.postMessage({command: 'waitForWebSocketResponse'});

@@ -28,16 +28,54 @@ var initPassport = function(req, res, next){
 
 var redirectHome = function(req, res, next){
 
-    if(req.user.firstLogin){
-        res.redirect("/user/profile");
+    log.debug('enter redirectHome');
+
+    if(req.newUser){
+        next();
     }
     else{
         res.locals.user = req.user;
-
+        log.debug('existing user, redirect to homepage.');
         res.redirect("/");
+        return;
     }
 
 };
+
+var processFacebookLogin = function(req, res, next){
+
+    passport.authenticate('facebook', function(err, user, info) {
+
+        log.debug('facebook has authenticated user: ' + JSON.stringify(user));
+
+        if (err) { return next(err); }
+
+        if (!user) { return res.redirect('/login'); }
+
+        if(user.firstLogin){
+
+            log.debug('new social user, needs to complete profile');
+            req.newUser = user;
+            next();
+        }
+        else{
+            log.debug('existing social user, redirect to homepage.');
+            req.user = user;
+            res.locals.user = user;
+
+
+            req.logIn(user, function(err) {
+                if (err) { return next(err); }
+                return res.redirect("/");
+            });
+
+        }
+
+    })(req, res, next);
+
+};
+
+
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
@@ -65,8 +103,8 @@ exports = module.exports = function(app) {
     app.get('/user/profile/', middleware.requireHTTPS, routes.views.userProfile);
     app.post('/user/save', uploads, routes.services.saveProfile);
 
-    app.get('/auth/facebook', passport.authenticate('facebook'));
-    app.get('/auth/facebook/callback', [initPassport, passport.authenticate('facebook'), redirectHome]);
+    app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
+    app.get('/auth/facebook/callback', [initPassport, processFacebookLogin, routes.views.userProfile]);
     app.post('/auth/local', passport.authenticate('local', {successRedirect : '/', failureRedirect : '/login', failureFlash: true}));
 
     app.all('/songMixer', middleware.requireHTTPS, routes.views.songMixer);
@@ -114,7 +152,6 @@ exports = module.exports = function(app) {
     });
 
     passport.deserializeUser(function(user, done) {
-
         done(null, user);
     });
 

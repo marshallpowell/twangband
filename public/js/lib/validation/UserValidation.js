@@ -17,12 +17,9 @@ UserValidation.validateUser = function(user){
 
         errors.push("Email cannot be blank");
     }
-    if(!user.id && user.password.trim() == ""){
+    if((!user.id && !user.socialId) && user.password.trim() == ""){
 
         errors.push("Password cannot be blank");
-    }
-    else if(user.confirmPassword != user.password){
-        errors.push("Passwords must match, password: " + user.password + ", cp: " + user.confirmPassword);
     }
 
     return errors;

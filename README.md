@@ -68,20 +68,48 @@
 
 ## Gcloud Dev Env
 
-### Docker commands for gcloud
+#### Kubernetes Cluster Info
+    #switch to dev cluster:
+    gcloud container clusters get-credentials dev-cluster --zone us-east1-b
+
+## Gcloud Prod Env
+       
+#### Kubernetes Cluster Info
+    #switch to prod cluster
+    gcloud container clusters get-credentials prod-cluster --zone us-central1-c
+
+## Docker commands for gcloud
 Push a image to gcloud
 
     gcloud docker push gcr.io/marshallpowell/mongo-server
 
-### Kubernetes commands
+## Kubernetes commands
 
-#### Show ENV info
+    #show cluster info: 
+    kubectl cluster-info
+    
+    #show all pods
+    kubectl get pods
+    
+    #to delete/add a replication controller, for instance if you needed to update the docker image, you could run the below (there are better ways to do this with versioning...)
+     kubectl delete rc web-controller
+     kubectl create -f dev-web-controller.yaml
+     
+     #show logs for a given pod
+     kubectl logs websocket-controller-ow7lp
+
+    # show environment info:
     kubectl exec web-controller-v0.0.1-c6241 env
     #shows....
     KUBERNETES_PORT_443_TCP_PORT=443
     MONGO_PORT_27017_TCP_ADDR=10.11.250.216
     NGINX_SSL_PROXY_SERVICE_PORT_HTTPS=443
     ....
+    
+    # create a secrets file for use in a cluster (this is where ssl cert info is currently stored)
+    kubectl create -f ./prod-secrets.yaml
+    # show the current secrets files in a cluster
+    kubectl get secrets
 
 #### Example create for services, replication controllers, secrets
 
@@ -89,7 +117,7 @@ Push a image to gcloud
     kubectl create -f dev-mongo-controller.yaml
 
 #### Example create disks
-the zone needs to be the same as the container
+the zone needs to be the same as the container (this can also be done through the console)
 
     gcloud compute disks create dev-mongodb-disk --zone us-east1-b —-size 10GB
 

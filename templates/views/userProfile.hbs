@@ -13,9 +13,9 @@
     <form class="form-horizontal" role="form" id="userForm">
         <div class="row">
             <!-- left column -->
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <div class="text-center">
-                    <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar img-circle" alt="avatar">
+                    <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar" alt="avatar">
                     <h6>Upload a different photo...</h6>
 
                     <input type="file" class="form-control" name="profileImg" id="profileImg"/>
@@ -23,12 +23,13 @@
             </div>
 
             <!-- edit form column -->
-            <div class="col-md-9 personal-info">
+            <div class="col-md-7 personal-info">
 
-                <h3>Personal info</h3>
+                <h2>Your info</h2>
 
 
                 <input type="hidden" name="id" id="id" value="{{user.id}}"/>
+                <input type="hidden" name="socialId" id="socialId" value="{{user.socialId}}"/>
 
                 <div class="form-group">
                     <label control-label">First name:</label>
@@ -66,12 +67,6 @@
                         <input class="form-control" type="password" id="password" name="password" value="{{password}}">
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label">Confirm Password:</label>
-                        <input class="form-control" type="password" id="confirmPassword" name="confirmPassword"
-                               value="{{password}}">
-                    </div>
-
                 {{/unless}}
 
                 <div class="form-group">
@@ -89,6 +84,13 @@
 
 
                     <input type="reset" class="btn btn-default" value="Cancel">
+
+                    {{#unless user}}
+                        <h2>Do you have a Facebook account?</h2>
+                        <div class='social_logins'>
+                            <a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
+                        </div>
+                    {{/unless}}
                 </div>
 
             </div>

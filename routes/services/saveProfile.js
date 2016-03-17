@@ -1,7 +1,7 @@
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var userDao = require(APP_LIB + 'dao/UserDao');
 var userValidation = require(global.PUBLIC_APP_LIB+'validation/UserValidation.js');
-
+var Q = require('q');
 var mv = require('mv');
 var path = require('path');
 
@@ -22,6 +22,52 @@ var uploadPic = function(profilePic, userDto){
     else {
         log.debug("no image uploaded");
     }
+};
+
+var createUser = function(userDto, profilePic){
+
+    var deferred = Q.defer();
+    var data = {};
+    data.errors = [];
+
+    userDao.createUser(userDto).then(function (userDto) {
+
+        uploadPic(profilePic, userDto);
+        data.user = userDto;
+        deferred.resolve(data);
+
+    }, function (err) {
+        log.error("error saving new user: " + err);
+        data.errors.push("There was an error creating your profile, please try back later");
+        deferred.resolve(data);
+
+    });
+
+    return deferred.promise;
+};
+
+
+var createSocialUser = function(userDto, profilePic){
+
+    var deferred = Q.defer();
+    var data = {};
+    data.errors = [];
+
+    userDao.createSocialUser(userDto).then(function (userDto) {
+
+        uploadPic(profilePic, userDto);
+        data.user = userDto;
+
+        deferred.resolve(data);
+
+    }, function (err) {
+        log.error("error saving new user: " + err);
+        data.errors.push("There was an error creating your profile, please try back later");
+        deferred.resolve(data);
+
+    });
+
+    return deferred.promise;
 };
 
 exports = module.exports = function(req, res) {
@@ -45,7 +91,7 @@ exports = module.exports = function(req, res) {
         return;
     }
 
-    //add new track data into the song
+
     var profilePic = null;
     for (var key in req.files) {
         log.debug("uploaded file is: " + req.files[key].name);
@@ -88,28 +134,21 @@ exports = module.exports = function(req, res) {
         //ensure email is unique
         userDao.isUniqueEmail(userDto).then(function (isUnique) {
 
-
             if (isUnique) {
                 log.debug('email is good, create user for: ' + JSON.stringify(userDto));
-                userDao.createUser(userDto).then(function (userDto) {
 
-                    log.debug("created user now check for profile pic");
+                if(userDto.socialId){
+                    createSocialUser(userDto).then(function(data){
+                        log.debug('returning user data');
+                        res.json(data);
+                    });
+                }
+                else{
+                    createUser(userDto).then(function(data){
+                        res.json(data);
+                    });
+                }
 
-                    log.debug("userDto: " + JSON.stringify(userDto));
-
-                    log.debug("profilePic: " + profilePic);
-
-                    uploadPic(profilePic, userDto);
-
-                    data.user = userDto;
-                    res.json(data);
-
-                }, function (err) {
-                    log.debug("error saving new user: " + err);
-                    data.errors.push("There was an error creating your profile, please try back later");
-
-                    res.json(data);
-                })
 
             }
             else {

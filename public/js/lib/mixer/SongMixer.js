@@ -128,7 +128,7 @@ var SongMixer = function(songDto){
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 
-            var songTrackDto = this.currentSongDto.tracks[i];
+            var songTrackDto = Object.create(this.currentSongDto.tracks[i]);
             songTrackDto.trackMixer=null;
             if(!songTrackDto.removed || songTrackDto.originalTrackDto !== undefined) {
 
