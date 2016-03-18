@@ -1,5 +1,18 @@
 {{!< default}}
 
+<script type="text/javascript">
+    WebFontConfig = {
+        google: { families: [ 'Caveat+Brush::latin' ] }
+    };
+    (function() {
+        var wf = document.createElement('script');
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+    })(); </script>
+
 <div class="container">
     <div class="row" style="text-align:center">
         <h2>Play, record and share homegrown music with friends on <span class="mblue">twang</span><span class="mgreen">band</span>.</h2>
@@ -10,19 +23,19 @@
             <div class="row" style="height: 352px">
                 <img src="/img/guitarPlayer.png" />
              </div>
-            <div class="row mblue homeNarrativeBlue">Arthel lives in Virginia and plays guitar</div>
+            <div class="row homeNarrativeBlue" style="font-family: caveat brush">[ Arthel lives in Virginia and plays guitar ]</div>
         </div>
         <div class="col-md-4">
             <div class="row" style="height: 352px">
                 <img src="/img/banjoPlayer.png" />
             </div>
-            <div class="row homeNarrativeGreen">Maybelle lives in Colorado and plays banjo</div>
+            <div class="row homeNarrativeGreen">[ Maybelle lives in Colorado and plays banjo ]</div>
         </div>
         <div class="col-md-4">
-            <div class="row" style="height: 352px">
+            <div class="row" style="height: 352px; vertical-align: middle">
                 <img src="/img/frontPageComputer.png" />
             </div>
-            <div class="row homeNarrativeBlue">They record songs together online at twangband.com</div>
+            <div class="row homeNarrativeBlue">[ They record songs together online at twangband.com ]</div>
         </div>
     </div>
 

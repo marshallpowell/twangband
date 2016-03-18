@@ -279,7 +279,7 @@
 
     </div>
 
-    <div class="row" style="background-color: #fff">
+    <div class="row" style="background-color: #fff; padding-top: 10px;">
         <div id="disqus_thread"></div>
         <script>
             var disqus_config = function () {
@@ -318,13 +318,29 @@
     <div class="row"  style="background-color: #fff;" id="createNewSong">
         <div class="col-sm-2"></div>
          <div class="col-sm-8">
-            <h1>Create a new Song</h1>
+
             <div id="checkLatencyMessage" style="display: none">
                 <h3>Before you can begin recording, you must calibrate your system for recording (you will need a mic & speakers)</h3>
-                <button id='btnCheckLatencyDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin</button><br /><br />
+                <button id='btnCheckLatencyDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin</button>
             </div>
-             <div id="createNewSongMessage" style="display: none">
-                <button id='btnCreateNewSongDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleEditSong()">Give your song a name and description</button>
+             <div id="createNewSongMessage" class="row" style="display: none">
+
+                 <form role="search" onsubmit="SearchUtil.searchByKeywords(document.getElementById('searchTracksBox').value); return false;">
+                     <div class="form-group form-inline">
+                         <label control-label"><h1>To create a new song from scratch</h1></label>
+                         <button id='btnCreateNewSongDialog' type="button" class="btn btn-primary" onclick="MixerUtil.toggleEditSong()">Click here</button>
+                     </div>
+
+                     <div class="form-group ">
+                         <label control-label"><h1>Or search for existing tracks to start from</h1></label>
+                         <div class="input-group">
+                             <input type="text" class="form-control" placeholder="Search for tracks..." name="keywords" id="searchTracksBox">
+                             <div class="input-group-btn">
+                                 <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                             </div>
+                         </div>
+                     </div>
+                 </form>
             </div>
          </div>
         <div class="col-sm-2"></div>

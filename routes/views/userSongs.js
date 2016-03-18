@@ -101,6 +101,15 @@ exports = module.exports = function(req, res) {
                 failureCb
             );
         }
+        else if (req.query.search == 'tracks') {
+            updateLocals('Track Search for: ', req.query.search);
+            isLoggedIn();
+
+            trackDao.findUserTracks(req.user).then(
+                successTrackSearchCb,
+                failureCb
+            );
+        }
         //TODO songs user has liked
         else if (req.query.search == 'favoriteSongs') {
             updateLocals('These are songs you have liked', req.query.search);
@@ -121,7 +130,7 @@ exports = module.exports = function(req, res) {
                 failureCb
             );
         }
-        else if (req.query.search == 'keyword') {
+        else if (req.query.search == 'songs') {
 
             if(req.query.tags){
                 updateLocals('Song Search by tags', req.query.search);

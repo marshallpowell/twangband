@@ -91,12 +91,14 @@ MixerUtil.updateNewSongMessage = function(){
     if(document.getElementById('createNewSong')){
 
         var latency = MixerUtil.getCookie('systemLatency');
-
-        if(latency){
+console.log('latency check: ' + latency);
+        if(latency.length){
+            console.log('first block');
             document.getElementById('checkLatencyMessage').style.display='none';
             document.getElementById('createNewSongMessage').style.display='block';
         }
         else{
+            console.log('else block');
             document.getElementById('checkLatencyMessage').style.display='block';
             document.getElementById('createNewSongMessage').style.display='none';
         }
@@ -599,11 +601,11 @@ MixerUtil.endTest = function(outTimes, inTimes) {
 
 
     MixerUtil.latencyTime=(avg / 44100);
-    document.getElementById(elInfoId).innerHTML="<h3>Callibration is complete! You may start recording now.</h3>";
-    document.getElementById('callibrateDialogFooter').innerHTML = '<button type="button" class="btn btn-primary btn-sm" id="modalCloseBtn" data-dismiss="modal">Close</button>';
+    MixerUtil.setCookie('systemLatency', (avg / 44100));
     MixerUtil.updateNewSongMessage();
 
-    MixerUtil.setCookie('systemLatency', (avg / 44100));
+    document.getElementById(elInfoId).innerHTML="<h3>Callibration is complete! You may start recording now.</h3>";
+    document.getElementById('callibrateDialogFooter').innerHTML = '<button type="button" class="btn btn-primary btn-sm" id="modalCloseBtn" data-dismiss="modal">Close</button>';
 
     log.debug('latency : ' + MixerUtil.latencyTime);
 };

@@ -16,9 +16,11 @@
             <div class="col-md-5">
                 <div class="text-center">
                     <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar" alt="avatar">
-                    <h6>Upload a different photo...</h6>
 
-                    <input type="file" class="form-control" name="profileImg" id="profileImg"/>
+                    <div class="form-group form-inline">
+                        <label control-label">Upload a different photo:</label>
+                        <input type="file" class="form-control" name="profileImg" id="profileImg"/>
+                    </div>
                 </div>
             </div>
 
@@ -48,7 +50,7 @@
                 <div class="form-group">
                     <label class="control-label">Create tags for instruments and music you play </label>&nbsp;<i>(hit enter after each tag)</i>
                     <br />
-                    <select name="tags" id="tags" multiple>
+                    <select name="tags" id="tags"  multiple>
 
                         {{#each user.tags}}
                             <option value="{{this}}">{{this}}</option>

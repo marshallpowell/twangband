@@ -33,8 +33,8 @@ exports.initLocals = function(req, res, next) {
     locals.user = req.user;
 
 	locals.navLinks = [
-		{ label: 'Our Songs',		key: 'songs',		href: '/song/user' },
-        { label: 'Start Recording',		key: 'mixer',		href: '/songMixer' }
+		{ label: 'Our Music',		key: 'songs',		href: '/music' },
+        { label: 'Create A Song',		key: 'mixer',		href: '/songMixer' }
 
 	];
 	
