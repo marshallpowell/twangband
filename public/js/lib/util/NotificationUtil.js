@@ -34,7 +34,7 @@ NotificationUtil.notify = function(message, alertClass, appendMessage, divId){
  * @param divId (optional)
  */
 NotificationUtil.error = function(message, appendMessage, divId){
-    NotificationUtil.notify(message, "alert-danger", true, divId);
+    NotificationUtil.notify(message, "alert-danger", appendMessage, divId);
 };
 
 /**

@@ -2,8 +2,8 @@ var method = SongDto.prototype;
 
 function SongDto(){
     
-    this.name;
-    this.description;
+    this.name='';
+    this.description='';
     this.id=null;
     this.tracks = [];
     this.collaborators = [];

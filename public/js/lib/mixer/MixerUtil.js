@@ -189,6 +189,7 @@ MixerUtil.createNewSongFromTrack = function(){
     newSongDto.description = document.getElementById('newSongDescription').value;
 
     var trackDto = mixer.getTrackByUiId(MixerUtil.selectedTrackUiId);
+    alert(JSON.stringify(trackDto));
     newSongDto.tracks.push(trackDto);
 
     var formData = new FormData();

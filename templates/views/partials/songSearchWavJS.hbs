@@ -1,25 +1,29 @@
 <script language="JavaScript">
 
-    var wavesurfers = (wavesurfers)? wavesurfers : [];
+    $(document).ready(function () {
 
-    {{#each songDtos}}
-    {{#if fileName}}
-        wavesurfers['{{id}}'] = WaveSurfer.create({
-            container: '#wav_{{id}}',
-            waveColor: '#1989D4',
-            progressColor: '#2BAD1D ',
-            scrollParent: false,
-            interact: false,
-            height: 75
-        });
+        var wavesurfers = (wavesurfers) ? wavesurfers : [];
 
-        wavesurfers['{{id}}'].load('/uploads/{{fileName}}');
+        {{#each songDtos}}
+            {{#if fileName}}
+                wavesurfers['{{id}}'] = WaveSurfer.create({
+                    container: '#wav_{{id}}',
+                    waveColor: '#1989D4',
+                    progressColor: '#2BAD1D ',
+                    scrollParent: false,
+                    interact: false,
+                    height: 75
+                });
 
-        document.getElementById('play_{{id}}').addEventListener('click', function (e) {
-            wavesurfers['{{id}}'].playPause();
-        });
+                wavesurfers['{{id}}'].load('/uploads/{{fileName}}');
 
-    {{/if}}
+                document.getElementById('play_{{id}}').addEventListener('click', function (e) {
+                    wavesurfers['{{id}}'].playPause();
+                });
 
-    {{/each}}
+            {{/if}}
+
+        {{/each}}
+    });
+
 </script>

@@ -84,33 +84,37 @@
             </div>
         </div>
 
+
+        <!--
         <div id="newSongFromTrack"  class="modalDialogForm">
 
-            <div class="form-group row">
-                <div class="col-sm-4">
-                    <label for="newSongName">Song Name</label>
-                </div>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" id="newSongName"
-                           placeholder="Enter a name for this song"/>
-                </div>
-                <div class="col-sm-4">
-                    <label for="newSongDescription">Description</label>
-                </div>
-                <div class="col-sm-8">
-                                <textarea class="form-control" id="newSongDescription"
-                                          placeholder="Enter a description for this song"></textarea>
-                </div>
-
+            <div class="row">
+                    <h2>Create a new song with this track</h2>
             </div>
-            <div class="modal-footer">
 
-                <button id="btn_createNewSongFromTrack" type="button" class="btn btn-default btn-lg"
+            <div class="form-group row">
+
+                <label for="songName">Song Name</label>
+                <input type="text" class="form-control" name="Song Name" id="newSongName"
+                       placeholder="Enter a name for this song"/>
+            </div>
+
+            <div class="form-group row">
+
+                <label for="songName">Description</label>
+                <input type="text" class="form-control" name="Song Name" id="newSongDescription"
+                       placeholder="Enter a description for this song"/>
+            </div>
+
+            <div class="modal-footer" style="padding-top: 5px; text-align:center;">
+
+                <button id="btn_createNewSongFromTrack" type="button" class="btn btn-primary"
                         onclick="MixerUtil.createNewSongFromTrack();">
                     Create a new song with this track
                 </button>
             </div>
         </div>
+        -->
 
         <div id="searchUsers"  class="modalDialogForm">
 
@@ -325,10 +329,10 @@
             </div>
              <div id="createNewSongMessage" class="row" style="display: none">
 
-                 <form role="search" onsubmit="SearchUtil.searchByKeywords(document.getElementById('searchTracksBox').value); return false;">
+                 <form role="search" onsubmit="SearchUtil.searchTracksByKeywords(document.getElementById('searchTracksBox').value); return false;">
                      <div class="form-group form-inline">
                          <label control-label"><h1>To create a new song from scratch</h1></label>
-                         <button id='btnCreateNewSongDialog' type="button" class="btn btn-primary" onclick="MixerUtil.toggleEditSong()">Click here</button>
+                         <button id='btnCreateNewSongDialog' type="button" class="btn btn-primary" onclick="tb.dialogs.openNewSongDialog()">Click here</button>
                      </div>
 
                      <div class="form-group ">
@@ -374,9 +378,13 @@ var user = null;
 {{/unless}}
 </script>
 
+
+{{> createSongFromTrackDialog }}
+
 <script src="js/lib/models/SearchCriteriaDto.js"></script>
 <script src="js/lib/models/SongDto.js"></script>
 <script src="js/lib/models/TrackDto.js"></script>
+<script src="js/lib/models/SongTrackDto.js"></script>
 <script src="js/lib/models/EditDto.js"></script>
 <script src="js/lib/models/RecordingDto.js"></script>
 <script src="js/lib/models/RecordingResponseDto.js"></script>
@@ -391,6 +399,7 @@ var user = null;
 <script src="js/lib/mixer/SongMixer.js"></script>
 <script src="js/lib/mixer/MixerUtil.js"></script>
 <script src="js/lib/mixer/Mic.js"></script>
+<script src="/js/lib/dialogs/NewSongDialog.js"></script>
 
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 

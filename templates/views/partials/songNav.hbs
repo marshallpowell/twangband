@@ -4,8 +4,14 @@
         <li {{#if collaborator}}class="active"{{/if}}><a href="/music?search=collaborator">My Collaborations</a></li>
         <li {{#if myTracks}}class="active"{{/if}}><a href="/music?search=myTracks">My Tracks</a></li>
         <li {{#if latest}}class="active"{{/if}}><a href="/music?search=latest">Latest Songs</a></li>
+
+        <!--
         <li {{#if following}}class="active"{{/if}}><a href="/music?search=following">Musicians I follow</a></li>
         <li {{#if favoriteSongs}}class="active"{{/if}}><a href="/music?search=favoriteSongs">Songs I Like</a></li>
-        <li {{#if keyword}}class="active"{{/if}}><a href="/music?search=songs">Search Songs</a></li>
+        -->
+        {{#if keywords}}
+        <li class="active"><a href="#">Search Songs</a></li>
+        {{/if}}
+
     </ul>
 </div>

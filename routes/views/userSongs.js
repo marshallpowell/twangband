@@ -2,6 +2,7 @@ var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var trackDao = require(APP_LIB + 'dao/TrackDao');
 var userDao = require(APP_LIB + 'dao/UserDao');
+var trackSearchDao = require(APP_LIB + 'dao/TrackSearchDao');
 var searchService = require(APP_LIB + 'service/SearchService');
 var Q = require('q');
 
@@ -102,13 +103,25 @@ exports = module.exports = function(req, res) {
             );
         }
         else if (req.query.search == 'tracks') {
-            updateLocals('Track Search for: ', req.query.search);
+
+            updateLocals('Create a new song from an existing track ', req.query.keywords);
             isLoggedIn();
 
-            trackDao.findUserTracks(req.user).then(
-                successTrackSearchCb,
-                failureCb
-            );
+            var keywords = req.query.keywords || '';
+
+            log.debug('search for public tracks with keywords: ' + keywords);
+
+            if(keywords.length){
+                trackSearchDao.searchTracksByKeywords(keywords).then(
+                    successTrackSearchCb,
+                    failureCb
+                );
+            }
+            else{
+                res.render('userSongs');
+            }
+
+
         }
         //TODO songs user has liked
         else if (req.query.search == 'favoriteSongs') {
@@ -133,7 +146,7 @@ exports = module.exports = function(req, res) {
         else if (req.query.search == 'songs') {
 
             if(req.query.tags){
-                updateLocals('Song Search by tags', req.query.search);
+                updateLocals('Song Search by tags', 'keywords');
                 var tags = [];
                 tags.push(req.query.tags)
                 songDao.findPublicSongsByTags(tags).then(
@@ -144,7 +157,7 @@ exports = module.exports = function(req, res) {
             else{
                 var keywords = req.query.keywords || '';
 
-                updateLocals('Song Search for: '+keywords, req.query.search);
+                updateLocals('Song Search for: '+keywords, 'keywords');
 
                 if(keywords.length){
                     songDao.searchPublicSongs(keywords).then(

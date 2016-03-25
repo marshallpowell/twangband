@@ -393,7 +393,7 @@ var SongMixer = function(songDto){
             " <button class='solo' id='bsolo" + trackDto.uiId + "' onclick='mixer.toggleSoloTrack(this,\"" + trackDto.uiId + "\");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
 
         if (!isNewRecording) {
-            trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackDto.uiId + "' onclick='MixerUtil.selectTrackForNewSong(\"" + trackDto.uiId + "\");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
+            trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackDto.uiId + "' onclick='tb.dialogs.openNewSongDialog(" + JSON.stringify(trackDto.originalTrackDto) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
         }
         trackInfo += " <button class='removeTrack' id='removeTrack" + trackDto.uiId + "' onclick='MixerUtil.removeTrackFromSong(\"" + trackDto.uiId + "\");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
 

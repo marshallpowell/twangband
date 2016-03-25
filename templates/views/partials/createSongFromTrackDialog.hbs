@@ -1,0 +1,58 @@
+<script id="newSongFromTrackPartial" type="text/x-handlebars-template">
+
+    <form id="newSongFromTrackForm" onsubmit="tb.dialogs.submitNewSong(this.elements.namedItem('newSongName').value, $(this.elements.namedItem('newSongIsPublic')).is(':checked'),this.elements.namedItem('newSongTrackDto').value); return false;">
+        <div id="newSongFromTrack"  class="modalDialogForm">
+
+            <div class="row col-md-12">
+
+            \{{#if trackDto }}
+                <h2>Create a new song with "\{{trackDto.name}}"</h2>
+            \{{/if}}
+            \{{#unless trackDto }}
+                <h2>Create a new song</h2>
+            \{{/unless}}
+            </div>
+            <div class="form-group row col-md-12" id="newSongFromTrackNotifications">
+            </div>
+
+            <div class="form-group row col-md-12">
+
+                <label for="songName">Song Name</label>
+                <input type="text" class="form-control" name="newSongName" id="newSongName"
+                       placeholder="Enter a name for this song"/>
+            </div>
+
+            <div class="form-group form-inline row col-md-12">
+
+                <label for="newSongIsPublic">Make Song Public</label>
+                <input type="checkbox" class="form-control" name="newSongIsPublic" id="newSongIsPublic" checked />
+            </div>
+
+            <div class="row " style="padding-top: 5px; text-align:center;">
+                <input type="hidden" id="newSongTrackDto" name="newSongTrackDto" value='\{{#json}}\{{trackDto}}\{{/json}}' />
+                <button id="btn_createNewSongFromTrack" type="submit" class="btn btn-primary" >
+                    Create Song
+                </button>
+            </div>
+
+        </div>
+    </form>
+</script>
+
+<div id="newSongFromTrackDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="newSongFromTrackBody"><p id="newSongFromTrackFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

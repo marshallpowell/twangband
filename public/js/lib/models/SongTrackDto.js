@@ -29,6 +29,4 @@ function SongTrackDto(){
     this._currentUser;
 }
 
-if(module.exports) {
-    module.exports = SongTrackDto;
-}
+try{module.exports = SongTrackDto;} catch(err){}

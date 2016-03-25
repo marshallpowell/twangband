@@ -1,42 +1,42 @@
 <div class="row">
-<div class="col-md-6">
-    <div class="row">
-        <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song={{searchResult.track.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">{{searchResult.track.name}}</button></div>
-    </div>
-    <div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12"><button type="button" onclick='tb.dialogs.openNewSongDialog({{{json searchResult.track}}})' style="display: block; width: 100%;" class="btn btn-primary btn-sm">{{searchResult.track.name}}</button></div>
+        </div>
+        <div class="row">
 
-        <div class="col-md-12">
-            <div id="wav_{{searchResult.track.id}}"></div>
-            <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
-                <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_{{searchResult.track.id}}">
-                    <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
-                </button>
+            <div class="col-md-12">
+                <div id="wav_{{searchResult.track.id}}"></div>
+                <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
+                    <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_{{searchResult.track.id}}">
+                        <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
+                    </button>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
-</div>
-<div class="col-md-6">
-    <div class="row">
-        <div class="searchResultSubTitle1"> creator </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="searchResultSubTitle1"> creator </div>
 
-        <div style='float:left;'>
-            {{> musicianInfoIcon userDto=searchResult.musician}}
+            <div style='float:left;'>
+                {{> musicianInfoIcon userDto=searchResult.musician}}
+            </div>
+
+
+            <div class="searchResultSubContent1">created: {{formatDate searchResult.track.dateCreated}}</div>
+            {{#if searchResult.track.tags}}
+
+                {{#each searchResult.track.tags}}
+                    {{> tagInfo tag=this}}
+                {{/each}}
+
+            {{/if}}
         </div>
-
-
-        <div class="searchResultSubContent1">created: {{formatDate searchResult.track.dateCreated}}</div>
-        {{#if searchResult.track.tags}}
-
-            {{#each searchResult.track.tags}}
-                {{> tagInfo tag=this}}
-            {{/each}}
-
+        {{#if searchResult.track.description}}
+            <div class="row searchResultSubContent2">{{truncateText searchResult.track.description 100}}</div>
         {{/if}}
-    </div>
-    {{#if searchResult.track.description}}
-        <div class="row searchResultSubContent2">{{truncateText searchResult.track.description 100}}</div>
-    {{/if}}
 
-</div>
+    </div>
 </div>

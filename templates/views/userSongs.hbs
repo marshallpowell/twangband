@@ -32,10 +32,7 @@
 
 </div>
 
-<script src="/js/lib/util/Logger.js"></script>
-<script src="/js/lib/handlebars.min.js"></script>
-<script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
-<script src="/js/lib/wavesurfer/wavesurfer.regions.js"></script>
+
 
 {{#if songs}}
     {{> songSearchWavJS songDtos=songs}}
@@ -44,6 +41,18 @@
     {{> songSearchWavJS songDtos=tracks}}
 {{/if}}
 {{> userProfileDialog }}
+
+{{> createSongFromTrackDialog }}
+
+<script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
+<script src="/js/lib/wavesurfer/wavesurfer.regions.js"></script>
+<script src="/js/lib/util/Logger.js"></script>
+<script src="js/lib/models/SongDto.js"></script>
+<script src="js/lib/models/TrackDto.js"></script>
+<script src="js/lib/models/SongTrackDto.js"></script>
+<script src="js/lib/validation/SongValidation.js"></script>
+<script src="/js/lib/dialogs/NewSongDialog.js"></script>
+
 
 <script language="JavaScript">
     var log = new Logger('DEBUG');
@@ -58,6 +67,4 @@
         $('#userProfileDialog').modal('toggle');
 
     };
-
-
 </script>

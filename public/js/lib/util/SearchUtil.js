@@ -13,6 +13,8 @@ SearchUtil.searchByKeywords = function(keywords){
 
 SearchUtil.searchTracksByKeywords = function(keywords){
     var param = encodeURIComponent(keywords);
-    console.log('take me to: '+'/music?search=keyword&keywords='+param);
+    console.log('take me to: '+'/music?search=tracks&keywords='+param);
     window.location.href='/music?search=tracks&keywords='+param;
 };
+
+

@@ -4,12 +4,13 @@ var method = TrackDto.prototype;
 function TrackDto(){
 
     this.id=null;
-    this.name;
-    this.description;
+    this.name='';
+    this.description='';
     this.blobData;
     this.creatorId;
     this.dateCreated;
     this.viewOrder;
+    this.isPublic=true;
     this.tags=[];
 
     //transient properties
