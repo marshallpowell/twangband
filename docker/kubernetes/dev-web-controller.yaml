@@ -18,11 +18,11 @@ spec:
         image: gcr.io/marshallpowell/twang-web:latest
         env:
         - name: FB_CLIENTID
-          value: '1558893454364234'
+          value: '1695295577390687'
         - name: FB_CALLBACKURL
-          value: https://twangband.com/auth/facebook/callback
+          value: https://dev.twangband.com/auth/facebook/callback
         - name: FB_CLIENTSECRET
-          value: 1992cb3d2ab570277129e9f8911b63a4
+          value: 31c8390edde4a04b9cb7ebfbf47930b0
         - name: BASE_URL
           value: http://twangband.com
         - name: DISQUS_API_SECRET

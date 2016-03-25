@@ -74,7 +74,7 @@ var SongMixer = function(songDto){
         }
 
         for(var i = 0; i < songDto.tracks.length; i++){
-            searchDto.userIds.push(songDto.tracks[i].creatorId);
+            searchDto.userIds.push(songDto.tracks[i].originalTrackDto.creatorId);
         }
 
         searchDto.userIds.push(songDto.creatorId);
