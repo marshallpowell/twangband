@@ -2,15 +2,20 @@
     padding-left: 3px;
 }
 
-.trackData {
-    padding:0px;
+.trackWav {
+     padding:0px;
+ }
+
+.trackInfo {
+    padding:3px;
+    background: @navbar-default-bg;
 }
 
 .trackRow {
-    background: #EEE;
+    background: #f9fbfb;
     border-bottom: 1px solid grey;
-    border-left: 1px solid grey;
-    border-right: 1px solid grey;
+    border-left: 1px solid @navbar-default-border;
+    border-right: 1px solid @navbar-default-border;
 }
 
 .thumbnail {
@@ -51,10 +56,19 @@
 }
 
 .searchResultSubTitle1 {
-    padding:5px;
+    padding:3px;
     border:1px;
     float:left;
     background: gainsboro;
+    color:white;
+    height:30px;
+}
+
+.searchResultSubTitle2 {
+    padding:3px;
+    border:1px;
+    float:left;
+    background-color: #75787b;
     color:white;
     height:30px;
 }
@@ -101,13 +115,13 @@
 
 #masterTools {
     padding: 5px;
-    background: #EEE;
-    border: 1px solid grey;
+    background: @navbar-default-bg;
+    border: 1px solid @navbar-default-border;
 
 }
 
 #app {
-    //width: 980px;
+    width: 980px;
     margin: auto;
     background: #EEE;
 }

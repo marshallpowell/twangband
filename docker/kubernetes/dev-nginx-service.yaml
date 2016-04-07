@@ -20,3 +20,4 @@ spec:
     name: nginx
     role: ssl-proxy
   type: LoadBalancer
+  loadBalancerIP: 104.196.30.112

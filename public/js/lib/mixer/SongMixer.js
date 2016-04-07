@@ -5,6 +5,7 @@ var SongMixer = function(songDto){
 
     var mixer = this; //use in ajax call backs
 
+    this.trackRowTemplate = Handlebars.compile($("#mixerTrackRowPartial").html());
     this.newEdits=[];
     //the current song that was loaded
     this.currentSongDto;
@@ -41,7 +42,26 @@ var SongMixer = function(songDto){
 
                 MixerUtil.enableOrDisableButtons(MixerUtil.buttonsIds, false);
                 MixerUtil.enableOrDisableButtons([MixerUtil.btn.stop], true);
+
+                //add creator icon
+                var template = Handlebars.compile($("#musicianInfoIconPartial").html());
+                var context={}
+                context.userDto = mixer.musicians[songDto.creatorId];
+                $('#songCreatorName').html('by '+mixer.musicians[songDto.creatorId].firstName);
+                $('#songCreatorIcon').html(template(context));
             });
+
+            //disable any admin features
+            //TODO this should go under MixerUtil and be more generic
+            if(songDto.creatorId != user.id){
+
+                var options = document.getElementsByClassName('adminOption');
+
+                for(var i = 0; i < options.length; i++){
+                    options[i].style.display='none';
+                }
+
+            }
 
 
         }
@@ -110,21 +130,15 @@ var SongMixer = function(songDto){
     /**
      * Save the current song
      */
-    this.saveSong = function(){
+    this.saveSong = function(notificationDiv){
 
         log.trace("enter save");
 
-        if(!MixerUtil.validateAndNotify(document.getElementById("bsaveSong"), AppConstants.ROLES.ADD_TRACK)){
+        if(!MixerUtil.validateRoleAndNotify(AppConstants.ROLES.ADMIN)){
             return;
         }
 
         var formData = new FormData();
-
-        this.currentSongDto.name = $("#songName").val();
-        this.currentSongDto.description = $("#songDescription").val();
-        this.currentSongDto.tags = $("#songTags").val();
-        this.currentSongDto.isPublic = $("#songIsPublic").is(':checked');
-
 
         for(var i = 0; i < this.currentSongDto.tracks.length; i++){
 
@@ -133,35 +147,12 @@ var SongMixer = function(songDto){
             if(!songTrackDto.removed || songTrackDto.originalTrackDto !== undefined) {
 
                 songTrackDto.viewOrder = i;
-                var trackName = document.getElementById('trackName' + songTrackDto.uiId).value;
-                var trackDescription = document.getElementById('trackDescription' + songTrackDto.uiId).value;
-
-                log.debug("trackName: " + trackName);
-
-                var trackTags = $('#trackTags' + songTrackDto.uiId).val();
-
-                if(songTrackDto.originalTrackDto !== undefined){
-                    log.debug('updating existing track');
-                    songTrackDto.originalTrackDto.name = trackName;
-                    songTrackDto.originalTrackDto.description = trackDescription;
-                    songTrackDto.originalTrackDto.tags = trackTags;
-                    songTrackDto.originalTrackDto.removed=true;
-                }
-                else{
-
-                    log.debug("adding new track");
-                    songTrackDto.name = trackName;
-                    songTrackDto.description = trackDescription;
-                    songTrackDto.tags = trackTags;
-                    formData.append("newTrack_" + i, songTrackDto.blobData, "song.wav");
-                }
+                //TODO save track volume, effects etc info
 
             }
         }
 
         formData.append("song", JSON.stringify(this.currentSongDto));
-
-        log.debug("saveTrack: , song: " + $('#songName').val() + " with desc: " + $('#songDescription').val() + " and tracks: " + JSON.stringify(formData));
 
         $('#savingModal').modal('toggle');
 
@@ -178,21 +169,28 @@ var SongMixer = function(songDto){
                 if(data.error){
                     log.debug('error saving song: ' + data.error);
                     $('#savingModal').modal('toggle');
-                    $('#notificationBody').html("There was an error saving your song: " + data.error);
-                    $('#myModal').modal('toggle');
+
+                    if(notificationDiv){
+                        NotificationUtil.error(data.error, true, notificationDiv);
+                    }
+                    else{
+                        $('#notificationBody').html("There was an error saving your song: " + data.error);
+                    }
+
                     return;
                 }
                 console.log("saved song: " + data);
+                document.getElementById('songDto').value = JSON.stringify(data);
 
                 $('#savingModal').modal('toggle');
 
-                //we only need to refresh the page for a new song
-                if(mixer.currentSongDto.id==null){
-                    window.location.href="/songMixer?song="+data.id;
+                if(notificationDiv){
+                    NotificationUtil.success('Changes saved successfully', true, notificationDiv);
                 }
                 else{
                     $.notify('Changes saved successfully', 'success');
                 }
+
 
 
             }
@@ -341,30 +339,17 @@ var SongMixer = function(songDto){
 
 
     /**
-     * Creates a new track from a recording
-     * @param blob - the recording data in a blob format new Blob([arrayBuffer], {type: "audio/wav"}
-     */
-    this.addNewRecording = function(blob){
-
-        log.trace("enter addNewRecording");
-
-        var trackDto = new TrackDto();
-        trackDto.uiId="_uiId_"+Math.random().toString().replace(".","");
-        trackDto.name="new track";
-        trackDto.description="";
-        trackDto.blobData = blob;
-
-        this.addTrack(trackDto, true);
-        this.currentSongDto.tracks.push(trackDto);
-    };
-
-    /**
      * adds new track that has been saved on server and compressed
      * @param trackDto
      */
-    this.addNewTrack = function(trackDto){
-        this.addTrack(trackDto, false);
-        this.currentSongDto.tracks.push(trackDto);
+    this.addNewTrack = function(songTrackDto){
+
+        this.addTrack(songTrackDto, false);
+        this.currentSongDto.tracks.push(songTrackDto);
+        //add notification to remix / save after track is added.
+       // $.notify({title: 'You must save', button: "<span class='data-notify-html'>Click <a href='#'>save</a> to remix with new tracks</span>"},{ autoHide:false});
+        MixerUtil.displaySaveNotification('Click save to mix this track into song.');
+
     };
 
 
@@ -376,84 +361,18 @@ var SongMixer = function(songDto){
         log.trace("enter addTrack");
 
         log.debug("adding track: " + JSON.stringify(trackDto));
-        log.debug("adding original track: " + JSON.stringify(trackDto.originalTrackDto));
+        //log.debug("adding original track: " + JSON.stringify(trackDto.originalTrackDto));
+        log.debug('fileName: ' + trackDto.originalTrackDto.fileName);
 
-       trackDto.trackMixer = new TrackMixer('track_waveform'+trackDto.uiId, this.audioContext);
+       trackDto.trackMixer = new TrackMixer(trackDto.uiId, this.audioContext);
 
-
-        var creatorImage = "<img src='/uploads/users/profile/shadow.jpg' width='30' height='30' />";
-
-        if (!isNewRecording) {
-            creatorImage = "<img class='thumbnailSmall' src='/uploads/users/profile/" + this.musicians[trackDto.originalTrackDto.creatorId].profilePic + "' width='50' height='50' />&nbsp;";
-        }
-
-        var trackInfo = "<div class='col-md-2'>" +
-            "<div class='row'>" + creatorImage +
-            "<button class='mute' id='bmute" + trackDto.uiId + "' onclick='mixer.toggleMuteTrack(this,\"" + trackDto.uiId + "\");'><span class='glyphicon glyphicon-volume-up'></span></button>" +
-            " <button class='solo' id='bsolo" + trackDto.uiId + "' onclick='mixer.toggleSoloTrack(this,\"" + trackDto.uiId + "\");'><span class='glyphicon glyphicon-headphones' title='Mute all other tracks except for this one.'></span></button>";
-
-        if (!isNewRecording) {
-            trackInfo += " <button class='createNewSongWithTrack' id='createNewSongWith" + trackDto.uiId + "' onclick='tb.dialogs.openNewSongDialog(" + JSON.stringify(trackDto.originalTrackDto) + ");' title='Create a new Song with this track' ><span class='glyphicon glyphicon-plus'></span></button>";
-        }
-        trackInfo += " <button class='removeTrack' id='removeTrack" + trackDto.uiId + "' onclick='MixerUtil.removeTrackFromSong(\"" + trackDto.uiId + "\");' title='Remove this track from song' ><span class='glyphicon glyphicon-remove-sign'></span></button>";
-
-        //add in tag info
-        var trackTags='';
-        var trackName='Track #' + this.currentSongDto.tracks.length;
-        var trackDescription='';
-        var disabled='';
-        if(trackDto.originalTrackDto !== undefined){
-            log.debug("originalTrackDto name: " + trackDto.originalTrackDto.name);
-            trackName = trackDto.originalTrackDto.name;
-            trackDescription = trackDto.originalTrackDto.description;
-
-            if (trackDto.originalTrackDto.tags) {
-                for (var i = 0; i < trackDto.originalTrackDto.tags.length; i++) {
-                    trackTags += '<option value="'+trackDto.originalTrackDto.tags[i]+'" selected>'+trackDto.originalTrackDto.tags[i]+'</option>\n';
-                }
-            }
-
-            if(trackDto.originalTrackDto.creatorId != user.id){
-                disabled='disabled';
-            }
-
-
-        }
-
-        trackInfo += "</div>" +
-            "<div class='row'>" +
-            "<a href='#' onclick='MixerUtil.toggleEditTrack(\"" + trackDto.uiId + "\");' ><span id='trackLabelIcon" + trackDto.uiId + "' class='glyphicon glyphicon-pencil'></span> Edit: <span id='trackLabel" + trackDto.uiId + "'>" + trackName.substring(0, 20) + "...</span></a>" +
-
-            "<div style='display:none'>" +
-            " <div id='trackInfo" + trackDto.uiId + "'> " +
-            "    <div class='row'> " +
-            "        <div class='form-group'><label for='trackName" + trackDto.uiId + "'>Track Name</label> " +
-            "        <input type='text' class='form-control' name='Track Name' id='trackName" + trackDto.uiId + "' "+disabled+" class='trackName' value='" + trackName + "' name='trackName" + trackDto.uiId + "' placeholder='Enter a name for this track' onchange='MixerUtil.updateTrackLabel(this.value,\"" + trackDto.uiId + "\");'/></div> " +
-            "        <div class='form-group'><label for='trackDescription" + trackDto.uiId + "' >Description</label>" +
-            "        <textarea class='form-control' name='Track Description' id='trackDescription" + trackDto.uiId + "' placeholder='Enter a description for this track' " + disabled +" >" + trackDescription + "</textarea></div> " +
-            "        <div><label for='trackTags" + trackDto.uiId + "''>Intrument/genre tags</label>&nbsp;<i>(Hit enter after each tag)</i><br />" +
-            "        <select name='Track Tags' id='trackTags" + trackDto.uiId + "' multiple " + disabled + ">"+trackTags+"</select></div><br />" +
-            "    </div> " +
-            "    <div class='modal-footer modalNotificationFooter'><button type='button' class='btn btn-default' data-dismiss='modal'>Close</button></div>" +
-            "  </div> " +
-            "</div> " +
-            "<span id='volspan'><input type='range' class = 'volumeSlider' id='volume" + trackDto.uiId + "' min='0' max = '100' value='100' style='width:150px' oninput='mixer.adjustTrackVolume(\"" + trackDto.uiId + "\", this.value);'/></span>" +
-            "</div>" +
-            "</div>";
-
-
-
-        var trackCanvas = document.createElement('div');
-        trackCanvas.className = "col-md-10 trackData";
-        trackCanvas.id = trackDto.trackMixer.id;
-        trackCanvas.innerHTML +='<p id="'+trackDto.trackMixer.messageId+'"><span class="fa fa-spinner fa-pulse"></span> Loading...</p>'
-
-        var trackRow =  document.createElement('div');
-        trackRow.className="row trackRow";
-        trackRow.id = trackDto.uiId;
-        trackRow.style.backgroundColor="#9999";
-        trackRow.innerHTML = trackInfo + trackCanvas.outerHTML;
-        $("#scroll").append(trackRow);
+        var context = {};
+        context.trackDto = trackDto.originalTrackDto;
+        context.userDto = this.musicians[trackDto.originalTrackDto.creatorId];
+        //context.trackTags = trackTags;
+        context.readOnly = (trackDto.originalTrackDto.creatorId != user.id);
+        var newTrackRow = this.trackRowTemplate(context);
+        $("#scroll").append(newTrackRow);
 
 
 
@@ -470,7 +389,7 @@ var SongMixer = function(songDto){
             trackDto.trackMixer.initBlob(trackDto.blobData);
         }
         else{
-            trackDto.trackMixer.initUrl('/uploads/'+trackDto.originalTrackDto.fileName);
+            trackDto.trackMixer.initUrl(tb.cdn+trackDto.originalTrackDto.fileName);
         }
 
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC

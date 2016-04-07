@@ -6,6 +6,7 @@ function TrackSearchResultDto(){
     this.musicians=[];
     this.tags=[];
     this.creator;
+    this.songs=[];//SmallSongSearchResultDto
 
 
 }

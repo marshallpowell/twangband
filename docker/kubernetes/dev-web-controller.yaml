@@ -24,7 +24,7 @@ spec:
         - name: FB_CLIENTSECRET
           value: 31c8390edde4a04b9cb7ebfbf47930b0
         - name: BASE_URL
-          value: http://twangband.com
+          value: http://dev.twangband.com
         - name: DISQUS_API_SECRET
           value: o0gPCh8Z0pMaoHe7ZQpHXTTkPDr8sizCQdtuReaOhTSE3gJJQQ7Z5Rwo3Rz2WNpm
         - name: DISQUS_API_PUBLIC_KEY
@@ -37,8 +37,20 @@ spec:
           value: /logs/
         - name: UPLOADS_DIR
           value: /uploads/
+        - name: CDN
+          value: http://dev.cdn.twangband.com/
         - name: UPLOADS_BUCKET
-          value: dev-twangband
+          value: dev.cdn.twangband.com
+        - name: TB_MONGO_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-user
+        - name: TB_MONGO_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-pass
         ports:
         - containerPort: 3000
           name: http-server

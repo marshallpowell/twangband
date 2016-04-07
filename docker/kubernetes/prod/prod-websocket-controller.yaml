@@ -29,6 +29,16 @@ spec:
           value: /uploads/
         - name: UPLOADS_BUCKET
           value: prod-twangband
+        - name: TB_MONGO_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-user
+        - name: TB_MONGO_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-pass
         ports:
         - containerPort: 3001
           name: http-server

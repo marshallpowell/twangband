@@ -1,23 +1,13 @@
 <div class="container">
-    <h1>
-        {{#if user}}
-            Edit Profile
-        {{/if}}
-
-        {{#unless user}}
-            Create Account
-        {{/unless}}
-    </h1>
-    <hr>
 
     <form class="form-horizontal" role="form" id="userForm">
         <div class="row">
             <!-- left column -->
             <div class="col-md-5">
-                <div class="text-center">
+                <div class="text-center" style="padding:10px">
                     <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar" alt="avatar">
 
-                    <div class="form-group form-inline">
+                    <div class="form-group">
                         <label control-label">Upload a different photo:</label>
                         <input type="file" class="form-control" name="profileImg" id="profileImg"/>
                     </div>
@@ -27,7 +17,15 @@
             <!-- edit form column -->
             <div class="col-md-7 personal-info">
 
-                <h2>Your info</h2>
+                <h1>
+                    {{#if user}}
+                        Edit Profile
+                    {{/if}}
+
+                    {{#unless user}}
+                        Create Account
+                    {{/unless}}
+                </h1>
 
 
                 <input type="hidden" name="id" id="id" value="{{user.id}}"/>
@@ -88,7 +86,7 @@
                     <input type="reset" class="btn btn-default" value="Cancel">
 
                     {{#unless user}}
-                        <h2>Do you have a Facebook account?</h2>
+                        <h2>Or do you have a Facebook account?</h2>
                         <div class='social_logins'>
                             <a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
                         </div>

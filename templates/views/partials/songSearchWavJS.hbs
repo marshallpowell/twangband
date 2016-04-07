@@ -4,10 +4,12 @@
 
         var wavesurfers = (wavesurfers) ? wavesurfers : [];
 
+
         {{#each songDtos}}
             {{#if fileName}}
+
                 wavesurfers['{{id}}'] = WaveSurfer.create({
-                    container: '#wav_{{id}}',
+                    container: document.querySelector('#wav_{{id}}'),
                     waveColor: '#1989D4',
                     progressColor: '#2BAD1D ',
                     scrollParent: false,
@@ -15,7 +17,17 @@
                     height: 75
                 });
 
+
                 wavesurfers['{{id}}'].load('/uploads/{{fileName}}');
+                wavesurfers['{{id}}'].on('ready', (function(){
+                    document.getElementById('wav_loading_{{id}}').remove();
+                }));
+                wavesurfers['{{id}}'].on('destroy', (function(){
+                    document.getElementById('wav_loading_{{id}}').remove();
+                }));
+                wavesurfers['{{id}}'].on('error', (function(){
+                    document.getElementById('wav_loading_{{id}}').remove();
+                }));
 
                 document.getElementById('play_{{id}}').addEventListener('click', function (e) {
                     wavesurfers['{{id}}'].playPause();

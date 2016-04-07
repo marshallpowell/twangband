@@ -1,6 +1,6 @@
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
-var TrackService = require(APP_LIB + 'service/TrackService');
+var trackService = require(APP_LIB + 'service/TrackService');
 var validationUtil = require(global.PUBLIC_APP_LIB+'validation/ValidationUtil.js');
 
 exports = module.exports = function (req, res) {
@@ -38,8 +38,8 @@ exports = module.exports = function (req, res) {
     //log.debug("saving songDto length: " + songDto.tracks.length);
 
 
-    TrackService.saveNewTracks(req.files, songDto, req.user)
-        .then(TrackService.updateExistingTracks)
+    trackService.saveNewTracks(req.files, songDto, req.user)
+        .then(trackService.updateExistingTracks)
         .then(songDao.createOrUpdateSong)
         .then(function (savedSongDto) {
             log.debug('saved track and song, now respond');

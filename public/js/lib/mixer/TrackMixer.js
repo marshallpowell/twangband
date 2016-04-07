@@ -4,7 +4,7 @@ var TrackMixer = function(id, audioContext){
     this.audioContext = audioContext;
     this.wavesurfer = null;
     this.volume=1;
-    this.id=id;
+    this.id='track_waveform'+id;
     this.messageId=this.id+'_message';
 
     this.setVolume=function(vol){

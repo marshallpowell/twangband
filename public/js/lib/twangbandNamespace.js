@@ -1,8 +1,16 @@
 (function(tb, $, undefined){
 
-    tb.dialogs = {};
+    tb.cdn = '';
+    tb.logLevel='DEBUG';
     tb.validation = {};
     tb.util = {};
     tb.mixer = {};
+
+    tb.dialogs = {};
+    tb.dialogs.mixer = {};
+    tb.dialogs.mixer.track = {};
+    tb.dialogs.mixer.song = {};
+
+    //tb.log = new Logger('DEBUG');
 
 }( window.tb = window.tb || {}, jQuery ));

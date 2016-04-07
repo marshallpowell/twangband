@@ -37,7 +37,11 @@ exports.initLocals = function(req, res, next) {
         { label: 'Create A Song',		key: 'mixer',		href: '/songMixer' }
 
 	];
-	
+
+	locals.cdn = process.env.CDN || 'http://cdn.twangband.com/';
+
+	//TODO may also be able to add local for logLevel here (eg. ?logLevel=DEBUG)
+
 	next();
 	
 };

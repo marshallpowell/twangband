@@ -34,7 +34,9 @@ mongoose.connect(mongoUrl, {
         socketOptions : {
             keepAlive: 1
         }
-    }
+    },
+    user: process.env.TB_MONGO_DB_USER,
+    pass: process.env.TB_MONGO_DB_PASS
 });
 
 mongoose.set('debug', true);
@@ -146,7 +148,7 @@ wss.on('connection', function connection(ws) {
                 dtoMapper.mapMediaMetaData(trackDto,audioDataDto);
 
                 log.debug('calling trackDao.createOrUpdateTrack');
-                trackDao.createOrUpdateTrack(trackDto).then(function(dto){
+                trackService.createOrUpdateTrack(trackDto).then(function(dto){
                     trackDto = dto;
 
                     log.debug('calling addNewTrackToSong with dto: ' + JSON.stringify(trackDto));
@@ -168,6 +170,9 @@ wss.on('connection', function connection(ws) {
                                 var responseJSON = JSON.stringify(responseDto);
                                 log.debug('responding with: ' + responseJSON);
                                 ws.send(responseJSON);
+
+                                trackService.updateTrackSearch(trackDto, songDto);
+
                                 return;
                             }
                         }

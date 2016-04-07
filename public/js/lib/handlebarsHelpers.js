@@ -1,7 +1,17 @@
-/**
- * helper utils for handlebars
- */
+$(document).ready(function () {
+    (function ($, undefined) {
+        /**
+         * helper utils for handlebars
+         */
 
-Handlebars.registerHelper('json', function(options) {
-    return JSON.stringify(this[Object.keys(this)[0]]);
+        Handlebars.registerHelper('json', JSON.stringify);
+
+        /**
+         * partials
+         */
+
+        Handlebars.registerPartial('tagInfo', Handlebars.compile($("#tagInfoPartial").html()));
+        Handlebars.registerPartial('musicianInfoIcon', Handlebars.compile($("#musicianInfoIconPartial").html()));
+
+    }(jQuery));
 });

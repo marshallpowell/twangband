@@ -109,6 +109,7 @@ exports = module.exports = function(app) {
 
     app.all('/songMixer', middleware.requireHTTPS, routes.views.songMixer);
     app.post('/song/save', uploads, routes.services.saveSong);
+    app.post('/track/save', uploads, routes.services.updateTrack);
     app.post('/song/updateCollaborators', routes.services.updateCollaborators);
     app.all('/music/', routes.views.userSongs);
 

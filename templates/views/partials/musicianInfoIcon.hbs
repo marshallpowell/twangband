@@ -1,3 +1,17 @@
-<div class="musicianInfoIcon">
-    <a href="#" onclick='showUserProfile({{{json userDto}}});'><img class="thumbnailSmall" src="/uploads/users/profile/{{userDto.profilePic}}" /></a>
-</div>
+{{#if clientSide}}
+    <!-- start musicianInfoIcon -->
+    <script id="musicianInfoIconPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+        <div class="musicianInfoIcon">
+            <a href="#" onclick='tb.dialogs.showUserProfile(\{{json userDto}});'><img class="thumbnailSmall"
+                                                                                         src="/uploads/users/profile/\{{userDto.profilePic}}"/></a>
+        </div>
+    </script>
+    <!-- end musicianInfoIcon -->
+{{/if}}
+{{#unless clientSide}}
+    <div class="musicianInfoIcon">
+        <a href="#" onclick='tb.dialogs.showUserProfile({{{json userDto}}});'><img class="thumbnailSmall"
+                                                                        src="/uploads/users/profile/{{userDto.profilePic}}"/></a>
+    </div>
+{{/unless}}
+

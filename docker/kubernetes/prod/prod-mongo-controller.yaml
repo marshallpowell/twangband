@@ -12,8 +12,31 @@ spec:
         name: mongo
     spec:
       containers:
-      - image: gcr.io/marshallpowell/mongo-server:latest
-        name: mongo
+      - name: mongo
+        image: gcr.io/marshallpowell/mongo-server:latest
+        env:
+        - name: MONGO_DB_NAME
+          value: twangband
+        - name: ADMIN_MONGO_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: admin-mongodb-user
+        - name: ADMIN_MONGO_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: admin-mongodb-pass
+        - name: TB_MONGO_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-user
+        - name: TB_MONGO_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: twangband-secrets
+              key: tb-mongodb-pass
         ports:
         - name: mongo
           containerPort: 27017

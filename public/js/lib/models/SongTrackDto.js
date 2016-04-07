@@ -3,6 +3,7 @@
  */
 
 /**
+ *
  * DTO is used to represent the track within a SongDTO
  * This captures the actual Track - TrackDto
  * And captures the Track's attributes within the song
@@ -11,11 +12,11 @@ var method = SongTrackDto.prototype;
 
 function SongTrackDto(){
 
-    this.name;
+    this.name='';
     this.originalTrackId=null;
     this.originalTrackDto={};
-    this.volume;
-    this.gain;
+    this.volume=9;
+    this.gain=9;
     this.position;
     this.loop;
     this.description;

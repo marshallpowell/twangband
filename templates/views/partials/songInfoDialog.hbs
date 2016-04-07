@@ -1,0 +1,60 @@
+<!-- begin songInfoDialogPartial -->
+<script id="songInfoDialogPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+<div id="songInfoDialogPartialBody" style="text-align:center;padding:5px;">
+    <div class="row" >
+        <h2>
+            \{{#if showSongUrl}}
+            <a href="/songMixer?song=\{{smallSongSearchResultDto.id}}">\{{smallSongSearchResultDto.name}}</a>
+            \{{/if}}
+            \{{#unless showSongUrl}}
+            \{{smallSongSearchResultDto.name}}
+            \{{/unless}}
+        </h2>
+     </div>
+    <div class="row">
+        <div id="songInfoDialogWav"><p id="loadingSongInfoDialogWav"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
+    </div>
+    <div class="row">
+        <div class="controls">
+            <button class="btn btn-primary btn-sm" id="songInfoDialogWavBtnBack">
+                <i class="glyphicon glyphicon-step-backward"></i>
+            </button>
+
+            <button class="btn btn-primary btn-sm" id="songInfoDialogWavBtnPlay">
+                <i class="glyphicon glyphicon-play"></i>
+                /
+                <i class="glyphicon glyphicon-pause"></i>
+
+            </button>
+
+            <button class="btn btn-primary btn-sm" id="songInfoDialogWavBtnStop">
+                <i class="glyphicon glyphicon-stop"></i>
+            </button>
+
+            <button class="btn btn-primary btn-sm" id="songInfoDialogWavBtnForward">
+                <i class="glyphicon glyphicon-step-forward"></i>
+            </button>
+
+        </div>
+    </div>
+</div>
+</script>
+
+<div id="songInfoDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="songInfoBody"><p id="songInfoFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- end songInfoDialogPartial -->

@@ -1,0 +1,70 @@
+<script id="mixerSongEditDialogPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+    <div id="songInfo" class="modalDialogForm" style="padding:5px;">
+
+        <div class="row">
+
+            <h3>
+                {{#if songJSON}}
+                    Update your song information
+                {{/if}}
+
+                {{#unless songJSON}}
+                    Create a new song!
+                {{/unless}}
+            </h3>
+        </div>
+        <div class="row">
+            <div id="mixerSongEditDialogFormNotifications"></div>
+        </div>
+        <div class="row">
+            <form id="mixerSongEditDialogForm" onsubmit="tb.dialogs.mixer.saveSong(); return false;">
+                <div class="form-group">
+
+                    <label for="mixerSongEditDialogSongName">Song Name</label>
+                    <input type="text" class="form-control" name="Song Name" id="mixerSongEditDialogSongName"
+                           value="\{{songDto.name}}"
+                           placeholder="Enter a name for this song"/>
+                </div>
+                <div class="form-group">
+                    <label for="mixerSongEditDialogSongDescription">Description</label>
+                    <textarea class="form-control" name="Song Description" id="mixerSongEditDialogSongDescription"
+
+                              placeholder="Enter a description for this song">\{{songDto.description}}"</textarea>
+                </div>
+                <div>
+                    <label for="mixerSongEditDialogSongIsPublic">Make Song Public</label>
+                    <input type="checkbox" class="form-control" name="songIsPublic"
+                           id="mixerSongEditDialogSongIsPublic" \{{#if isPublic}}checked\{{/if}} />
+                </div>
+                <div class="form-group">
+                    <label for="trackName">Tag Your Song</label>&nbsp;<i>(Hit enter after each tag)</i><br/>
+                    <select name='Song Tags' id='mixerSongEditDialogSongTags' multiple>
+                        \{{#each songDto.tags}}
+                        <option value="\{{this}}" selected>\{{this}}</option>
+                        \{{/each}}
+
+                    </select>
+                </div>
+                <div class="modal-footer" style="padding-top: 5px; text-align:center;">
+                    <button type="submit" class="btn btn-default" id="modalSaveBtn">Save</button>
+                    <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+<div id="mixerSongEditDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="mixerSongEditDialogBody"><p id="mixerSongEditDialogFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

@@ -2,7 +2,6 @@ var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var trackDao = require(APP_LIB + 'dao/TrackDao');
 var userDao = require(APP_LIB + 'dao/UserDao');
-var trackSearchDao = require(APP_LIB + 'dao/TrackSearchDao');
 var searchService = require(APP_LIB + 'service/SearchService');
 var Q = require('q');
 
@@ -45,8 +44,19 @@ exports = module.exports = function(req, res) {
 
     var successTrackSearchCb = function (tracks) {
         searchService.createTrackSearchResult(tracks).then(function(searchResults){
+
+            log.debug('####searchResults: ' + JSON.stringify(searchResults));
             locals['trackSearchResults'] = searchResults;
-            locals['tracks'] = tracks;
+
+            var tracks = [];
+            for(var x = 0; x < searchResults.length; x++){
+                tracks.push(searchResults[x].track);
+            }
+
+            if(tracks.length){
+                locals['tracks'] = tracks;
+            }
+
             res.render('userSongs');
         });
     };
@@ -57,9 +67,16 @@ exports = module.exports = function(req, res) {
         res.render('userSongs');
     };
 
-    var updateLocals = function (title, tab) {
+    var updateLocals = function (title, tab, searchType) {
         locals['title'] = title;
         locals[tab] = true;
+
+        if(searchType == 'tracks'){
+            locals['showTracks'] = true;
+        }
+        else{
+            locals['showSongs'] = true;
+        }
     };
 
     var isLoggedIn = function(){
@@ -73,7 +90,7 @@ exports = module.exports = function(req, res) {
 
         if (req.query.search == 'collaborator') {
 
-            updateLocals('Songs you have been invited to collaborate on', req.query.search)
+            updateLocals('Songs you have been invited to collaborate on', req.query.search, 'songs')
             isLoggedIn();
             songDao.findUserCollaboratorSongs(req.user.id).then(
                 successSongSearchCb,
@@ -83,7 +100,7 @@ exports = module.exports = function(req, res) {
 
         else if (req.query.search == 'mySongs') {
 
-            updateLocals('Your Songs', req.query.search);
+            updateLocals('Your Songs', req.query.search, 'songs');
             isLoggedIn();
 
             songDao.findUserSongs(req.user.id).then(
@@ -94,7 +111,7 @@ exports = module.exports = function(req, res) {
         }
         //TODO user tracks
         else if (req.query.search == 'myTracks') {
-            updateLocals('All of your tracks', req.query.search);
+            updateLocals('All of your tracks', req.query.search, 'tracks');
             isLoggedIn();
 
             trackDao.findUserTracks(req.user).then(
@@ -104,7 +121,7 @@ exports = module.exports = function(req, res) {
         }
         else if (req.query.search == 'tracks') {
 
-            updateLocals('Create a new song from an existing track ', req.query.keywords);
+            updateLocals('Create a new song from an existing track ', req.query.keywords, 'tracks');
             isLoggedIn();
 
             var keywords = req.query.keywords || '';
@@ -112,7 +129,7 @@ exports = module.exports = function(req, res) {
             log.debug('search for public tracks with keywords: ' + keywords);
 
             if(keywords.length){
-                trackSearchDao.searchTracksByKeywords(keywords).then(
+                trackDao.searchTracksByKeywords(keywords).then(
                     successTrackSearchCb,
                     failureCb
                 );
@@ -125,7 +142,7 @@ exports = module.exports = function(req, res) {
         }
         //TODO songs user has liked
         else if (req.query.search == 'favoriteSongs') {
-            updateLocals('These are songs you have liked', req.query.search);
+            updateLocals('These are songs you have liked', req.query.search, 'songs');
             isLoggedIn();
 
             songDao.findLatestPublicSongs().then(
@@ -146,7 +163,7 @@ exports = module.exports = function(req, res) {
         else if (req.query.search == 'songs') {
 
             if(req.query.tags){
-                updateLocals('Song Search by tags', 'keywords');
+                updateLocals('Song Search by tags', 'keywords', 'songs');
                 var tags = [];
                 tags.push(req.query.tags)
                 songDao.findPublicSongsByTags(tags).then(
@@ -157,7 +174,7 @@ exports = module.exports = function(req, res) {
             else{
                 var keywords = req.query.keywords || '';
 
-                updateLocals('Song Search for: '+keywords, 'keywords');
+                updateLocals('Song Search for: '+keywords, 'keywords', 'songs');
 
                 if(keywords.length){
                     songDao.searchPublicSongs(keywords).then(
@@ -174,7 +191,7 @@ exports = module.exports = function(req, res) {
         }
         //TODO latest public songs
         else {
-            updateLocals('Our latest songs', 'latest');
+            updateLocals('Our latest songs', 'latest', 'songs');
             songDao.findLatestPublicSongs(0,20).then(
                 successSongSearchCb,
                 failureCb

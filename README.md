@@ -47,6 +47,9 @@
 ### Mongo Server
     #note you cannot mount a data dir from osx to a virtual box machine
     docker run --name musicilo-mongo -d -p 27017:27017  musicilo/mongo-server 
+    
+    #connect to the server from commandline on the container
+    mongo 127.0.0.1:27017/twangband -u tb -p fuzzyWUZZYhadnohair102938476
 ### Ngnix Web Server
 
     docker run  \
@@ -66,13 +69,30 @@
     #run image locally
     docker run musicilo/ffmpeg-server -i http://nodejs-musicilo.rhcloud.com/uploads/5f4183d5c36ee835b9c396a3d022671c.wav -acodec libvorbis audio.ogg
 
-## Gcloud Dev Env
+## Gcloud Info
+Gcloud API ref: https://cloud.google.com/sdk/gcloud/reference/info
 
+    #This is how to upgrade the master and nodes for kubernetes. For more info: https://cloud.google.com/container-engine/docs/clusters/upgrade
+    gcloud container clusters upgrade prod-cluster --master
+    gcloud container clusters upgrade prod-cluster
+
+## Gcloud Dev Env
+    #make sure you switch to the dev cluster
+    gcloud config configurations activate default
+    #verify active config
+    gcloud info
+    
 #### Kubernetes Cluster Info
     #switch to dev cluster:
     gcloud container clusters get-credentials dev-cluster --zone us-east1-b
 
 ## Gcloud Prod Env
+
+#### gcloud config setting
+    #make sure you switch to the production cluster 
+    gcloud config configurations activate production-cluster
+    #verify active config
+    gcloud info
        
 #### Kubernetes Cluster Info
     #switch to prod cluster
@@ -84,6 +104,7 @@ Push a image to gcloud
     gcloud docker push gcr.io/marshallpowell/mongo-server
 
 ## Kubernetes commands
+http://kubernetes.io/docs/user-guide/kubectl-cheatsheet/
 
     #show cluster info: 
     kubectl cluster-info
@@ -106,7 +127,14 @@ Push a image to gcloud
     NGINX_SSL_PROXY_SERVICE_PORT_HTTPS=443
     ....
     
+    #get a shell on a container
+    kubectl exec -it web-controller-v0.0.1-c6241 bash
+    
     # create a secrets file for use in a cluster (this is where ssl cert info is currently stored)
+    # see http://kubernetes.io/docs/user-guide/secrets/
+    # all values in the secrets file must be base64 encoded (ex. echo -n "admin" | base64)
+    
+    #create secrets file:
     kubectl create -f ./prod-secrets.yaml
     # show the current secrets files in a cluster
     kubectl get secrets

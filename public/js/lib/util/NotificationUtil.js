@@ -44,5 +44,5 @@ NotificationUtil.error = function(message, appendMessage, divId){
  * @param divId (optional)
  */
 NotificationUtil.success = function(message, appendMessage, divId){
-    NotificationUtil.notify(message, "alert-success");
+    NotificationUtil.notify(message, "alert-success", appendMessage, divId);
 };

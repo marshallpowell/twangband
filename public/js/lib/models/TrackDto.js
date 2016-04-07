@@ -9,9 +9,10 @@ function TrackDto(){
     this.blobData;
     this.creatorId;
     this.dateCreated;
-    this.viewOrder;
+
     this.isPublic=true;
     this.tags=[];
+    this.songIds=[];
 
     //transient properties
     this.uiId;
@@ -20,6 +21,8 @@ function TrackDto(){
     this._currentUser={};
 
     //from View Track
+    //TODO these properties should probably be removed as they are only set on the SongTrack
+    this.viewOrder;
     this.peaks;
     this.volume = 1;
     this.panning;

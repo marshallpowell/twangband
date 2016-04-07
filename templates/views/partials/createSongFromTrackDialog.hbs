@@ -1,3 +1,4 @@
+<!-- begin newSongFromTrackPartial -->
 <script id="newSongFromTrackPartial" type="text/x-handlebars-template">
 
     <form id="newSongFromTrackForm" onsubmit="tb.dialogs.submitNewSong(this.elements.namedItem('newSongName').value, $(this.elements.namedItem('newSongIsPublic')).is(':checked'),this.elements.namedItem('newSongTrackDto').value); return false;">
@@ -29,7 +30,7 @@
             </div>
 
             <div class="row " style="padding-top: 5px; text-align:center;">
-                <input type="hidden" id="newSongTrackDto" name="newSongTrackDto" value='\{{#json}}\{{trackDto}}\{{/json}}' />
+                <input type="hidden" id="newSongTrackDto" name="newSongTrackDto" value='\{{json trackDto}}' />
                 <button id="btn_createNewSongFromTrack" type="submit" class="btn btn-primary" >
                     Create Song
                 </button>
@@ -56,3 +57,4 @@
 
     </div>
 </div>
+<!-- end newSongFromTrackPartial -->

@@ -6,7 +6,7 @@
         <div class="row">
         {{#if searchResult.song.fileName}}
             <div class="col-md-12">
-                <div id="wav_{{searchResult.song.id}}"></div>
+                <div id="wav_{{searchResult.song.id}}"><p id="wav_loading_{{searchResult.song.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
                 <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
                     <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_{{searchResult.song.id}}">
                         <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>

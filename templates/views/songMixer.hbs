@@ -1,122 +1,12 @@
 {{!< default}}
 
 
-<div id="app" class="container" ng-app="app" ng-controller="myCtrl">
+<div id="app" class="container">
 
     <div id="consoleForms" style="display:none;">
 
 
-        <div id="songInfo">
-
-            {{#if songJSON}}
-            <div class="row">
-                <div id="songWav"></div>
-            </div>
-            <div class="row">
-                <div class="controls">
-                    <button class="btn btn-primary btn-sm" data-action="back">
-                        <i class="glyphicon glyphicon-step-backward"></i>
-                        Backward
-                    </button>
-
-                    <button class="btn btn-primary btn-sm" data-action="play">
-                        <i class="glyphicon glyphicon-play"></i>
-                        Play
-                        /
-                        <i class="glyphicon glyphicon-pause"></i>
-                        Pause
-                    </button>
-
-                    <button class="btn btn-primary btn-sm" data-action="stop">
-                        <i class="glyphicon glyphicon-stop"></i> Stop
-                    </button>
-
-                    <button class="btn btn-primary btn-sm" data-action="forth">
-                        <i class="glyphicon glyphicon-step-forward"></i>
-                        Forward
-                    </button>
-
-                </div>
-            </div>
-            {{/if}}
-            <div class="row">
-
-                <h3>
-                    {{#if songJSON}}
-                        Update your song information
-                    {{/if}}
-
-                    {{#unless songJSON}}
-                        Create a new song!
-                    {{/unless}}
-                </h3>
-            </div>
-            <div class="row">
-                <div id="songFormNotifications"></div>
-            </div>
-            <div class="row">
-
-                <div class="form-group">
-
-                        <label for="songName">Song Name</label>
-                        <input type="text" class="form-control" name="Song Name" id="songName" ng-model="songName"
-                               placeholder="Enter a name for this song"/>
-                </div>
-                <div class="form-group">
-                    <label for="songName">Description</label>
-                    <textarea class="form-control" name="Song Description" id="songDescription" ng-model="songDescription"
-                                              placeholder="Enter a description for this song"></textarea>
-                </div>
-                <div>
-                        <label for="trackName">Make Song Public</label>&nbsp;<input type="checkbox" name="Make Song Public" id="songIsPublic" ng-model="songIsPublic"/>
-                </div>
-                <div class="form-group">
-                        <label for="trackName">Tag Your Song</label>&nbsp;<i>(Hit enter after each tag)</i><br />
-                        <select name="Song Tags" id="songTags" ng-model="songTags" ng-options="option.name for option in songTags track by option.id" multiple>
-
-                        </select>
-                </div>
-                <div class="modal-footer" style="padding-top: 5px; text-align:center;">
-                        <button type="button" class="btn btn-default" id="modalSaveBtn" onClick="MixerUtil.createOrUpdateSongInfo();">Save</button>
-                        <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
-                </div>
-
-            </div>
-        </div>
-
-
-        <!--
-        <div id="newSongFromTrack"  class="modalDialogForm">
-
-            <div class="row">
-                    <h2>Create a new song with this track</h2>
-            </div>
-
-            <div class="form-group row">
-
-                <label for="songName">Song Name</label>
-                <input type="text" class="form-control" name="Song Name" id="newSongName"
-                       placeholder="Enter a name for this song"/>
-            </div>
-
-            <div class="form-group row">
-
-                <label for="songName">Description</label>
-                <input type="text" class="form-control" name="Song Name" id="newSongDescription"
-                       placeholder="Enter a description for this song"/>
-            </div>
-
-            <div class="modal-footer" style="padding-top: 5px; text-align:center;">
-
-                <button id="btn_createNewSongFromTrack" type="button" class="btn btn-primary"
-                        onclick="MixerUtil.createNewSongFromTrack();">
-                    Create a new song with this track
-                </button>
-            </div>
-        </div>
-        -->
-
-        <div id="searchUsers"  class="modalDialogForm">
+        <div id="searchUsers" class="modalDialogForm">
 
             <div class="row">
                 <div class="col-sm-2"><h5>Collaborators: </h5></div>
@@ -136,9 +26,11 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="collaboratorSearchKeywords"
                                    placeholder="search musicians by name, email, instrument, genre... "/>
-                             <div class="input-group-btn">
-                                 <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                              </div>
+
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -152,57 +44,23 @@
         </div>
 
 
-        <div id="trackInfo"  class="modalDialogForm">
-
-            <div class="form-group row">
-                <div class="col-sm-4">
-                    <label for="trackName">Track Name</label>
-                </div>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" name="Track Name" id="trackName" ng-model="trackName"
-                           placeholder="Enter a name for this track"/>
-                </div>
-                <div class="col-sm-4">
-                    <label for="trackName">Description</label>
-                </div>
-                <div class="col-sm-8">
-                                <textarea class="form-control" name="Track Description" id="trackDescription" ng-model="trackDescription"
-                                          placeholder="Enter a description for this track"></textarea>
-                </div>
-                <div class="col-sm-4">
-                    <label for="trackName">Make Track Public</label>
-                </div>
-                <div class="col-sm-8">
-                    <input type="checkbox" class="form-control" name="Make Track Public" id="trackIsPublic" />
-                </div>
-
-                <div class="col-sm-4">
-                    <label for="trackName">What type of intrument(s) is on this track?</label>
-                </div>
-                <div class="col-sm-8">
-
-                    <select name="Track Tags" id="trackTags" multiple>
-
-                    </select>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="recordingDialog" >
+        <div id="recordingDialog">
             <div class="row">
                 <div id="startTimer" class="col-lg-12"></div>
-                <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span id="countdownTimer" style="background-color: #FFFF00"></span></div>
+                <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span
+                        id="countdownTimer" style="background-color: #FFFF00"></span></div>
             </div>
         </div>
 
-        <div id="callibrationDialog" >
+        <div id="callibrationDialog">
             <div class="row">
-                <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60" height="60" /></div>
-                <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate your system's audio input and output. You will need to be very quiet and put your microphone as close to your speaker as possible. You will hear a series of 5 clicks, and the test will be complete. Please click below to proceed</div>
+                <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60"
+                                                                  height="60"/></div>
+                <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate
+                    your system's audio input and output. You will need to be very quiet and put your microphone as
+                    close to your speaker as possible. You will hear a series of 5 clicks, and the test will be
+                    complete. Please click below to proceed
+                </div>
             </div>
             <div class="row">
                 <div id="callibrationResults" class="col-lg-12"></div>
@@ -220,135 +78,164 @@
     </div>
 
     {{#if songJSON}}
-    <div class="row">
-        <div id="masterTools" class="row">
+        <div class="row" style="background-color: #fff; vertical-align: bottom">
+            <div class="col-sm-12">
+                <input type="text" value="{{songJSON}}" id="songDto" style="display:none;"/>
 
-
-            <a href="#" onclick="MixerUtil.toggleEditSong();" ><span class="glyphicon glyphicon-pencil"></span> Edit Song: </span><span ng-bind="songName"></span></a>
-
-            <button id="bcollaborators" type="button" class="btn btn-primary btn-sm"
-                    onclick="MixerUtil.toggleSearchUsers();"
-                    title="Find collaborators to add tracks to this song"
-                    >
-                <span class="glyphicon glyphicon-user"></span> Collaborate
-            </button>
-
-            <button id="bsaveSong" type="button" class="btn btn-primary btn-sm"
-                    onclick="mixer.saveSong();"
-                    title="Save song"
-                    >
-                <span class="glyphicon glyphicon-floppy-disk"></span> Save
-            </button>
-
-            <button id="bplay" type="button" class="btn btn-primary btn-sm"
-                    onclick="mixer.playPauseAll();"
-                    title="Play song" >
-                <span class="glyphicon glyphicon-play"></span> Play / <span class="glyphicon glyphicon-pause"></span> Pause
-            </button>
-
-            <button id="bstop"
-                    onclick="mixer.stopAll();"
-                    title="Stop playing"
-                    type="button" class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-stop"></span> Stop
-            </button>
-
-            <button id="brecordMix"
-                    onclick="initAudio();" type="button"
-                    title="Click to start recording."
-                    class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-record"></span> Record
-            </button>
-
-           <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
-
-
-
-        </div>
-    </div>
-    <div class="row" style="background-color: #fff">
-
-        <div id="recordingWav" style="display:none;">
-            <div id="viz" class="col-lg-12">
-                <canvas id="analyser" width="500" height="200"></canvas>
+                <div style='float:left;'><h1><a href="#"
+                                                onclick="tb.dialogs.openSongInfoDialog(JSON.parse(document.getElementById('songDto').value), false);"><span
+                        id="songTitle"></span></a></h1></div>
+                <div style='float:left; padding-left: 10px'>
+                    <table style='padding:0px; height:65px;'>
+                        <tr>
+                            <td ><div id='songCreatorName'></div></td>
+                            <td>
+                                <div id='songCreatorIcon'></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
+        <div class="row">
+            <div id="masterTools" class="row">
 
-        <div id="scroll">
+                <!-- Single button -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        <span class="icon-menu3"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li id="songOptionEdit" class="adminOption"><a href="#"
+                               onclick="tb.dialogs.mixer.openSongEditDialog(JSON.parse(document.getElementById('songDto').value));"><span
+                                class="glyphicon glyphicon-edit"></span> Edit Song</a></li>
+                        <li  id="songOptionListen"><a href="#"
+                               onclick="tb.dialogs.openSongInfoDialog(JSON.parse(document.getElementById('songDto').value));"><span
+                                class="icon-file-music"></span> Listen to mixed tracks</a></li>
+                        <li  id="songOptionAddCollaborator" class="adminOption"><a href="#" onclick="MixerUtil.toggleSearchUsers();"><span
+                                class="glyphicon glyphicon-user"></span> Invite a musician</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li  id="songOptionSaveTracks" class="adminOption"><a href="#" onclick="mixer.saveSong(); return false;"><span
+                                class="glyphicon glyphicon-floppy-disk"></span> Save</a></li>
+                    </ul>
+                </div>
 
-            <div class="col-md-2"></div>
-            <div id="tracksTop" class="col-md-10"></div>
+                <button id="bsave" type="button" class="btn btn-primary btn-sm"
+                        onclick="mixer.saveSong();"
+                        title="Save song">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                </button>
+
+                <button id="bplay" type="button" class="btn btn-primary btn-sm"
+                        onclick="mixer.playPauseAll();"
+                        title="Play / Pause Song">
+                    <span class="glyphicon glyphicon-play"></span> / <span
+                        class="glyphicon glyphicon-pause"></span>
+                </button>
+
+                <button id="bstop"
+                        onclick="mixer.stopAll();"
+                        title="Stop playing"
+                        type="button" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-stop"></span>
+                </button>
+
+                <button id="brecordMix"
+                        onclick="initAudio();" type="button"
+                        title="Click to start recording."
+                        class="btn btn-primary btn-sm">
+                    <span class="icon-mic" style="font-size: 14px; font-weight: 100"></span> Record
+                </button>
+
+                <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
+
+
+            </div>
+        </div>
+        <div class="row" style="background-color: #fff">
+
+            <div id="recordingWav" style="display:none;">
+                <div id="viz" class="col-lg-12">
+                    <canvas id="analyser" width="500" height="200"></canvas>
+                </div>
+            </div>
+
+            <div id="scroll">
+
+                <div class="col-md-2"></div>
+                <div id="tracksTop" class="col-md-10"></div>
+
+            </div>
 
         </div>
 
-    </div>
+        <div class="row" style="background-color: #fff; padding-top: 10px;">
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
 
-    <div class="row" style="background-color: #fff; padding-top: 10px;">
-        <div id="disqus_thread"></div>
-        <script>
-            var disqus_config = function () {
+                    this.page.url = '{{pageUrl}}';
+                    this.page.identifier = '{{disqusTopicId}}';
+                    this.page.remote_auth_s3 = '{{disqusAuth}}';
+                    this.page.api_key = '{{DISQUS_API_PUBLIC_KEY}}';
 
-                this.page.url = '{{pageUrl}}';
-                this.page.identifier = '{{disqusTopicId}}';
-                this.page.remote_auth_s3 = '{{disqusAuth}}';
-                this.page.api_key = '{{DISQUS_API_PUBLIC_KEY}}';
-
-                // This adds the custom login/logout functionality
-                this.sso = {
-                    name:   "twangband",
-                    button:  "http://twangband.com/images/facebook_login.png",
-                    //icon:     "http://example.com/favicon.png",
-                    url:        "http://twangband.com/login/",
-                    logout:  "http://twangband.com/logout/",
-                    width:   "200",
-                    height:  "50"
+                    // This adds the custom login/logout functionality
+                    this.sso = {
+                        name: "twangband",
+                        button: "http://twangband.com/images/facebook_login.png",
+                        //icon:     "http://example.com/favicon.png",
+                        url: "http://twangband.com/login/",
+                        logout: "http://twangband.com/logout/",
+                        width: "200",
+                        height: "50"
+                    };
                 };
-            };
 
-            (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
+                (function () { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
 
-                s.src = '//twangband.disqus.com/embed.js';
+                    s.src = '//twangband.disqus.com/embed.js';
 
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
 
-    </div>
+        </div>
     {{/if}}
 
     {{#unless songJSON}}
-    <div class="row"  style="background-color: #fff;" id="createNewSong">
-        <div class="col-sm-2"></div>
-         <div class="col-sm-8">
+        <div class="row" style="background-color: #fff;" id="createNewSong">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
 
-            <div id="checkLatencyMessage" style="display: none">
-                <h3>Before you can begin recording, you must calibrate your system for recording (you will need a mic & speakers)</h3>
-                <button id='btnCheckLatencyDialog' type="button"  class="btn btn-primary btn-lg"onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin</button>
+                <div id="checkLatencyMessage" style="display: none">
+                    <h3>Before you can begin recording, you must calibrate your system for recording (you will need a
+                        mic & speakers)</h3>
+                    <button id='btnCheckLatencyDialog' type="button" class="btn btn-primary btn-lg"
+                            onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin
+                    </button>
+                </div>
+                <div id="createNewSongMessage" class="row" style="display: none">
+
+
+                    <div class="form-group form-inline">
+                        <label control-label"><h1>To create a new song from scratch</h1></label>
+                        <button id='btnCreateNewSongDialog' type="button" class="btn btn-primary"
+                                onclick="tb.dialogs.openNewSongDialog()">Click here
+                        </button>
+                    </div>
+
+                    <div class="form-group ">
+                        <label control-label"><h1>Or search for existing tracks to start from</h1></label>
+                        {{> searchTrackForm }}
+                    </div>
+
+                </div>
             </div>
-             <div id="createNewSongMessage" class="row" style="display: none">
-
-                 <form role="search" onsubmit="SearchUtil.searchTracksByKeywords(document.getElementById('searchTracksBox').value); return false;">
-                     <div class="form-group form-inline">
-                         <label control-label"><h1>To create a new song from scratch</h1></label>
-                         <button id='btnCreateNewSongDialog' type="button" class="btn btn-primary" onclick="tb.dialogs.openNewSongDialog()">Click here</button>
-                     </div>
-
-                     <div class="form-group ">
-                         <label control-label"><h1>Or search for existing tracks to start from</h1></label>
-                         <div class="input-group">
-                             <input type="text" class="form-control" placeholder="Search for tracks..." name="keywords" id="searchTracksBox">
-                             <div class="input-group-btn">
-                                 <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                             </div>
-                         </div>
-                     </div>
-                 </form>
-            </div>
-         </div>
-        <div class="col-sm-2"></div>
-    </div>
+            <div class="col-sm-2"></div>
+        </div>
 
 
     {{/unless}}
@@ -361,25 +248,29 @@
 
 </div>
 <script language="JavaScript">
-{{#if songJSON}}
-var songDto = {{{songJSON}}};
-{{/if}}
 
-{{#unless songJSON}}
-var songDto = null;
-{{/unless}}
 
-{{#if user}}
-var user = {{{json user}}};
-{{/if}}
+        {{#if user}}
+        var user = {{{json user}}};
+        {{/if}}
 
-{{#unless user}}
-var user = null;
-{{/unless}}
+        {{#unless user}}
+        var user = null;
+        {{/unless}}
 </script>
 
 
+
+{{> MixerTrackRow }}
+{{> MixerTrackEditDialog }}
+
 {{> createSongFromTrackDialog }}
+
+{{> userProfileDialog }}
+{{> songInfoDialog }}
+{{> MixerSongEditDialog }}
+{{> musicianInfoIcon clientSide=true }}
+
 
 <script src="js/lib/models/SearchCriteriaDto.js"></script>
 <script src="js/lib/models/SongDto.js"></script>
@@ -390,7 +281,7 @@ var user = null;
 <script src="js/lib/models/RecordingResponseDto.js"></script>
 <script src="js/lib/util/AppConstants.js"></script>
 <script src="js/lib/validation/SongValidation.js"></script>
-
+<script src="js/lib/validation/TrackValidation.js"></script>
 <script src="js/lib/util/Logger.js"></script>
 <script src="/js/lib/recorderjs/recorder.js"></script>
 <script src="js/lib/wavesurfer/wavesurfer.min.js"></script>
@@ -400,7 +291,10 @@ var user = null;
 <script src="js/lib/mixer/MixerUtil.js"></script>
 <script src="js/lib/mixer/Mic.js"></script>
 <script src="/js/lib/dialogs/NewSongDialog.js"></script>
-
+<script src="/js/lib/dialogs/MixerTrackEditDialog.js"></script>
+<script src="/js/lib/dialogs/UserProfileDialog.js"></script>
+<script src="/js/lib/dialogs/SongInfoDialog.js"></script>
+<script src="/js/lib/dialogs/SongEditDialog.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 
 <script language="JavaScript">
@@ -408,134 +302,57 @@ var user = null;
     var tags = {};
     var log = new Logger('DEBUG');
     var app = angular.module('app', []);
+    var songDto = null;
 
     $(document).ready(function () {
 
+        {{#if songJSON}}
+            songDto = JSON.parse(document.getElementById('songDto').value);
+            document.getElementById('songTitle').innerHTML = songDto.name;
+        {{/if}}
+
+        if (songDto == null) {
+            MixerUtil.updateNewSongMessage();
+            return;
+        }
+
 
         //attach onChange event handler to all form elements
-        $('input').change(function(){
+        $('input').change(function () {
             MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
         });
 
-        $('textarea').change(function(){
+        $('textarea').change(function () {
             MixerUtil.notifyOfChanges(this.name + ' changed to: ' + this.value);
         });
 
-        $.notify.defaults({autoHide : true, className : 'info'});
+        $.notify.defaults({autoHide: true, className: 'info'});
 
         tags = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             prefetch: {
                 url: '/listData?type=instruments',
-                filter: function(list) {
-                    return $.map(list, function(instrument) {
-                        return { name: instrument }; });
+                filter: function (list) {
+                    return $.map(list, function (instrument) {
+                        return {name: instrument};
+                    });
                 },
-                cache : false
+                cache: false
             }
         });
 
         tags.initialize();
 
-        $('#songTags').tagsinput({
-            typeaheadjs: {
-                hint: true,
-                autoselect: true,
-                highlight: true,
-                minLength: 1,
-                limit : 10,
-                name: 'instruments',
-                displayKey: 'name',
-                valueKey: 'name',
-                source: tags.ttAdapter()
-            }
-        });
 
         mixer = new SongMixer(songDto).init();
         //sound.js ... init(songDto);
 
 
-        if(songDto == null){
-            MixerUtil.updateNewSongMessage();
-        }
-
-
     });
-
-    var songWavesurfer = Object.create(WaveSurfer);
-    app.controller('myCtrl', function ($scope) {
-
-
-        if (songDto != null) {
-            console.log("setting scope variables with name: " + songDto.name + ', tags length: '+songDto.tags.length);
-            $scope.songName = songDto.name;
-            $scope.songDescription = songDto.description;
-            $scope.songIsPublic = songDto.isPublic;
-            $scope.songTags = [];
-
-            if(songDto.fileName){
-
-                var GLOBAL_ACTIONS = {
-                    'play': function () {
-                        songWavesurfer.playPause();
-                    },
-
-                    'back': function () {
-                        songWavesurfer.skipBackward();
-                    },
-
-                    'forth': function () {
-                        songWavesurfer.skipForward();
-                    },
-
-                    'stop': function () {
-                        songWavesurfer.stop();
-                    }
-                };
-
-                [].forEach.call(document.querySelectorAll('[data-action]'), function (el) {
-                    el.addEventListener('click', function (e) {
-                        var action = e.currentTarget.dataset.action;
-                        if (action in GLOBAL_ACTIONS) {
-                            e.preventDefault();
-                            GLOBAL_ACTIONS[action](e);
-                        }
-                    });
-                });
-            }
-
-
-            if(songDto.tags.length){
-
-                for(var i=0; i < songDto.tags.length; i++){
-                    $scope.songTags.push({id : songDto.tags[i], name : songDto.tags[i]});
-                    console.log('tag name: ' + $scope.songTags[i].name);
-                }
-            }
-            else{
-                $scope.songTags.push({id : '', name : ''});
-            }
-
-
-        }
-        else{
-
-            var name = "anonymous";
-            if(user){
-                name = user.firstName;
-            }
-
-            name += " track " + new Date().toLocaleString();
-            $scope.songName = name.replace(/ /g,"_").replace(/,/g,"");
-            // $scope.songName = name + " track " + new Date().toLocaleString();
-
-        }
-
-    });
-
 
 </script>
+
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
@@ -548,7 +365,7 @@ var user = null;
                 <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
 
             </div>
-            <div class="modal-body " >
+            <div class="modal-body ">
                 <div id="notificationBody" class="modalNotificationBody"><p id="foo"></p></div>
             </div>
 
@@ -557,11 +374,11 @@ var user = null;
     </div>
 </div>
 
-<div id="savingModal" class="modal fade" >
+<div id="savingModal" class="modal fade">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div id="notificationBody"><p><span class="fa fa-spinner fa-pulse"></span> Saving...</p></div>
             </div>
         </div>
@@ -572,5 +389,6 @@ var user = null;
 <div id="trash" style="display:none"></div>
 
 
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
+    powered by Disqus.</a></noscript>
 <script id="dsq-count-scr" src="//twangband.disqus.com/count.js" async></script>

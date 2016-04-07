@@ -17,7 +17,7 @@ var server_port = 3000;
 
 var mongoUrl=process.env.MONGO_SERVICE_HOST + ':' + process.env.MONGO_SERVICE_PORT + '/' + process.env.MONGO_DB_NAME;
 console.log("connect to mongo url " + mongoUrl);
-
+//console.log("mongo user: " + process.env.TB_MONGO_DB_USER + " mongo pass: " + process.env.TB_MONGO_DB_PASS);
 
 mongoose.connect(mongoUrl, {
     server: {
@@ -25,7 +25,9 @@ mongoose.connect(mongoUrl, {
         socketOptions : {
             keepAlive: 1
         }
-    }
+    },
+    user: process.env.TB_MONGO_DB_USER,
+    pass: process.env.TB_MONGO_DB_PASS
 });
 
 mongoose.set('debug', true);

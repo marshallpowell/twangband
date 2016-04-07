@@ -8,8 +8,8 @@ MixerUtil.btn = {};
 MixerUtil.btn.play = 'bplay';
 MixerUtil.btn.stop = 'bstop';
 MixerUtil.btn.record = 'brecordMix';
-MixerUtil.btn.saveSong = 'bsaveSong';
-MixerUtil.btn.searchCollaborators = 'bcollaborators';
+MixerUtil.btn.saveSong = 'bsave';
+
 MixerUtil.buttonsIds=[];
 MixerUtil.latencyTime=null;
 MixerUtil.recordingDto=null;
@@ -18,9 +18,6 @@ for(var key in MixerUtil.btn){
     MixerUtil.buttonsIds.push(MixerUtil.btn[key]);
 }
 
-//TODO implement better browser detection logic
-var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? document.body : '#myModal';
-
 /**
  * Push notifications to UI showing which updates were made, and indicating un-saved changes
  * Adds edit info to mixer to save
@@ -28,12 +25,12 @@ var keyEventElement = (window.navigator.userAgent.indexOf("Firefox") > -1) ? doc
  */
 MixerUtil.notifyOfChanges = function(editAlert){
 
-    log.trace('enter notifyOfChanges');
-    $("#bsaveSong").notify("You have un-saved changes", { position:"top", autoHide:false });
+      log.trace('enter notifyOfChanges');
+//disable for now    $.notify("You have un-saved changes", { autoHide:false });
     var editDto = new EditDto(user.id, editAlert);
-    mixer.newEdits.push();
+    mixer.newEdits.push(editDto);
 
-    $.notify(editAlert);
+    //$.notify(editAlert);
 };
 
 /**
@@ -52,6 +49,7 @@ MixerUtil.enableOrDisableButtons = function(btnIdArray, enableOrDisable){
         document.getElementById(btnIdArray[i]).disabled = enableOrDisable;
     }
 };
+
 
 /**
  * Updates UI with collaborator info
@@ -110,141 +108,73 @@ console.log('latency check: ' + latency);
  * @param value
  * @param index
  */
-MixerUtil.updateTrackLabel = function(value, index){
+MixerUtil.updateTrackLabel = function(value, uid){
 
-    document.getElementById("trackLabel"+index).innerHTML= value.substring(0,15) + "...";
+    document.getElementById("trackLabel"+uid).innerText= value.substring(0,15) + "...";
 
 };
 
 MixerUtil.createOrUpdateSongInfo = function(){
 
-    var errors = SongValidation.validateSongFieldData(document.getElementById('songName').value);
 
-    if(errors.length){
-        NotificationUtil.error(errors.join("\n<br/> * "), true, 'songFormNotifications');
-        return;
-    }
-    else{
-        mixer.saveSong();
-        return;
-    }
 };
 
+MixerUtil.displaySaveButtonNotification = function(displayText){
+
+    $('#bsave').notify(displayText,{ autoHide:false, position:'top left'});
+};
 /**
  *
  * @param uiId
  */
-MixerUtil.removeTrackFromSong = function(uiId){
+MixerUtil.removeTrackFromSong = function(trackDto){
 
     if(!confirm("Are you sure you want to remove this track")){
         return;
 
     }
 
-    log.debug("before mixer.currentSongDto tracks size: " + mixer.currentSongDto.tracks.length + " \n" + JSON.stringify(mixer.currentSongDto.tracks));
+    log.debug("before mixer.currentSongDto tracks size: " + mixer.currentSongDto.tracks.length);
 
     for(var i =0; i < mixer.currentSongDto.tracks.length; i++){
-        if(mixer.currentSongDto.tracks[i].uiId == uiId){
-            log.debug('removing track: ' + $("#"+uiId).html());
-            MixerUtil.notifyOfChanges('Removed Track: ' + document.getElementById('trackName' + mixer.currentSongDto.tracks[i].uiId).value);
-            document.getElementById(uiId).style.display='none';
+        if(mixer.currentSongDto.tracks[i].uiId == trackDto.uiId){
+            MixerUtil.notifyOfChanges('Removed Track: ' + trackDto.name);
+            document.getElementById(trackDto.uiId).style.display='none';
             mixer.currentSongDto.tracks.splice(i,1);
             break;
         }
     }
 
-    log.debug("after mixer.currentSongDto track size: " + mixer.currentSongDto.tracks.length + " \n" + JSON.stringify(mixer.currentSongDto.tracks));
+    log.debug("after mixer.currentSongDto track size: " + mixer.currentSongDto.tracks.length);
 
-
+    MixerUtil.displaySaveButtonNotification('Click save to re-mix song without track');
 };
 
-/*
-Edit song
-Edit track
- Add track
- Remove track
-Add collaborator
 
- */
+
 
 /**
  *
- * @param uiId -- track uiId
- */
-MixerUtil.selectTrackForNewSong = function(uiId){
-
-    MixerUtil.selectedTrackUiId = uiId;
-    MixerUtil.toggleNotification($("#newSongFromTrack"));
-};
-
-/**
- * Create a new song with the selected track
- */
-MixerUtil.createNewSongFromTrack = function(){
-
-    log.trace("enter createNewSongFromTrack");
-
-    var newSongDto = new SongDto();
-    newSongDto.name = document.getElementById('newSongName').value;
-    newSongDto.description = document.getElementById('newSongDescription').value;
-
-    var trackDto = mixer.getTrackByUiId(MixerUtil.selectedTrackUiId);
-    alert(JSON.stringify(trackDto));
-    newSongDto.tracks.push(trackDto);
-
-    var formData = new FormData();
-    formData.append("song", JSON.stringify(newSongDto));
-
-    $('#savingModal').modal('toggle');
-
-    $.ajax({
-        url: '/song/save',
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        type: 'POST',
-        success: function(data){
-
-            //TODO need to handle errors too
-            log.debug("saved song: " + data);
-
-            $('#notificationBody').html("Saved Successfully. Refreshing Page");
-            $('#myModal').modal('toggle');
-
-            window.location.href="/songMixer?song="+data.id;
-
-        },
-        fail: function(error){
-            alert('There was an error creating a song from this track: ' + error);
-        }
-    });
-
-};
-
-/**
- *
- * @param el
  * @param role
  * @returns {boolean}
  */
-MixerUtil.validateAndNotify = function(el, role){
+MixerUtil.validateRoleAndNotify = function(role){
 
     if(!user){
-        $(el).notify('You must login first', 'error');
+        $.notify('You must login first', 'error');
         return false;
     }
 
     if(role == AppConstants.ROLES.ADMIN){
         if(!SongValidation.isAdmin(user, songDto)){
-            $(el).notify('You must be an admin to perform this action', 'error');
+            $.notify('You must be an admin to perform this action', 'error');
             return false;
         }
     }
 
     if(role == AppConstants.ROLES.ADD_TRACK){
         if(!SongValidation.canAddTrack(user, songDto)){
-            $(el).notify('You must be collaborator to perform this action', 'error');
+            $.notify('You must be collaborator to perform this action', 'error');
             return false;
         }
     }
@@ -328,15 +258,6 @@ MixerUtil.addCollaborator = function(userDto){
 
 /**
  *
- * @param trackNumber
- */
-MixerUtil.toggleEditTrack = function(trackNumber){
-
-    MixerUtil.toggleNotification($('#trackInfo'+trackNumber));
-};
-
-/**
- *
  * @param content
  * @param doNotToggle
  */
@@ -357,31 +278,6 @@ MixerUtil.toggleNotification = function(content, doNotToggle){
 
 };
 
-/**
- * Show or hide the edit song dialog
- * @param closeMe
- */
-var songLoaded=false;
-MixerUtil.toggleEditSong = function(closeMe){
-
-    MixerUtil.toggleNotification($('#songInfo'), closeMe);
-
-    if(!songLoaded){
-        setTimeout(function() {
-
-            var options = {
-                container     : document.getElementById('songWav'),
-                waveColor: '#1989D4',
-                progressColor: '#2BAD1D ',
-                cursorColor   : 'navy'
-            };
-
-            songWavesurfer.init(options);
-            songWavesurfer.load('/uploads/'+songDto.fileName);
-            songLoaded=true;
-        },500);
-    }
-};
 
 /**
  *
@@ -415,13 +311,9 @@ MixerUtil.toggleRecording = function(){
         recordingAnalyzerEl.style.display="none";
         modalXCloseEl.style.display="inline";
 
-        $(keyEventElement).off('keypress', function(){
-            MixerUtil.toggleRecording();
-        });
+        $('#myModal').unbind('hidden.bs.modal');
 
-
-
-        $('#myModal').modal('toggle');
+        $('#myModal').modal('hide');
 
         //stop the equalizer
         cancelAnalyserUpdates();
@@ -446,6 +338,9 @@ MixerUtil.toggleRecording = function(){
             return;
         }
 
+        $('#myModal').on('hidden.bs.modal', function () {
+            MixerUtil.toggleRecording();
+        });
 
         //start recording
         MixerUtil.isRecordingOn=true;
@@ -482,15 +377,16 @@ MixerUtil.toggleRecording = function(){
                     },50);
 
 
-                    document.getElementById("startTimer").textContent="Press the space bar to stop recording";
+                    $(startTimerEl).html("<form id='stopRecordingForm' onsubmit='MixerUtil.toggleRecording(); return false;'><button class='btn-primary' id='stopRecordingBtn' type='submit'>Press enter or click here to stop recording</button></form>");
+                    $("#stopRecordingBtn").focus();
                     countDownInfoEl.textContent = 'or recording will automatically end in';
-                   // $(keyEventElement).on('keypress',MixerUtil.toggleRecording);
+
 
 
 
                 }
                 else{
-                    document.getElementById("startTimer").textContent = "Start playing in " + startRecording + "...";
+                    startTimerEl.textContent = "Start playing in " + startRecording + "...";
                 }
 
             }
@@ -516,7 +412,7 @@ MixerUtil.startTimer = function(duration, el) {
 
     var timer = duration, minutes, seconds;
     MixerUtil.countdownTimer = setInterval(function () {
-        log.debug("updating timer");
+
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
@@ -526,7 +422,7 @@ MixerUtil.startTimer = function(duration, el) {
         el.textContent = minutes + ":" + seconds;
 
         if (--timer < 0) {
-            log.debug("ending timer......");
+
             timer = duration;
             MixerUtil.toggleRecording();
 

@@ -1,0 +1,59 @@
+<!-- begin mixerTrackRow -->
+<script id="mixerTrackRowPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+    <div class="row trackRow" id="\{{trackDto.uiId}}">
+        <div class="col-lg-2">
+            <div class="row trackInfo">
+                <span style='float:left'>\{{> musicianInfoIcon userDto=userDto}}</span>
+                <span style='float:left'>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-xs dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="icon-menu3"></span> Track
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#"
+                                               onclick="tb.dialogs.mixer.track.openTrackEditDialog(JSON.parse(document.getElementById('trackJson\{{trackDto.uiId}}').value), \{{readOnly}});"><span
+                                                id="trackLabelIcon\{{trackDto.uiId}}"
+                                                class="glyphicon glyphicon-edit"></span> Edit Track</a></li>
+                                        <li><a href="#"
+                                               onclick="tb.dialogs.openNewSongDialog(\{{json trackDto}}); return false;">
+                                            <span class="glyphicon glyphicon-plus-sign" id="bmute\{{trackDto.uiId}}"></span> Create new Song...</a></li>
+                                        <li><a href="#" onclick="mixer.toggleSoloTrack(this,'\{{trackDto.uiId}}'); return false;">
+                                            <span class="glyphicon glyphicon-headphones solo" id="bsolo\{{trackDto.uiId}}" ></span> Mute all other tracks</a>
+                                        </li>
+
+                                        <li><a href="#" onclick="mixer.toggleMuteTrack(this,'\{{trackDto.uiId}}'); return false;">
+                                            <span class="glyphicon glyphicon-volume-up mute" id="bmute\{{trackDto.uiId}}"></span> Mute this track</a>
+                                        </li>
+
+                                        <li><a href="#" onclick="MixerUtil.removeTrackFromSong(JSON.parse(document.getElementById('trackJson\{{trackDto.uiId}}').value)); return false;">
+                                            <span class="glyphicon glyphicon-trash removeTrack" id="removeTrack\{{trackDto.uiId}}"></span> Delete this track</a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                     </span>
+
+
+            </div>
+
+            <div class="row  trackInfo">
+                <input type="text" id="trackJson\{{trackDto.uiId}}" value='\{{json trackDto}}'
+                       style="display:none;"/>
+                <input type="hidden" id="isReadOnly\{{trackDto.uiId}}" value='\{{readOnly}}'/>
+
+
+            <p><a href="#" id='trackLabel\{{trackDto.uiId}}'
+                  onclick="tb.dialogs.mixer.track.openTrackEditDialog(JSON.parse(document.getElementById('trackJson\{{trackDto.uiId}}').value), \{{readOnly}});">\{{trackDto.name}}</a></p>
+            <span id="volspan"><input type="range" class="volumeSlider" id="volume\{{trackDto.uiId}}"
+                                      min="0" max="100" value="100" style="width:150px"
+                                      oninput="mixer.adjustTrackVolume('\{{trackDto.uiId}}', this.value);"></span>
+            </div>
+
+        </div>
+        <div class="col-lg-10 trackWav" id="track_waveform\{{trackDto.uiId}}">
+            <p id='track_waveform\{{trackDto.uiId}}_message'><span class="fa fa-spinner fa-pulse"></span> Loading...</p>
+        </div>
+    </div>
+</script>
+<!-- end mixerTrackRow -->

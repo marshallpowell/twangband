@@ -8,30 +8,39 @@
         <div class="col-md-12 page-header"><h1>{{title}}</h1></div>
     </div>
 
-    {{#if songs}}
-        {{#each songSearchResults}}
-            {{> songSearchResult searchResult=this}}
-        {{/each}}
+    {{#if showSongs}}
 
+        {{#if songSearchResults}}
+            {{#each songSearchResults}}
+                {{> songSearchResult searchResult=this}}
+            {{/each}}
 
-        {{#unless songs}}
-                <div class="row"><span class="searchNoInfo">No songs found...</span></div>
+        {{/if}}
+
+        {{#unless songSearchResults}}
+            <div class="row"><span class="searchNoInfo">No songs found...</span></div>
         {{/unless}}
     {{/if}}
 
-    {{#if trackSearchResults}}
-        {{#each trackSearchResults}}
-            {{> trackSearchResult searchResult=this}}
-        {{/each}}
+    {{#if showTracks}}
+        <div class="row" style="padding:5px;">
+            <div class="col-md-8 col-lg-8 col-sm-12">
+                {{> searchTrackForm }}
+            </div>
+        </div>
+        {{#if trackSearchResults}}
+            {{#each trackSearchResults}}
+                {{> trackSearchResult searchResult=this}}
+            {{/each}}
 
-
-        {{#unless tracks}}
+        {{/if}}
+        {{#unless trackSearchResults}}
             <div class="row"><span class="searchNoInfo">No tracks found...</span></div>
         {{/unless}}
     {{/if}}
 
-</div>
 
+</div>
 
 
 {{#if songs}}
@@ -40,8 +49,9 @@
 {{#if tracks}}
     {{> songSearchWavJS songDtos=tracks}}
 {{/if}}
-{{> userProfileDialog }}
 
+{{> songInfoDialog }}
+{{> userProfileDialog}}
 {{> createSongFromTrackDialog }}
 
 <script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
@@ -52,19 +62,6 @@
 <script src="js/lib/models/SongTrackDto.js"></script>
 <script src="js/lib/validation/SongValidation.js"></script>
 <script src="/js/lib/dialogs/NewSongDialog.js"></script>
+<script src="/js/lib/dialogs/SongInfoDialog.js"></script>
+<script src="/js/lib/dialogs/UserProfileDialog.js"></script>
 
-
-<script language="JavaScript">
-    var log = new Logger('DEBUG');
-    var template = Handlebars.compile($("#userProfilePartial").html());
-    var showUserProfile = function(userDto){
-
-        log.debug('enter showUserProfile with: ' + JSON.stringify(userDto));
-        var context = {};
-        context.userDto = userDto;
-        log.debug('template: ' + template(context));
-        $('#userProfileBody').html(template(context));
-        $('#userProfileDialog').modal('toggle');
-
-    };
-</script>
