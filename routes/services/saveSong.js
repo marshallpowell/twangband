@@ -2,6 +2,8 @@ var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var trackService = require(APP_LIB + 'service/TrackService');
 var validationUtil = require(global.PUBLIC_APP_LIB+'validation/ValidationUtil.js');
+var tagValidation = require(global.PUBLIC_APP_LIB+'validation/TagValidation.js');
+var songValidation = require(global.PUBLIC_APP_LIB+'validation/SongValidation.js');
 
 exports = module.exports = function (req, res) {
 
@@ -17,6 +19,15 @@ exports = module.exports = function (req, res) {
     var songDto = JSON.parse(req.body.song);
     songDto.name = validationUtil.escapeHtml(songDto.name);
     songDto.description = validationUtil.escapeHtml(songDto.description);
+
+    var errors = songValidation.validate(songDto);
+    errors = errors.concat(tagValidation.validate(songDto.tags));
+
+    if(errors.length){
+        log.debug('validation failed when saving song: ' + JSON.stringify(errors));
+        res.json({error: errors});
+        return;
+    }
 
     //songDto.creatorId = req.user.id;
     songDto._currentUser = req.user;

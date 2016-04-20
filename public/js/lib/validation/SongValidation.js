@@ -3,7 +3,7 @@ var SongValidation = {};
 
 SongValidation.validateUiFormData = function(name, divId){
 
-    var errors = SongValidation.validateSongFieldData(name);
+    var errors = SongValidation.validate(name);
 
     if(errors.length){
         NotificationUtil.error(errors.join("\n<br/> * "), true, divId);
@@ -14,13 +14,24 @@ SongValidation.validateUiFormData = function(name, divId){
     }
 };
 
-SongValidation.validateSongFieldData = function(name){
+SongValidation.validate = function(songDto){
 
     var errors = [];
+    var name = (songDto && songDto.name)? songDto.name.trim() : '';
+    var description = (songDto && songDto.description) ? songDto.description.trim() : '';
 
-    if(name.trim() == ""){
+    var nameMaxLength = 50;
+    var descMaxLength = 500;
+
+    if(name == ""){
 
         errors.push("Name cannot be blank");
+    }
+    if(name.length > nameMaxLength){
+        errors.push("Name is " + name.length + " characters long. Max length is "+nameMaxLength + " characters");
+    }
+    if(description.length > descMaxLength){
+        errors.push("Description is " + description.length + " characters long. Max length is "+descMaxLength+ " characters");
     }
 
     return errors;

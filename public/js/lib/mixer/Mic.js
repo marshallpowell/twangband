@@ -1,23 +1,4 @@
 var recordings=[];
-var track = undefined;
-/**
- *
- * @param id
- * @param data - Float32Array
- * @constructor
- */
-function UiTrack(id, data){
-
-    this.id = 'local_'+id;
-    this.data = data;
-    this.format = 'wav';
-
-    this.onloaderror = function(){
-        console.log("load error");
-    };
-
-    this.src = 'local_'+id;
-}
 
 
 /* Copyright 2013 Chris Wilson
@@ -62,8 +43,6 @@ function saveAudio() {
     // audioRecorder.exportMonoWAV( doneEncoding );
 }
 function gotBuffers( buffers ) {
-
-    track = new UiTrack(recIndex++, buffers[0]);
 
     audioRecorder.endRecording(finishedProcessing);
     //audioRecorder.exportWAVBufferArray( doneEncoding );
@@ -211,7 +190,7 @@ function initAudio() {
 
     console.log("enter initAudio....");
     MixerUtil.latencyTime=MixerUtil.getCookie('systemLatency');
-    //for some reason the keypress event is binding to this function.
+
     if(MixerUtil.isRecordingOn){
         console.log('MixerUtil.isRecordingOn: ' + MixerUtil.isRecordingOn);
         MixerUtil.toggleRecording();

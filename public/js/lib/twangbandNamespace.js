@@ -1,6 +1,6 @@
 (function(tb, $, undefined){
 
-    tb.cdn = '';
+    tb.CDN = '';
     tb.logLevel='DEBUG';
     tb.validation = {};
     tb.util = {};

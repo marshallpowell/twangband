@@ -2,6 +2,7 @@ var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var trackDao = require(APP_LIB + 'dao/TrackDao');
 var validationUtil = require(global.PUBLIC_APP_LIB+'validation/ValidationUtil.js');
 var trackValidation = require(global.PUBLIC_APP_LIB+'validation/TrackValidation.js');
+var tagValidation = require(global.PUBLIC_APP_LIB+'validation/TagValidation.js');
 
 exports = module.exports = function (req, res) {
 
@@ -9,7 +10,8 @@ exports = module.exports = function (req, res) {
     var trackDto = JSON.parse(req.body.track);
     var data = {};
     data.errors = [];
-    data.errors = data.errors.concat(trackValidation.validateTrack(trackDto));
+    data.errors = data.errors.concat(trackValidation.validate(trackDto));
+    data.errors = data.errors.concat(tagValidation.validate(trackDto.tags));
 
     if(data.errors.length){
         res.json(data);

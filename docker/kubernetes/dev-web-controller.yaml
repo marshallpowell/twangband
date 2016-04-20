@@ -37,10 +37,8 @@ spec:
           value: /logs/
         - name: UPLOADS_DIR
           value: /uploads/
-        - name: CDN
-          value: http://dev.cdn.twangband.com/
         - name: UPLOADS_BUCKET
-          value: dev.cdn.twangband.com
+          value: dev-twangband
         - name: TB_MONGO_DB_USER
           valueFrom:
             secretKeyRef:

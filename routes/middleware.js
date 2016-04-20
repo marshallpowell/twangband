@@ -38,7 +38,7 @@ exports.initLocals = function(req, res, next) {
 
 	];
 
-	locals.cdn = process.env.CDN || 'http://cdn.twangband.com/';
+	locals.CDN = '/'+(process.env.UPLOADS_BUCKET || 'uploads');
 
 	//TODO may also be able to add local for logLevel here (eg. ?logLevel=DEBUG)
 

@@ -31,7 +31,18 @@ $(document).ready(function () {
 
         tb.dialogs.mixer.saveSong = function(){
 
-            var errors = SongValidation.validateSongFieldData(document.getElementById('mixerSongEditDialogSongName').value);
+            var name = document.getElementById('mixerSongEditDialogSongName').value;
+            var description = document.getElementById('mixerSongEditDialogSongDescription').value;
+            var tags = $("#mixerSongEditDialogSongTags").val();
+
+            var dto = {};
+            dto.name = name;
+            dto.description = description;
+            dto.tags = tags;
+            var errors = [];
+            errors = errors.concat(SongValidation.validate(dto));
+            errors = errors.concat(TagValidation.validate(tags));
+
 
             if(errors.length){
                 NotificationUtil.error(errors.join("\n<br/> * "), true, 'mixerSongEditDialogFormNotifications');
@@ -39,9 +50,9 @@ $(document).ready(function () {
             }
             else{
 
-                mixer.currentSongDto.name = $("#mixerSongEditDialogSongName").val();
-                mixer.currentSongDto.description = $("#mixerSongEditDialogSongDescription").val();
-                mixer.currentSongDto.tags = $("#mixerSongEditDialogSongTags").val();
+                mixer.currentSongDto.name = name;
+                mixer.currentSongDto.description = description;
+                mixer.currentSongDto.tags = tags;
                 mixer.currentSongDto.isPublic = $("#mixerSongEditDialogSongIsPublic").is(':checked');
 
                 mixer.saveSong('mixerSongEditDialogFormNotifications');

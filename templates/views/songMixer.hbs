@@ -78,7 +78,7 @@
     </div>
 
     {{#if songJSON}}
-        <div class="row" style="background-color: #fff; vertical-align: bottom">
+        <div class="row">
             <div class="col-sm-12">
                 <input type="text" value="{{songJSON}}" id="songDto" style="display:none;"/>
 
@@ -272,24 +272,25 @@
 {{> musicianInfoIcon clientSide=true }}
 
 
-<script src="js/lib/models/SearchCriteriaDto.js"></script>
-<script src="js/lib/models/SongDto.js"></script>
-<script src="js/lib/models/TrackDto.js"></script>
-<script src="js/lib/models/SongTrackDto.js"></script>
-<script src="js/lib/models/EditDto.js"></script>
-<script src="js/lib/models/RecordingDto.js"></script>
-<script src="js/lib/models/RecordingResponseDto.js"></script>
-<script src="js/lib/util/AppConstants.js"></script>
-<script src="js/lib/validation/SongValidation.js"></script>
-<script src="js/lib/validation/TrackValidation.js"></script>
-<script src="js/lib/util/Logger.js"></script>
+<script src="/js/lib/models/SearchCriteriaDto.js"></script>
+<script src="/js/lib/models/SongDto.js"></script>
+<script src="/js/lib/models/TrackDto.js"></script>
+<script src="/js/lib/models/SongTrackDto.js"></script>
+<script src="/js/lib/models/EditDto.js"></script>
+<script src="/js/lib/models/RecordingDto.js"></script>
+<script src="/js/lib/models/RecordingResponseDto.js"></script>
+<script src="/js/lib/util/AppConstants.js"></script>
+<script src="/js/lib/validation/TagValidation.js"></script>
+<script src="/js/lib/validation/SongValidation.js"></script>
+<script src="/js/lib/validation/TrackValidation.js"></script>
+<script src="/js/lib/util/Logger.js"></script>
 <script src="/js/lib/recorderjs/recorder.js"></script>
-<script src="js/lib/wavesurfer/wavesurfer.min.js"></script>
-<script src="js/lib/wavesurfer/wavesurfer.regions.js"></script>
-<script src="js/lib/mixer/TrackMixer.js"></script>
-<script src="js/lib/mixer/SongMixer.js"></script>
-<script src="js/lib/mixer/MixerUtil.js"></script>
-<script src="js/lib/mixer/Mic.js"></script>
+<script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
+<script src="/js/lib/wavesurfer/wavesurfer.regions.js"></script>
+<script src="/js/lib/mixer/TrackMixer.js"></script>
+<script src="/js/lib/mixer/SongMixer.js"></script>
+<script src="/js/lib/mixer/MixerUtil.js"></script>
+<script src="/js/lib/mixer/Mic.js"></script>
 <script src="/js/lib/dialogs/NewSongDialog.js"></script>
 <script src="/js/lib/dialogs/MixerTrackEditDialog.js"></script>
 <script src="/js/lib/dialogs/UserProfileDialog.js"></script>

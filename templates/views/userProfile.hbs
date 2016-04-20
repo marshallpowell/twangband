@@ -73,13 +73,13 @@
                     <label class="control-label"></label>
                     {{#if user}}
                         <input type="button" class="btn btn-primary" id="saveUserBtn" value="Save Changes"
-                               onClick="UserProfile.saveUser();">
+                               onClick="tb.dialogs.saveUser();">
 
                     {{/if}}
                     {{#unless user}}
 
                         <input type="button" class="btn btn-primary" id="createUserBtn" value="Create Profile"
-                               onClick="UserProfile.saveUser();">
+                               onClick="tb.dialogs.saveUser();">
                     {{/unless}}
 
 
@@ -100,8 +100,9 @@
 <hr>
 
 <script src="/js/lib/models/UserDto.js"></script>
+<script src="/js/lib/util/Logger.js"></script>
 <script src="/js/lib/validation/UserValidation.js"></script>
-<script src="/js/scripts/userProfile.js"></script>
+<script src="/js/lib/dialogs/UserProfileDialog.js"></script>
 
 <script language="JavaScript">
     $(document).ready(function () {

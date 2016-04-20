@@ -389,7 +389,7 @@ var SongMixer = function(songDto){
             trackDto.trackMixer.initBlob(trackDto.blobData);
         }
         else{
-            trackDto.trackMixer.initUrl(tb.cdn+trackDto.originalTrackDto.fileName);
+            trackDto.trackMixer.initUrl(tb.CDN+'/'+trackDto.originalTrackDto.fileName);
         }
 
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC

@@ -31,7 +31,7 @@
     -e MONGO_SERVICE_HOST=192.168.99.100 \
     -e MONGO_SERVICE_PORT=27017 \
     -e MONGO_DB_NAME=cluckoldhen \
-    -e UPLOADS_BUCKET=dev-twangband \
+    -e UPLOADS_BUCKET=uploads \
     -e UPLOADS_DIR=/uploads \
     -e LOG_DIR=/logs/ \
     --link mongo \
@@ -56,6 +56,8 @@
       -e ENABLE_SSL=true \
       -e ENABLE_BASIC_AUTH=false \
       -e TARGET_SERVICE=192.168.99.1:3000 \
+      -e CDN_TARGET_SERVICE=192.168.99.1:3000 \
+      -e CDN_TARGET_PATH=uploads \
       -e WEBSOCKET_TARGET_SERVICE=192.168.99.1:3001 \
       --name=nginx \
       -v /Users/marshallpowell/dev/sslCert/twangband.com.crt:/etc/secrets/proxycert \

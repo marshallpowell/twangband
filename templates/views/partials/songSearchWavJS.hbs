@@ -18,7 +18,7 @@
                 });
 
 
-                wavesurfers['{{id}}'].load('/uploads/{{fileName}}');
+                wavesurfers['{{id}}'].load('{{@root.CDN}}/{{fileName}}');
                 wavesurfers['{{id}}'].on('ready', (function(){
                     document.getElementById('wav_loading_{{id}}').remove();
                 }));

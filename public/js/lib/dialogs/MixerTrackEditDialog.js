@@ -33,7 +33,6 @@ $(document).ready(function () {
 
         tb.dialogs.mixer.track.updateTrack = function () {
 
-            var errors = [];
             var trackDto = new TrackDto();
             trackDto.name = document.getElementById('mixerTrackEditDialogTrackName').value || '';
             trackDto.description = document.getElementById('mixerTrackEditDialogTrackDescription').value || '';
@@ -41,7 +40,9 @@ $(document).ready(function () {
             trackDto.id = document.getElementById('mixerTrackEditDialogTrackId').value;
             trackDto.tags = $(document.getElementById('mixerTrackEditDialogTrackTags')).val();
 
-            errors = TrackValidation.validateTrack(trackDto);
+            var errors = [];
+            errors = errors.concat(TrackValidation.validate(trackDto));
+            errors = errors.concat(TagValidation.validate(trackDto.tags));
 
             if (errors.length) {
                 NotificationUtil.error(errors.join("\n<br/> * "), false, 'mixerTrackEditDialogNotifications');
