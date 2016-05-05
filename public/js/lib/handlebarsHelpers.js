@@ -12,6 +12,6 @@ $(document).ready(function () {
 
         Handlebars.registerPartial('tagInfo', Handlebars.compile($("#tagInfoPartial").html()));
         Handlebars.registerPartial('musicianInfoIcon', Handlebars.compile($("#musicianInfoIconPartial").html()));
-
+        Handlebars.registerPartial('songCollaboratorResults', Handlebars.compile($("#songCollaboratorResultsPartial").html()));
     }(jQuery));
 });

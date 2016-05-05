@@ -29,7 +29,7 @@
                     <label for="mixerSongEditDialogSongDescription">Description</label>
                     <textarea class="form-control" name="Song Description" id="mixerSongEditDialogSongDescription"
 
-                              placeholder="Enter a description for this song">\{{songDto.description}}"</textarea>
+                              placeholder="Enter a description for this song">\{{songDto.description}}</textarea>
                 </div>
                 <div>
                     <label for="mixerSongEditDialogSongIsPublic">Make Song Public</label>
@@ -37,10 +37,11 @@
                            id="mixerSongEditDialogSongIsPublic" \{{#if isPublic}}checked\{{/if}} />
                 </div>
                 <div class="form-group">
-                    <label for="trackName">Tag Your Song</label>&nbsp;<i>(Hit enter after each tag)</i><br/>
-                    <select name='Song Tags' id='mixerSongEditDialogSongTags' multiple>
+                    <label for="mixerSongEditDialogSongTags">Tag Your Song</label>&nbsp;<i>(Hit enter after each tag)</i><br/>
+
+                    <select name='Song Tags' id='mixerSongEditDialogSongTags' data-role="tagsinput" multiple>
                         \{{#each songDto.tags}}
-                        <option value="\{{this}}" selected>\{{this}}</option>
+                        <option value="\{{this}}" selected="selected">\{{this}}</option>
                         \{{/each}}
 
                     </select>

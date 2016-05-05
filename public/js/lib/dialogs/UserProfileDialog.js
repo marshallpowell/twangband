@@ -33,9 +33,12 @@ $(document).ready(function () {
             user.id = $("#id").val();
             user.socialId = $("#socialId").val();
             user.tags = $("#tags").val();
+            user.profilePic = $("#profilePic").val();
 
-            errors=[];
-           // var errors = UserValidation.validateUser(user);
+            var fileUploaded=false;
+            var errors = [];
+            errors = UserValidation.validateUser(user);
+            errors = errors.concat(TagValidation.validate(user.tags));
 
             if(errors.length){
 
@@ -49,6 +52,7 @@ $(document).ready(function () {
 
                 if(document.getElementById("profileImg").files[0]) {
                     formData.append("profileImage", document.getElementById("profileImg").files[0], document.getElementById("profileImg").files[0].name);
+                    fileUploaded=true;
                 }
 
                 $.ajax({
@@ -64,15 +68,26 @@ $(document).ready(function () {
                             var message = "There were errors with your submission:\n * "+data.errors.join("\n * ");
                             //NotificationUtil.error(message);
                             $.notify(message, {autoHide: false, arrowShow:true, className: 'error'});
+                            fileUploaded=false;
                         }
                         else{
 
                             if($("#id").val().length){
                                 // NotificationUtil.success("Your profile has been updated.");
                                 $.notify('Your profile has been updated.', 'success');
+
+                                if(fileUploaded){
+                                    document.getElementById("displayProfilePic").src = '/img/loading.gif';
+                                    setTimeout(function(){
+                                        document.getElementById("displayProfilePic").src = tb.CDN +'/users/profile/'+data.user.profilePic+'?ts='+Date.now();
+                                    },2000);
+                                    document.getElementById("profileImg").value=null;
+                                    fileUploaded=false;
+                                }
+
                             }
                             else{
-                                NotificationUtil.success("Your profile has been created. Click <b></b><a href='/login'>here</a></b> to sign in");
+                                NotificationUtil.success("Your profile has been created.");
                                 $("#id").val(data.user.id);
                             }
 

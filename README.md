@@ -13,6 +13,9 @@
     #get IP address of laptop
     ifconfig | grep "inet " | grep -v 127.0.0.1
     
+### Local Libraries and setup
+FFMPEG and http://sharp.dimens.io/en/stable/install/ where installed through brew
+    
 ### Docker set env
     eval "$(docker-machine env default)"
 

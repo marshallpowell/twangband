@@ -49,8 +49,7 @@ exports = module.exports = function (req, res) {
     //log.debug("saving songDto length: " + songDto.tracks.length);
 
 
-    trackService.saveNewTracks(req.files, songDto, req.user)
-        .then(trackService.updateExistingTracks)
+    trackService.updateSongTracks(songDto, req.user)
         .then(songDao.createOrUpdateSong)
         .then(function (savedSongDto) {
             log.debug('saved track and song, now respond');

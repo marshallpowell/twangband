@@ -112,8 +112,6 @@ var SongMixer = function(songDto){
                 var musicians = {};
                 $( data ).each(function( index ) {
                     log.debug("loading musician: " + JSON.stringify(this));
-
-                    MixerUtil.addCollaboratorToUi(this);
                     musicians[this.id]=this;
 
                 });
@@ -179,7 +177,7 @@ var SongMixer = function(songDto){
 
                     return;
                 }
-                console.log("saved song: " + data);
+                console.log("saved song: " + JSON.stringify(data));
                 document.getElementById('songDto').value = JSON.stringify(data);
 
                 $('#savingModal').modal('toggle');
@@ -273,49 +271,10 @@ var SongMixer = function(songDto){
     this.adjustTrackVolume = function(trackUiId, volume){
         log.trace("enter adjustTrackVolume with volume: " + volume);
         var trackDto = this.getTrackByUiId(trackUiId);
-        trackDto.trackMixer.wavesurfer.setVolume(volume/100);
+        trackDto.volume = volume/100;
+        trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
     };
 
-
-    /**
-     * this was just experimental, the recording comes out as non-sense.
-     * I'm guessing the tracks need to be the same length, or more feasibly this could be done
-     * by piping all tracks through a master gain node, but not in real time.???
-     *
-     *
-     */
-    this.downloadTrackMix = function(){
-
-        var bufferSize=0;
-        var duh;
-        for(var i = 0; i < this.currentSongDto.tracks.length; i++){
-            var trackDto = this.currentSongDto.tracks[i];
-            var channelDataArray=[];
-
-            log.debug('num channels: ' + trackDto.trackMixer.wavesurfer.backend.buffer.numberOfChannels);
-            log.debug('channel length: ' + trackDto.trackMixer.wavesurfer.backend.buffer.getChannelData(0).length);
-
-            for(var c = 0; c < trackDto.trackMixer.wavesurfer.backend.buffer.numberOfChannels; c++){
-                bufferSize += trackDto.trackMixer.wavesurfer.backend.buffer.getChannelData(c).length;
-                channelDataArray[c]= trackDto.trackMixer.wavesurfer.backend.buffer.getChannelData(c);
-            }
-        }
-
-        //recorder.workder.mergeBuffers - creates a Float32Array
-        //recorder.worker.encodeWav takes a float32Array and returns a blob
-        log.debug("bufferSize: " + bufferSize);
-
-
-
-
-        new Recorder(this.masterGainNode).exportWavFromBuffers(function (blob) {
-            var fileName = mixer.currentSongDto.name + ".wav";
-            log.debug("Saved mix!");
-            log.debug("file: " + fileName);
-            Recorder.forceDownload(blob, fileName);
-        }, channelDataArray, bufferSize);
-
-    };
 
     /**
      * Get a track based on it's uiId
@@ -395,19 +354,9 @@ var SongMixer = function(songDto){
         //don't think i need to a master volume, we can just use individual track volume and the master volume will be the PC
        // trackDto.trackMixer.wavesurfer.backend.gainNode.disconnect(); -- this gave some odd results
         trackDto.trackMixer.wavesurfer.backend.gainNode.connect(this.masterGainNode);
+        trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
+        document.getElementById('volume'+trackDto.uiId).value= (trackDto.volume * 100);
 
-        /*
-        //I didn't see any sequence delay difference when calling the play based on an event vs just looping through them
-        //in fact it seemed like looping gave more consistant time results then the event driven approach
-        $('#'+trackDto.uiId).data('trackDto',trackDto);
-
-        $('#'+trackDto.uiId).on('playPauseAll',function(){
-            $(this).data('trackDto').trackMixer.wavesurfer.playPause();
-            log.debug("*** playing track on the milli second: " + new Date().getMilliseconds());
-        });
-
-        $(".trackRow").trigger('playPauseAll');
-        */
 
         MixerUtil.enableOrDisableButtons([MixerUtil.btn.play], false);
 

@@ -5,7 +5,7 @@
             <!-- left column -->
             <div class="col-md-5">
                 <div class="text-center" style="padding:10px">
-                    <img src="/uploads/users/profile/{{user.profilePic}}" class="avatar" alt="avatar">
+                    <img src="{{CDN}}/users/profile/{{user.profilePic}}" id="displayProfilePic" class="avatar" alt="avatar">
 
                     <div class="form-group">
                         <label control-label">Upload a different photo:</label>
@@ -30,6 +30,7 @@
 
                 <input type="hidden" name="id" id="id" value="{{user.id}}"/>
                 <input type="hidden" name="socialId" id="socialId" value="{{user.socialId}}"/>
+                <input type="text" style="display:none" name="profilePic" id="profilePic" value="{{user.profilePic}}"/>
 
                 <div class="form-group">
                     <label control-label">First name:</label>
@@ -101,6 +102,7 @@
 
 <script src="/js/lib/models/UserDto.js"></script>
 <script src="/js/lib/util/Logger.js"></script>
+<script src="/js/lib/validation/TagValidation.js"></script>
 <script src="/js/lib/validation/UserValidation.js"></script>
 <script src="/js/lib/dialogs/UserProfileDialog.js"></script>
 

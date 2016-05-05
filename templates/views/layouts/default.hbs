@@ -37,7 +37,7 @@
         <script src="/js/lib/notify.min.js"></script>
 
         <script src="/js/lib/bootstrap-tagsinput.js"></script>
-        <script src="/js/lib/bootstrap-tagsinput-angular.js"></script>
+
         <script src="/js/lib/typeahead.bundle.js"></script>
         <script src="/js/lib/handlebars.min.js"></script>
         <script src="/js/lib/handlebarsHelpers.js"></script>
@@ -80,7 +80,7 @@
 							</ul>
 							<ul class="nav navbar-nav navbar-right">
 								{{#if user}}
-                                    <li {{#ifeq section 'profile'}}class="active"{{else}}{{/ifeq}}><a href="/user/profile" alt="Edit Your Profile"><img class="thumbnailSmall" src="/uploads/users/profile/{{user.profilePic}}" />{{user.firstName}}</a></li>
+                                    <li {{#ifeq section 'profile'}}class="active"{{else}}{{/ifeq}}><a href="/user/profile" alt="Edit Your Profile"><img class="thumbnailSmall" src="{{CDN}}/users/profile/{{user.profilePic}}" />{{user.firstName}}</a></li>
 								<li><a href="/logout">Sign Out {{user.name.first}}</a></li>
 								{{else}}
                                 <li style="margin-top:10px" ><button type="link" class="btn btn-primary btn-sm" onclick="window.location.href='/login/'">Login</button>&nbsp;</li>
@@ -150,5 +150,6 @@
 
             {{> tagInfo clientSide=true}}
             {{> musicianInfoIcon clientSide=true}}
+            {{> songCollaboratorResults }}
 	</body>
 </html>

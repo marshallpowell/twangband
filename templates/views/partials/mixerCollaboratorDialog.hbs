@@ -1,0 +1,56 @@
+<script id="mixerCollaboratorDialogPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+<div id="collaboratorDialogPartial" class="modalDialogForm" style="padding:5px;" >
+    <div id="mixerCollaboratorDialogNotifications"></div>
+    <div id="mixerCollaboratorsList" class="row">
+        \{{> songCollaboratorResults collaborators=collaborators}}
+    </div>
+
+    <div class="form-group row" id="searchUsersForm">
+
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <h3>Invite folks to record with you</h3>
+            </div>
+        </div>
+        <div class="form-group row">
+        <div class="col-sm-12">
+            <form role="search" onsubmit="tb.dialogs.mixer.searchCollaborators(); return false;">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="mixerCollaboratorDialogKeywords"
+                           placeholder="search musicians by name, email, instrument, genre... "/>
+
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+            </div>
+
+    </div>
+    <div id="mixerCollaboratorDialogSearchUsersData">
+
+    </div>
+    <div class="modal-footer" style="padding-top: 5px; text-align:center;">
+        <button type="button" onclick="tb.dialogs.mixer.saveCollaborators();" class="btn btn-default" id="modalSaveBtn">Save</button>
+        <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
+
+    </div>
+</div>
+</script>
+<div id="mixerCollaboratorDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="mixerCollaboratorDialogBody"><p id="mixerCollaboratorDialogFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

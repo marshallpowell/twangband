@@ -113,7 +113,7 @@
                         <li  id="songOptionListen"><a href="#"
                                onclick="tb.dialogs.openSongInfoDialog(JSON.parse(document.getElementById('songDto').value));"><span
                                 class="icon-file-music"></span> Listen to mixed tracks</a></li>
-                        <li  id="songOptionAddCollaborator" class="adminOption"><a href="#" onclick="MixerUtil.toggleSearchUsers();"><span
+                        <li  id="songOptionAddCollaborator" class="adminOption"><a href="#" onclick="tb.dialogs.mixer.openMixerCollaboratorDialog(user, JSON.parse(document.getElementById('songDto').value));"><span
                                 class="glyphicon glyphicon-user"></span> Invite a musician</a></li>
                         <li role="separator" class="divider"></li>
                         <li  id="songOptionSaveTracks" class="adminOption"><a href="#" onclick="mixer.saveSong(); return false;"><span
@@ -263,17 +263,20 @@
 
 {{> MixerTrackRow }}
 {{> MixerTrackEditDialog }}
-
 {{> createSongFromTrackDialog }}
-
 {{> userProfileDialog }}
 {{> songInfoDialog }}
+
 {{> MixerSongEditDialog }}
+{{> mixerCollaboratorDialog }}
+{{> mixerCollaboratorSearchResults }}
 {{> musicianInfoIcon clientSide=true }}
+
 
 
 <script src="/js/lib/models/SearchCriteriaDto.js"></script>
 <script src="/js/lib/models/SongDto.js"></script>
+<script src="/js/lib/models/SongCollaboratorDto.js"></script>
 <script src="/js/lib/models/TrackDto.js"></script>
 <script src="/js/lib/models/SongTrackDto.js"></script>
 <script src="/js/lib/models/EditDto.js"></script>
@@ -296,6 +299,7 @@
 <script src="/js/lib/dialogs/UserProfileDialog.js"></script>
 <script src="/js/lib/dialogs/SongInfoDialog.js"></script>
 <script src="/js/lib/dialogs/SongEditDialog.js"></script>
+<script src="/js/lib/dialogs/MixerCollaboratorDialog.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 
 <script language="JavaScript">
@@ -393,3 +397,4 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
     powered by Disqus.</a></noscript>
 <script id="dsq-count-scr" src="//twangband.disqus.com/count.js" async></script>
+

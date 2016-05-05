@@ -70,7 +70,8 @@ $(document).ready(function () {
                         if(data.track){
                             log.debug("saved track: " + data);
                             NotificationUtil.success('Track Saved', true, 'mixerTrackEditDialogNotifications');
-                            MixerUtil.updateTrackLabel(data.track.name,data.track.uiId);
+
+                            document.getElementById("trackLabel"+data.track.uiId).innerText= data.track.name.substring(0,15) + "...";
                             document.getElementById('trackJson'+data.track.uiId).value = JSON.stringify(data.track);
 
                             console.log('track out: ' + document.getElementById('trackJson'+data.track.uiId).value);

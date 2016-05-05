@@ -1,0 +1,25 @@
+<script id="mixerCollaboratorSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+    <div id="collaboratorSearchResults">
+
+        \{{#each users}}
+        <div class="row">
+            <div style='float:left;'>
+                <button class="btn btn-primary btn-sm" type="button"
+                        onclick="tb.dialogs.mixer.addCollaborator(\{{json this}});">Add
+                </button>
+            </div>
+
+            <div style='float:left;'>
+                <img class="thumbnailSmall"
+                     src="{{@root.CDN}}/users/profile/\{{profilePic}}"/>
+            </div>
+            <div style='float:left;'>
+                \{{firstName}} \{{lastName}}
+            </div>
+
+        </div>
+
+        \{{/each}}
+
+    </div>
+</script>

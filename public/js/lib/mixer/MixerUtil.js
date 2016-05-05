@@ -51,37 +51,6 @@ MixerUtil.enableOrDisableButtons = function(btnIdArray, enableOrDisable){
 };
 
 
-/**
- * Updates UI with collaborator info
- * @param userDto
- */
-MixerUtil.addCollaboratorToUi = function(userDto) {
-    log.debug("collaborator: " + JSON.stringify(userDto));
-    var div = $('<div class="col-sm-2"></div>');
-    var img = $('<img class="collaborator thumbnail">');
-    img.attr('src', "/uploads/users/profile/"+userDto.profilePic);
-    img.appendTo(div);
-    div.append("<div style='display:inline'>"+userDto.firstName+"</div>");
-    div.appendTo('#collaborators');
-};
-
-/**
- * Open or close the collaborator dialog
- * @param closeMe
- */
-MixerUtil.toggleCollaboratorDialog = function (closeMe){
-
-    if(closeMe){
-        document.getElementById("searchUsers").style.display="none";
-    }
-    else if(document.getElementById("searchUsers").style.display=="block"){
-        document.getElementById("searchUsers").style.display="none";
-    }
-    else{
-        document.getElementById("searchUsers").style.display="block";
-    }
-
-};
 
 
 MixerUtil.updateNewSongMessage = function(){
@@ -103,21 +72,7 @@ console.log('latency check: ' + latency);
     }
 };
 
-/**
- *
- * @param value
- * @param index
- */
-MixerUtil.updateTrackLabel = function(value, uid){
 
-    document.getElementById("trackLabel"+uid).innerText= value.substring(0,15) + "...";
-
-};
-
-MixerUtil.createOrUpdateSongInfo = function(){
-
-
-};
 
 MixerUtil.displaySaveButtonNotification = function(displayText){
 
@@ -140,7 +95,8 @@ MixerUtil.removeTrackFromSong = function(trackDto){
         if(mixer.currentSongDto.tracks[i].uiId == trackDto.uiId){
             MixerUtil.notifyOfChanges('Removed Track: ' + trackDto.name);
             document.getElementById(trackDto.uiId).style.display='none';
-            mixer.currentSongDto.tracks.splice(i,1);
+            //mixer.currentSongDto.tracks.splice(i,1);
+            mixer.currentSongDto.tracks[i].removed=true;
             break;
         }
     }
@@ -198,62 +154,6 @@ MixerUtil.isLoggedIn = function(el){
     return false;
 };
 
-/**
- * submit a search for collaborators and display a dialog to add them to the song
- */
-MixerUtil.searchCollaborators = function(){
-
-    if(!MixerUtil.isLoggedIn(document.getElementById("bcollaborators"))){
-        return;
-    }
-
-    var searchDto = {
-        type : "USER",
-        keywords : document.getElementById("collaboratorSearchKeywords").value
-    };
-
-    $.ajax({
-        url: '/search',
-        data : JSON.stringify(searchDto),
-        cache: false,
-        contentType: 'application/json',
-        processData: false,
-        type: 'POST',
-        success: function(data){
-            log.debug(data);
-            //display search results
-            var output="<ul>";
-
-            $( data ).each(function( index ) {
-
-                output += "<li><a href='#' onclick='MixerUtil.addCollaborator ("+JSON.stringify(this)+");' >" + this.firstName + " " + this.lastName + "</a></li>";
-            });
-
-            output += "</ul>";
-
-            document.getElementById("searchUsersData").innerHTML=output;
-        }
-    });
-};
-
-/**
- *
- * @param userDto
- */
-MixerUtil.addCollaborator = function(userDto){
-
-    log.debug("add userDto: " + userDto);
-    var formData = new FormData();
-    var collaboratorDto = {
-        'id' : userDto.id,
-        'roles' : ['ADD_TRACK'],
-        'invitationAccepted' : false
-    };
-
-    mixer.currentSongDto.collaborators.push(collaboratorDto);
-    MixerUtil.addCollaboratorToUi(userDto);
-
-};
 
 
 /**
@@ -276,19 +176,6 @@ MixerUtil.toggleNotification = function(content, doNotToggle){
         $('#myModal').modal('toggle');
     }
 
-};
-
-
-/**
- *
- * @param closeMe
- */
-MixerUtil.toggleSearchUsers = function(closeMe){
-
-    if(!SongValidation.isAdmin(user, songDto)){
-        document.getElementById('searchUsersForm').style.display='none';
-    }
-    MixerUtil.toggleNotification($('#searchUsers'));
 };
 
 
