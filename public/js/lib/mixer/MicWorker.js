@@ -94,21 +94,23 @@ function record(inputBuffer){
     }
 
     ws.binaryType = "arraybuffer";
-    ws.send(convertFloat32ToInt16(inputBuffer[0]), {mask: true});
+    ws.send(convertFloat32ToInt16Buffer(inputBuffer[0]), {mask: true});
 }
 
-/**
- * new function ref: https://subvisual.co/blog/posts/39-tutorial-html-audio-capture-streaming-to-node-js-no-browser-extensions
- * @param buffer
- * @returns {ArrayBuffer}
- */
-function convertFloat32ToInt16(buffer) {
-    l = buffer.length;
-    buf = new Int16Array(l);
-    while (l--) {
-        buf[l] = Math.min(1, buffer[l])*0x7FFF;
+
+//based on recorderjs
+function convertFloat32ToInt16Buffer(buffer){
+
+    var l = buffer.length;  //Buffer
+    var output = new Int16Array(l);
+    var offset = 44;
+
+    for (var i = 0; i < buffer.length; i++){
+        var s = Math.max(-1, Math.min(1, buffer[i]));
+        output[i] = (s < 0 ? s * 0x8000 : s * 0x7FFF);
     }
-    return buf.buffer;
+
+    return output.buffer;
 }
 
 /**

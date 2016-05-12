@@ -272,6 +272,8 @@ var SongMixer = function(songDto){
         log.trace("enter adjustTrackVolume with volume: " + volume);
         var trackDto = this.getTrackByUiId(trackUiId);
         trackDto.volume = volume/100;
+
+        log.trace("update vol with volume: " + trackDto.volume);
         trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
     };
 
@@ -355,6 +357,7 @@ var SongMixer = function(songDto){
        // trackDto.trackMixer.wavesurfer.backend.gainNode.disconnect(); -- this gave some odd results
         trackDto.trackMixer.wavesurfer.backend.gainNode.connect(this.masterGainNode);
         trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
+        log.debug('setting volume to: '+(trackDto.volume * 100) + ' dto volume: ' + trackDto.volume);
         document.getElementById('volume'+trackDto.uiId).value= (trackDto.volume * 100);
 
 

@@ -116,7 +116,7 @@ exports = module.exports = function(app) {
     app.get('/listData', routes.services.listData);
     app.all('/search/', routes.services.search);
 
-
+    //app.all('/recorderjs', middleware.requireHTTPS, routes.views.recorderjs);
     //404's
     app.use(function(req, res, next){
 

@@ -20,13 +20,19 @@ exports = module.exports = function(req, res) {
             });
             transporter.sendMail({
                 from: 'musicilo.info@gmail.com',
-                to: 'marshallpowell@gmail.com',
+                to: req.body.email,
                 subject: 'reset password request',
                 text: 'Copy this URL into your browser to reset your password: ' + global.BASE_URL + '/reset?token=' + user.passwordResetToken
+            }, function(err){
+                logger.error('There was an error sending out your email: ' + err);
+
+                //req.flash('error','Sorry, there was an error sending to your email. Please try back later');
+                //res.render('forgot');
+                return;
+
             });
 
             req.flash('success','We have sent you a reset URL to your email address');
-
             res.render('forgot');
 
         }, function(err){
