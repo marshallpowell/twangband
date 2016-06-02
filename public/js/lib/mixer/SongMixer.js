@@ -13,7 +13,7 @@ var SongMixer = function(songDto){
     this.musicians={};
 
     this.masterGainNode;
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.audioContext = tb.audioContext; //new (window.AudioContext || window.webkitAudioContext)();
 
     /**
      * Init
@@ -211,9 +211,17 @@ var SongMixer = function(songDto){
         }
         else{
 
+            //don't play tracks that are set for removal
+            var playTracks = [];
             for(var i = 0; i < this.currentSongDto.tracks.length; i++){
-                this.currentSongDto.tracks[i].trackMixer.wavesurfer.playPause();
-                log.debug("*** playing track on the milli second: " + new Date().getMilliseconds());
+                if(!this.currentSongDto.tracks[i].removed){
+                    playTracks.push(this.currentSongDto.tracks[i])
+                }
+            }
+
+
+            for(var i = 0; i < playTracks.length; i++){
+                playTracks[i].trackMixer.wavesurfer.playPause();
             }
         }
 
@@ -272,8 +280,6 @@ var SongMixer = function(songDto){
         log.trace("enter adjustTrackVolume with volume: " + volume);
         var trackDto = this.getTrackByUiId(trackUiId);
         trackDto.volume = volume/100;
-
-        log.trace("update vol with volume: " + trackDto.volume);
         trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
     };
 

@@ -1,3 +1,68 @@
+{{#if clientSide}}
+    <!-- start track search result -->
+    <script id="trackSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12"><button type="button" onclick='tb.dialogs.openNewSongDialog(\{{{json searchResult.track}}})' style="display: block; width: 100%;" class="btn btn-primary btn-sm">\{{searchResult.track.name}}</button></div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div id="wav_\{{searchResult.track.id}}"><p id="wav_loading_\{{searchResult.track.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
+                        <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' id="wav_playpause_\{{searchResult.track.id}}">
+                            <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_\{{searchResult.track.id}}">
+                                <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="searchResultSubTitle1"> created by </div>
+
+                    <div style='float:left;'>
+                        \{{#each searchResult.musicians}}
+                            \{{> musicianInfoIcon userDto=this}}
+                        \{{/each}}
+                    </div>
+
+
+                    <div class="searchResultSubContent1">on \{{formatDate searchResult.track.dateCreated}}</div>
+                    <div class="searchResultSubTitle2"> tags </div>
+                    \{{#if searchResult.track.tags}}
+
+                        \{{#each searchResult.track.tags}}
+                            \{{> tagInfo tag=this}}
+                        \{{/each}}
+
+                    \{{/if}}
+                </div>
+                \{{#if searchResult.track.description}}
+                    <div class="row searchResultSubContent2">\{{truncateText searchResult.track.description 100}}</div>
+                \{{/if}}
+                \{{#if searchResult.songs}}
+                    <div class="row">
+                        <div class="searchResultSubTitle2" > Songs </div>
+                        \{{#each searchResult.songs}}
+                            \{{> songTagButton song=this}}
+                        \{{/each}}
+                    </div>
+                \{{/if}}
+
+            </div>
+        </div>
+
+    </script>
+    <!-- end track search result -->
+{{/if}}
+
+
+{{#unless clientSide}}
+
 <div class="row">
     <div class="col-md-6">
         <div class="row">
@@ -51,3 +116,5 @@
 
     </div>
 </div>
+
+{{/unless}}

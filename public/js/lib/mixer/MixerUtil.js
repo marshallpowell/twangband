@@ -198,9 +198,10 @@ MixerUtil.toggleRecording = function(){
         recordingAnalyzerEl.style.display="none";
         modalXCloseEl.style.display="inline";
 
-        $('#myModal').unbind('hidden.bs.modal');
+        $('#mixerRecordingDialog').unbind('hidden.bs.modal');
 
-        $('#myModal').modal('hide');
+        $('#mixerRecordingDialog').modal('hide');
+        toggleMetronome('stop');
 
         //stop the equalizer
         cancelAnalyserUpdates();
@@ -211,6 +212,7 @@ MixerUtil.toggleRecording = function(){
         //audioRecorder.getBuffer( gotBuffers );
 
         audioRecorder.endRecording(finishedProcessing);
+
 
     }
     else{
@@ -225,8 +227,10 @@ MixerUtil.toggleRecording = function(){
             return;
         }
 
-        $('#myModal').on('hidden.bs.modal', function () {
+        $('#mixerRecordingDialog').on('hidden.bs.modal', function () {
+            console.log('closing window and toggle recording');
             MixerUtil.toggleRecording();
+            toggleMetronome('stop');
         });
 
         //start recording
@@ -239,7 +243,7 @@ MixerUtil.toggleRecording = function(){
         recordingAnalyzerEl.style.display="block";
         modalXCloseEl.style.display="none";
 
-        MixerUtil.toggleNotification($('#recordingDialog'));
+       // MixerUtil.toggleNotification($('#recordingDialog'));
 
         var maxTrackDuration = 180; //60 * 3;
 
@@ -257,6 +261,9 @@ MixerUtil.toggleRecording = function(){
                     audioRecorder.record();
 
                     setTimeout(function() {
+                        if($("#useMetronome option:selected").val()=='true'){
+                            toggleMetronome('play');
+                        }
 
                         mixer.playPauseAll();
                         updateAnalysers();
@@ -264,7 +271,7 @@ MixerUtil.toggleRecording = function(){
                     },50);
 
 
-                    $(startTimerEl).html("<form id='stopRecordingForm' onsubmit='MixerUtil.toggleRecording(); return false;'><button class='btn-primary' id='stopRecordingBtn' type='submit'>Press enter or click here to stop recording</button></form>");
+                    $(startTimerEl).html("<form id='stopRecordingForm' onsubmit='MixerUtil.toggleRecording(); return false;'><button class='btn btn-primary btn-lg' id='stopRecordingBtn' type='submit'>Press enter or click here to stop recording</button></form>");
                     $("#stopRecordingBtn").focus();
                     countDownInfoEl.textContent = 'or recording will automatically end in';
 
@@ -396,11 +403,11 @@ MixerUtil.endTest = function(outTimes, inTimes) {
 
 MixerUtil.testLatency = function(stream) {
 
-    gain = audioContext.createGain();
-    realAudioInput = audioContext.createMediaStreamSource(stream);
+    gain = tb.audioContext.createGain();
+    realAudioInput = tb.audioContext.createMediaStreamSource(stream);
     realAudioInput.connect(gain);
 
-    var node = audioContext.createScriptProcessor(MixerUtil.latencyBufferLength, 1, 1);
+    var node = tb.audioContext.createScriptProcessor(MixerUtil.latencyBufferLength, 1, 1);
     var frame = -1;
     var inputTimes = [];
     var outputTimes = [];
@@ -454,7 +461,7 @@ MixerUtil.testLatency = function(stream) {
     };
 
     gain.connect(node);
-    node.connect(audioContext.destination);
+    node.connect(tb.audioContext.destination);
 };
 
 MixerUtil.setCookie = function(cname, cvalue) {

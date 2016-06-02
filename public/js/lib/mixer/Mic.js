@@ -21,7 +21,7 @@ var recordings=[];
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-var audioContext = new AudioContext();
+var audioContext = tb.audioContext; //new AudioContext();
 var audioInput = null,
     realAudioInput = null,
     inputPoint = null,
