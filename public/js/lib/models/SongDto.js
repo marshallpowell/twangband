@@ -5,6 +5,7 @@ function SongDto(){
     this.name='';
     this.description='';
     this.id=null;
+    this.uiId='';
     this.tracks = [];
     this.collaborators = [];
     this.creatorId;

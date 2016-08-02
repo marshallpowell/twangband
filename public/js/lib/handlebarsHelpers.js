@@ -42,5 +42,6 @@ $(document).ready(function () {
         Handlebars.registerPartial('musicianInfoIcon', Handlebars.compile($("#musicianInfoIconPartial").html()));
         Handlebars.registerPartial('songCollaboratorResults', Handlebars.compile($("#songCollaboratorResultsPartial").html()));
         Handlebars.registerPartial('songTagButton', Handlebars.compile($("#songTagButtonPartial").html()));
+        Handlebars.registerPartial('likeIcon', Handlebars.compile($("#likeIconPartial").html()));
     }(jQuery));
 });

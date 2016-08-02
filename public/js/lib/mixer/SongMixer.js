@@ -240,27 +240,32 @@ var SongMixer = function(songDto){
     };
 
 
-    this.toggleActiveClass = function(el,uiId){
+    this.toggleActiveClass = function(cssSelector){
 
-        log.trace("enter toggleMuteSong");
-        $(el).toggleClass("activated");
+        log.trace("enter toggleActiveClass");
+       // $(el).toggleClass("activated");
+
+        if(cssSelector){
+            $(cssSelector).toggleClass("activated");
+        }
     };
     /**
      *
      * @param el - the html element which called the function
      * @param uiId - uiId of the track
+     * @param cssSelector - option css class to apply behavior to
      */
-    this.toggleMuteTrack = function(el, uiId){
+    this.toggleMuteTrack = function(el, uiId, cssSelector){
 
         log.trace("enter toggleMuteSong");
         this.getTrackByUiId(uiId).trackMixer.wavesurfer.toggleMute();
-        this.toggleActiveClass(el);
+        this.toggleActiveClass(cssSelector);
     };
 
-    this.toggleSoloTrack = function(el, uiId){
+    this.toggleSoloTrack = function(el, uiId, cssSelector){
 
         log.trace("enter toggleSoloTrack");
-        $(el).toggleClass("activated");
+        this.toggleActiveClass(cssSelector);
         if(this.soloTrack == null){
             this.soloTrack = this.getTrackByUiId(uiId);
         }

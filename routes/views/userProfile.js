@@ -1,5 +1,6 @@
 var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var userDao = require(APP_LIB + 'dao/UserDao');
+var AppConstants = require(global.PUBLIC_APP_LIB+'util/AppConstants.js');
 
 exports = module.exports = function(req, res) {
 
@@ -29,6 +30,10 @@ exports = module.exports = function(req, res) {
             function(user){
                 log.debug("found user:  " + JSON.stringify(user));
                 locals['user'] = user;
+
+                if(user.loginType != AppConstants.LOGIN_TYPES.TB){
+                    locals['socialUser'] = true;
+                }
                 // Render the view
                 res.render('userProfile');
             },

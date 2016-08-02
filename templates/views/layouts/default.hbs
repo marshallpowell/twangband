@@ -104,29 +104,43 @@
 				{{#if messages.info}}
 				<div class="alert alert-info">
                     <a class="panel-close close" data-dismiss="alert">×</a>
-                    <i class="fa fa-coffee"></i>
-						{{messages.info}}
+                    <ul >
+                        {{#each messages.info}}
+                            <i class="fa fa-coffee">{{this}}</i><br \>
+                        {{/each}}
+                    </ul>
+
+
 				</div>
 				{{/if}}
 				{{#if messages.success}}
 				<div class="alert alert-success">
                     <a class="panel-close close" data-dismiss="alert">×</a>
-                    <i class="fa fa-coffee"></i>
-						{{messages.success}}
+                    <ul >
+                        {{#each messages.success}}
+                            <i class="fa fa-coffee">{{this}}</i><br \>
+                        {{/each}}
+                    </ul>
 				</div>
 				{{/if}}
 				{{#if messages.warning}}
 				<div class="alert alert-warning">
                     <a class="panel-close close" data-dismiss="alert">×</a>
-                    <i class="fa fa-coffee"></i>
-						{{ messages.warning}}
+                    <ul >
+                        {{#each messages.warning}}
+                            <i class="fa fa-coffee">{{this}}</i><br \>
+                        {{/each}}
+                    </ul>
 				</div>
 				{{/if}}
 				{{#if messages.error}}
 				<div class="alert alert-danger">
                     <a class="panel-close close" data-dismiss="alert">×</a>
-                    <i class="fa fa-coffee"></i>
-						{{messages.error}}
+                    <ul >
+                    {{#each messages.error}}
+                        <i class="fa fa-coffee">{{this}}</i><br \>
+                    {{/each}}
+                    </ul>
 				</div>
 				{{/if}}
 			{{/if}}
@@ -152,5 +166,6 @@
             {{> musicianInfoIcon clientSide=true}}
             {{> songCollaboratorResults }}
             {{> songTagButton clientSide=true }}
+            {{> likeIcon clientSide=true }}
 	</body>
 </html>

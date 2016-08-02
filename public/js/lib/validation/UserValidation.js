@@ -6,8 +6,7 @@ UserValidation.validateUser = function(user){
     var errors = [];
     var nameMaxLength = 50;
     var emailMaxLength = 100;
-    var passwordMinLength = 8;
-    var passwordMaxLength = 25;
+
 
     if(user.firstName.trim() == ""){
 
@@ -32,16 +31,27 @@ UserValidation.validateUser = function(user){
     }
     if(!user.id && !user.socialId){
 
-        if(user.password.trim() == ""){
+        errors.push(UserValidation.validatePassword(user.password));
+    }
 
-            errors.push("Password cannot be blank");
-        }
-        if(user.password.length > passwordMaxLength){
-            errors.push("Password is " + user.password.length + " characters long. Max length is "+passwordMaxLength + " characters");
-        }
-        if(user.password.length < passwordMinLength){
-            errors.push("Password is " + user.password.length + " characters long. It must be at least "+passwordMinLength + " characters");
-        }
+    return errors;
+};
+
+UserValidation.validatePassword = function(password){
+
+    var passwordMinLength = 8;
+    var passwordMaxLength = 25;
+    var errors = [];
+
+    if(password.trim() == ""){
+
+        errors.push("Password cannot be blank");
+    }
+    if(password.length > passwordMaxLength){
+        errors.push("Password is " + password.length + " characters long. Max length is "+passwordMaxLength + " characters");
+    }
+    if(password.length < passwordMinLength){
+        errors.push("Password is " + password.length + " characters long. It must be at least "+passwordMinLength + " characters");
     }
 
     return errors;

@@ -11,6 +11,7 @@
     tb.dialogs.mixer.track = {};
     tb.dialogs.mixer.song = {};
     tb.dialogs.search = {};
+    tb.dialogs.activities = {};
 
     //tb.log = new Logger('DEBUG');
 

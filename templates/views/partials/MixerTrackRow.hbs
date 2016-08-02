@@ -1,14 +1,14 @@
 <!-- begin mixerTrackRow -->
 <script id="mixerTrackRowPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
     <div class="row trackRow" id="\{{trackDto.uiId}}">
-        <div class="col-lg-2">
+        <div class="col-lg-3 col-sm-12">
             <div class="row trackInfo">
                 <span style='float:left'>\{{> musicianInfoIcon userDto=userDto}}</span>
                 <span style='float:left'>
-                                <div class="btn-group">
+                                <div style='float:left' class="btn-group">
                                     <button type="button" class="btn btn-primary btn-xs dropdown-toggle"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="icon-menu3"></span> Track
+                                        <span class="icon-menu3"></span>
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li><a href="#"
@@ -17,13 +17,13 @@
                                                 class="glyphicon glyphicon-edit"></span> Edit Track</a></li>
                                         <li><a href="#"
                                                onclick="tb.dialogs.openNewSongDialog(\{{json trackDto}}); return false;">
-                                            <span class="glyphicon glyphicon-plus-sign" id="bmute\{{trackDto.uiId}}"></span> Create new Song...</a></li>
-                                        <li><a href="#" onclick="mixer.toggleSoloTrack(this,'\{{trackDto.uiId}}'); return false;">
-                                            <span class="glyphicon glyphicon-headphones solo" id="bsolo\{{trackDto.uiId}}" ></span> Mute all other tracks</a>
+                                            <span class="glyphicon glyphicon-plus-sign" id="bmute\{{trackDto.uiId}}"></span> Create new song from track</a></li>
+                                        <li><a href="#" onclick="mixer.toggleSoloTrack(this,'\{{trackDto.uiId}}','.solo\{{trackDto.uiId}}'); return false;">
+                                            <span class="glyphicon glyphicon-headphones solo solo\{{trackDto.uiId}}" id="bsolo\{{trackDto.uiId}}" ></span> Mute all other tracks</a>
                                         </li>
 
-                                        <li><a href="#" onclick="mixer.toggleMuteTrack(this,'\{{trackDto.uiId}}'); return false;">
-                                            <span class="glyphicon glyphicon-volume-up mute" id="bmute\{{trackDto.uiId}}"></span> Mute this track</a>
+                                        <li><a href="#" onclick="mixer.toggleMuteTrack(this,'\{{trackDto.uiId}}', '.mute\{{trackDto.uiId}}'); return false;">
+                                            <span class="glyphicon glyphicon-volume-up mute mute\{{trackDto.uiId}}" id="bmute\{{trackDto.uiId}}"></span> Mute this track</a>
                                         </li>
 
                                         <li><a href="#" onclick="MixerUtil.removeTrackFromSong(JSON.parse(document.getElementById('trackJson\{{trackDto.uiId}}').value)); return false;">
@@ -32,6 +32,27 @@
                                     </ul>
 
                                 </div>
+                                <div style="float:left; padding-left: 2px;">
+                                    <button id="bsolo" type="button" class="btn btn-primary btn-xs"
+                                            href="#"
+                                            onclick="mixer.toggleSoloTrack(this,'\{{trackDto.uiId}}','.solo\{{trackDto.uiId}}'); return false;"
+                                            title="Mute all other tracks">
+                                        <span class="glyphicon glyphicon-headphones solo solo\{{trackDto.uiId}}"></span>
+                                    </button>
+                                </div>
+
+                                <div style="float:left; padding-left: 2px;">
+                                    <button id="bmute" type="button" class="btn btn-primary btn-xs"
+                                            href="#"
+                                            onclick="mixer.toggleMuteTrack(this,'\{{trackDto.uiId}}','.mute\{{trackDto.uiId}}'); return false;"
+                                            title="Mute Track">
+                                        <span class="glyphicon glyphicon-volume-up mute mute\{{trackDto.uiId}}"></span>
+                                    </button>
+                                </div>
+
+
+                                <div style="float:left; padding-left: 2px;" id="track_like\{{trackDto.uiId}}">like</div>
+
                      </span>
 
 
@@ -51,9 +72,12 @@
             </div>
 
         </div>
-        <div class="col-lg-10 trackWav" id="track_waveform\{{trackDto.uiId}}">
+        <div class="col-lg-9 col-sm-12 trackWav" id="track_waveform\{{trackDto.uiId}}">
             <p id='track_waveform\{{trackDto.uiId}}_message'><span class="fa fa-spinner fa-pulse"></span> Loading...</p>
         </div>
     </div>
+    <script language="JavaScript">
+        tb.dialogs.activities.addLikeButton('track', '\{{trackDto.id}}', document.getElementById('track_like\{{trackDto.uiId}}'));
+    </script>
 </script>
 <!-- end mixerTrackRow -->

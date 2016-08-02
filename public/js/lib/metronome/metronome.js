@@ -59,11 +59,11 @@ function scheduleNote( beatNumber, time ) {
 
     osc.connect( audioContext.destination );
     if (beatNumber % 16 === 0)    // beat 0 == high pitch
-        osc.frequency.value = 128; //880.0;
+        osc.frequency.value = 880.0; //128
     else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
-        osc.frequency.value = 64; //440.0;
+        osc.frequency.value = 440.0; //64
     else                        // other 16th notes = low pitch
-        osc.frequency.value = 42; //220.0;
+        osc.frequency.value = 220.0; //42
 
     osc.start( time );
     osc.stop( time + noteLength );

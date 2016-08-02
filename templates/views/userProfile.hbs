@@ -5,7 +5,8 @@
             <!-- left column -->
             <div class="col-md-5">
                 <div class="text-center" style="padding:10px">
-                    <img src="{{CDN}}/users/profile/{{user.profilePic}}" id="displayProfilePic" class="avatar" alt="avatar">
+                    <img src="{{CDN}}/users/profile/{{user.profilePic}}" id="displayProfilePic" class="avatar"
+                         alt="avatar">
 
                     <div class="form-group">
                         <label control-label">Upload a different photo:</label>
@@ -47,9 +48,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">Create tags for instruments and music you play </label>&nbsp;<i>(hit enter after each tag)</i>
-                    <br />
-                    <select name="tags" id="tags"  multiple>
+                    <label class="control-label">Create tags for instruments and music you play </label>&nbsp;<i>(hit
+                    enter after each tag)</i>
+                    <br/>
+                    <select name="tags" id="tags" multiple>
 
                         {{#each user.tags}}
                             <option value="{{this}}">{{this}}</option>
@@ -58,7 +60,11 @@
                 </div>
 
                 {{#if user}}
-
+                    {{#unless socialUser}}<!-- Need to check if user is a social user as well before displaying this link. Then also need to rip out ajax form for validating current password. -->
+                        <div class="form-group">
+                            <a href="/reset" title="Reset Password">Reset Password</a>
+                        </div>
+                    {{/unless}}
                 {{/if}}
 
                 {{#unless user}}
@@ -88,8 +94,9 @@
 
                     {{#unless user}}
                         <h2>Or do you have a Facebook account?</h2>
+
                         <div class='social_logins'>
-                            <a href="/auth/facebook"><img src="/images/facebook_login.png" /></a>
+                            <a href="/auth/facebook"><img src="/images/facebook_login.png"/></a>
                         </div>
                     {{/unless}}
                 </div>
@@ -99,6 +106,7 @@
     </form>
 </div>
 <hr>
+
 
 <script src="/js/lib/models/UserDto.js"></script>
 <script src="/js/lib/util/Logger.js"></script>

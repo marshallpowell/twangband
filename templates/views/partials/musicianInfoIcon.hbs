@@ -2,7 +2,7 @@
     <!-- start musicianInfoIcon -->
     <script id="musicianInfoIconPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
         <div class="musicianInfoIcon">
-            <a href="#" onclick='tb.dialogs.showUserProfile(\{{json userDto}});'><img class="thumbnailSmall"
+            <a href="javascript:void();" onclick='tb.dialogs.showUserProfile(\{{json userDto}},this);'><img class="thumbnailSmall"
                                                                                          src="{{@root.CDN}}/users/profile/\{{userDto.profilePic}}"/></a>
         </div>
     </script>
@@ -10,7 +10,7 @@
 {{/if}}
 {{#unless clientSide}}
     <div class="musicianInfoIcon">
-        <a href="#" onclick='tb.dialogs.showUserProfile({{{json userDto}}});'><img class="thumbnailSmall"
+        <a href="javascript:void();" onclick='tb.dialogs.showUserProfile({{{json userDto}}},this);'><img class="thumbnailSmall"
                                                                         src="{{@root.CDN}}/users/profile/{{userDto.profilePic}}"/></a>
     </div>
 {{/unless}}

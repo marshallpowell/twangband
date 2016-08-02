@@ -7,13 +7,7 @@ var songValidation = require(global.PUBLIC_APP_LIB+'validation/SongValidation.js
 
 exports = module.exports = function (req, res) {
 
-    //TODO need to do some error catching here (ensure song is wav, not over size limit or too short etc...)
-    //thorough error handling should be done upfront to ensure no errors are encountered with persistence in mongo
 
-    //log.debug("saving song tracks : " + JSON.stringify(req.files));
-    //log.debug("req.session.id: " + JSON.stringify(req.user));
-    //log.debug("req session: " + JSON.stringify(req.session));
-    //log.debug("req JSON body.song: " + req.body.song);
     log.debug("enter saveSong with songDto: " + JSON.stringify(req.body.song));
 
     var songDto = JSON.parse(req.body.song);

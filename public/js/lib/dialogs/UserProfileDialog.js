@@ -3,21 +3,25 @@ $(document).ready(function () {
     (function (tb, $, undefined) {
 
         var log = new Logger('DEBUG');
-        var template = null;
+        var template;
 
-        tb.dialogs.showUserProfile = function(userDto){
+        $.notify.addStyle('userProfile', {
+            html: "<div><span data-notify-html/></div>"
+        });
 
-            log.debug('enter showUserProfile with: ' + JSON.stringify(userDto));
+
+        tb.dialogs.showUserProfile = function(userDto, el){
 
             if(template == null){
-              template = Handlebars.compile($("#userProfilePartial").html());
+                template = Handlebars.compile($("#userProfilePartial").html());
             }
             var context = {};
             context.userDto = userDto;
             log.debug('template: ' + template(context));
-            $('#userProfileBody').html(template(context));
-            $('#userProfileDialog').modal('toggle');
+            //$('#userProfileBody').html(template(context));
 
+
+            $(el).notify(template(context),{style: 'userProfile', autoHide:false, position:'bottom left'});
         };
 
         tb.dialogs.saveUser = function(){
@@ -104,6 +108,8 @@ $(document).ready(function () {
 
             }
         };
+
+
 
     }(window.tb = window.tb || {}, jQuery));
 });
