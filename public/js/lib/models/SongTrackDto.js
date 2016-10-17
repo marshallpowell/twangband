@@ -15,7 +15,7 @@ function SongTrackDto(){
     this.name='';
     this.originalTrackId=null;
     this.originalTrackDto={};
-    this.volume=9;
+    this.volume=10;
     this.gain=9;
     this.position;
     this.loop;

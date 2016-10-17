@@ -13,7 +13,7 @@ var SongMixer = function(songDto){
     this.musicians={};
 
     this.masterGainNode;
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.audioContext = tb.audioContext; //new (window.AudioContext || window.webkitAudioContext)();
 
     /**
      * Init
@@ -211,9 +211,17 @@ var SongMixer = function(songDto){
         }
         else{
 
+            //don't play tracks that are set for removal
+            var playTracks = [];
             for(var i = 0; i < this.currentSongDto.tracks.length; i++){
-                this.currentSongDto.tracks[i].trackMixer.wavesurfer.playPause();
-                log.debug("*** playing track on the milli second: " + new Date().getMilliseconds());
+                if(!this.currentSongDto.tracks[i].removed){
+                    playTracks.push(this.currentSongDto.tracks[i])
+                }
+            }
+
+
+            for(var i = 0; i < playTracks.length; i++){
+                playTracks[i].trackMixer.wavesurfer.playPause();
             }
         }
 
@@ -232,27 +240,32 @@ var SongMixer = function(songDto){
     };
 
 
-    this.toggleActiveClass = function(el,uiId){
+    this.toggleActiveClass = function(cssSelector){
 
-        log.trace("enter toggleMuteSong");
-        $(el).toggleClass("activated");
+        log.trace("enter toggleActiveClass");
+       // $(el).toggleClass("activated");
+
+        if(cssSelector){
+            $(cssSelector).toggleClass("activated");
+        }
     };
     /**
      *
      * @param el - the html element which called the function
      * @param uiId - uiId of the track
+     * @param cssSelector - option css class to apply behavior to
      */
-    this.toggleMuteTrack = function(el, uiId){
+    this.toggleMuteTrack = function(el, uiId, cssSelector){
 
         log.trace("enter toggleMuteSong");
         this.getTrackByUiId(uiId).trackMixer.wavesurfer.toggleMute();
-        this.toggleActiveClass(el);
+        this.toggleActiveClass(cssSelector);
     };
 
-    this.toggleSoloTrack = function(el, uiId){
+    this.toggleSoloTrack = function(el, uiId, cssSelector){
 
         log.trace("enter toggleSoloTrack");
-        $(el).toggleClass("activated");
+        this.toggleActiveClass(cssSelector);
         if(this.soloTrack == null){
             this.soloTrack = this.getTrackByUiId(uiId);
         }
@@ -355,6 +368,7 @@ var SongMixer = function(songDto){
        // trackDto.trackMixer.wavesurfer.backend.gainNode.disconnect(); -- this gave some odd results
         trackDto.trackMixer.wavesurfer.backend.gainNode.connect(this.masterGainNode);
         trackDto.trackMixer.wavesurfer.setVolume(trackDto.volume);
+        log.debug('setting volume to: '+(trackDto.volume * 100) + ' dto volume: ' + trackDto.volume);
         document.getElementById('volume'+trackDto.uiId).value= (trackDto.volume * 100);
 
 

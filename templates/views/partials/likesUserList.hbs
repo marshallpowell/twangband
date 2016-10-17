@@ -1,0 +1,32 @@
+<script id="likesUserListPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+    <div id="likesUserList">
+
+        \{{#each users}}
+        <div class="row">
+            <div class="col-lg-2">
+                \{{> musicianInfoIcon userDto=this }}
+            </div>
+            <div class="col-lg-10">
+                \{{this.firstName}} \{{this.lastName}}
+            </div>
+        </div>
+        \{{/each}}
+
+    </div>
+</script>
+
+<div id="likesUserListDialog" class="modal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="likesUserListDialogBody"><p id="likesUserListDialogFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

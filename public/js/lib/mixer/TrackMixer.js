@@ -57,8 +57,8 @@ var TrackMixer = function(id, audioContext){
             waveColor: '#1989D4',
             progressColor: '#2BAD1D ',
             hideScrollbar: true,
-            barWidth: 1,
-            pixelRatio: 1,
+            //barWidth: 1,
+            //pixelRatio: 1,
             audioContext: my.audioContext
         });
 

@@ -21,7 +21,7 @@ var recordings=[];
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-var audioContext = new AudioContext();
+var audioContext = tb.audioContext; //new AudioContext();
 var audioInput = null,
     realAudioInput = null,
     inputPoint = null,
@@ -150,7 +150,7 @@ function gotStream(stream) {
     inputPoint.connect( analyserNode );
 
     MixerUtil.recordingDto = new RecordingDto(user.id, songDto.id, MixerUtil.latencyTime);
-    audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : MixerUtil.recordingDto});
+    audioRecorder = new Recorder( inputPoint, {bufferLen : 4096, recordingDto : MixerUtil.recordingDto});
 
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;
@@ -200,9 +200,26 @@ function initAudio() {
         MixerUtil.toggleCallibrateDialog();
         return;
     }
+    //getUserMedia options...
+    //http://stackoverflow.com/questions/26485049/how-can-i-disable-automatic-gain-control-agc-in-webrtc-web-apps-such-as-google
+    //https://groups.google.com/forum/#!topic/discuss-webrtc/L4AzllUOTBM
     else if(!AUDIO_INITIALIZED){
         navigator.getUserMedia(
-            {audio:{optional:[{echoCancellation:false}]}}, gotStream, function(e) {
+            {
+                "audio": {
+                    optional: [
+                        {googAutoGainControl: false},
+                        {googAutoGainControl2: false},
+                        {googEchoCancellation: false},
+                        {googEchoCancellation2: false},
+                        {googNoiseSuppression: false},
+                        {googNoiseSuppression2: false},
+                        {googHighpassFilter: false},
+                        {googTypingNoiseDetection: false},
+                        {googAudioMirroring: false}
+                    ]
+                },
+            }, gotStream, function(e) {
                 alert('Error getting audio');
                 console.log(e);
             });
@@ -217,7 +234,7 @@ function initAudio() {
     }
     else{
         console.log("again createn new audioRecorder......");
-        audioRecorder = new Recorder( inputPoint, {bufferLen : 256, recordingDto : MixerUtil.recordingDto});
+        audioRecorder = new Recorder( inputPoint, {bufferLen : 4096, recordingDto : MixerUtil.recordingDto});
         waitForWsConnection()
     }
 

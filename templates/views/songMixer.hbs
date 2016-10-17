@@ -5,76 +5,41 @@
 
     <div id="consoleForms" style="display:none;">
 
+        <!--
 
-        <div id="searchUsers" class="modalDialogForm">
+                <div id="recordingDialog">
+                    <div class="row">
+                        <div id="startTimer" class="col-lg-12"></div>
+                        <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span
+                                id="countdownTimer" style="background-color: #FFFF00"></span></div>
+                    </div>
 
-            <div class="row">
-                <div class="col-sm-2"><h5>Collaborators: </h5></div>
-                <div class="col-sm-10" id="collaborators"></div>
-            </div>
+                </div>
 
-            <div class="form-group row" id="searchUsersForm">
+                <div id="callibrationDialog">
+                    <div class="row">
+                        <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60"
+                                                                          height="60"/></div>
+                        <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate
+                            your system's audio input and output. You will need to be very quiet and put your microphone as
+                            close to your speaker as possible. You will hear a series of 5 clicks, and the test will be
+                            complete. Please click below to proceed
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="callibrationResults" class="col-lg-12"></div>
+                    </div>
 
-                <div class="form-group row">
-                    <div class="col-sm-12">
-                        <h3>Invite folks to record with you</h3>
+                    <div class="modal-footer" style="padding-top: 5px; text-align:center;" id="callibrateDialogFooter">
+                        <button id="bcallibrate"
+                                onclick="MixerUtil.callibrateSystem();"
+                                title="Callibrate System"
+                                type="button" class="btn btn-primary btn-lg">
+                            <span class="glyphicon glyphicon-time"></span> Callibrate Your System
+                        </button>
                     </div>
                 </div>
-
-                <div class="col-sm-12">
-                    <form role="search" onsubmit="MixerUtil.searchCollaborators(); return false;">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="collaboratorSearchKeywords"
-                                   placeholder="search musicians by name, email, instrument, genre... "/>
-
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-            <div id="searchUsersData" class="row"></div>
-            <div class="modal-footer" style="padding-top: 5px; text-align:center;">
-                <button type="button" class="btn btn-default" id="modalCloseBtn" data-dismiss="modal">Close</button>
-
-            </div>
-        </div>
-
-
-        <div id="recordingDialog">
-            <div class="row">
-                <div id="startTimer" class="col-lg-12"></div>
-                <div id="recordingInfo" class="col-lg-12"><span id="countdownInfo"></span>&nbsp;<span
-                        id="countdownTimer" style="background-color: #FFFF00"></span></div>
-            </div>
-        </div>
-
-        <div id="callibrationDialog">
-            <div class="row">
-                <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60"
-                                                                  height="60"/></div>
-                <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate
-                    your system's audio input and output. You will need to be very quiet and put your microphone as
-                    close to your speaker as possible. You will hear a series of 5 clicks, and the test will be
-                    complete. Please click below to proceed
-                </div>
-            </div>
-            <div class="row">
-                <div id="callibrationResults" class="col-lg-12"></div>
-            </div>
-            <div class="modal-footer" style="padding-top: 5px; text-align:center;" id="callibrateDialogFooter">
-                <button id="bcallibrate"
-                        onclick="MixerUtil.callibrateSystem();"
-                        title="Callibrate System"
-                        type="button" class="btn btn-primary btn-lg">
-                    <span class="glyphicon glyphicon-time"></span> Callibrate Your System
-                </button>
-            </div>
-        </div>
-
+        -->
     </div>
 
     {{#if songJSON}}
@@ -92,9 +57,13 @@
                             <td>
                                 <div id='songCreatorIcon'></div>
                             </td>
+                            <td style='padding-left: 10px'>
+                                {{> likeIcon likeDto=likeContentDto }}
+                            </td>
                         </tr>
                     </table>
                 </div>
+
             </div>
         </div>
         <div class="row">
@@ -142,12 +111,11 @@
                 </button>
 
                 <button id="brecordMix"
-                        onclick="initAudio();" type="button"
+                        onclick="tb.dialogs.mixer.openRecordingDialog();" type="button"
                         title="Click to start recording."
                         class="btn btn-primary btn-sm">
                     <span class="icon-mic" style="font-size: 14px; font-weight: 100"></span> Record
                 </button>
-
                 <!-- <span id='masterVolumeSpan' width="200"><input type='range' class = 'volumeSlider' id='masterVolume' min='0' max = '100' value='100' style='width:200px; display:inline' oninput='mixer.adjustSongVolume(this.value);'/></span> -->
 
 
@@ -214,7 +182,7 @@
                     <h3>Before you can begin recording, you must calibrate your system for recording (you will need a
                         mic & speakers)</h3>
                     <button id='btnCheckLatencyDialog' type="button" class="btn btn-primary btn-lg"
-                            onclick="MixerUtil.toggleCallibrateDialog();">Click here to begin
+                            onclick="tb.dialogs.mixer.openCallibrationDialog();">Click here to begin
                     </button>
                 </div>
                 <div id="createNewSongMessage" class="row" style="display: none">
@@ -271,7 +239,9 @@
 {{> mixerCollaboratorDialog }}
 {{> mixerCollaboratorSearchResults }}
 {{> musicianInfoIcon clientSide=true }}
-
+{{> mixerRecordingDialog }}
+{{> mixerCallibrateDialog }}
+{{> likesUserList }}
 
 
 <script src="/js/lib/models/SearchCriteriaDto.js"></script>
@@ -300,14 +270,26 @@
 <script src="/js/lib/dialogs/SongInfoDialog.js"></script>
 <script src="/js/lib/dialogs/SongEditDialog.js"></script>
 <script src="/js/lib/dialogs/MixerCollaboratorDialog.js"></script>
+<script src="/js/lib/dialogs/MixerRecordingDialog.js"></script>
+<script src="/js/lib/dialogs/LikeContentDialog.js"></script>
+<script src="/js/lib/metronome/metronome.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 
 <script language="JavaScript">
+    tb.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     var mixer;
     var tags = {};
     var log = new Logger('DEBUG');
     var app = angular.module('app', []);
     var songDto = null;
+
+    $(document).on('show.bs.modal', '.modal', function () {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
 
     $(document).ready(function () {
 

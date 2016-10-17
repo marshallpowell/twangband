@@ -115,8 +115,11 @@ exports = module.exports = function(app) {
 
     app.get('/listData', routes.services.listData);
     app.all('/search/', routes.services.search);
+    app.post('/likeContent', routes.services.likeContent);
+    app.get('/getLikes', routes.services.getLikes);
 
 
+    //app.all('/recorderjs', middleware.requireHTTPS, routes.views.recorderjs);
     //404's
     app.use(function(req, res, next){
 

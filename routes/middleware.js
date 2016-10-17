@@ -52,17 +52,35 @@ exports.initLocals = function(req, res, next) {
 */
 
 exports.flashMessages = function(req, res, next) {
-
+/* this is not doing anything at the moment....
 	var flashMessages = {
 		info: req.flash('info'),
 		success: req.flash('success'),
 		warning: req.flash('warning'),
 		error: req.flash('error')
 	};
+
+	for(var key in flashMessages){
+
+		if(key == 'error'){
+
+			logger.debug(key + ' IS an array, length: ' + flashMessages[key].length + ', value: ' + req.flash('error'));
+			var msg = '';
+			for(var i = 0; i < flashMessages[key].length; i++){
+				msg += '** ' + flashMessages[key][i] + '<br />\n';
+			}
+
+			flashMessages[key] = msg;
+			logger.debug('value is: ' + msg);
+		}
+		else{
+			logger.debug(key + ' is not an array');
+		}
+	}
 	
 	res.locals.messages = _.any(flashMessages, function(msgs) { return msgs.length; }) ? flashMessages : false;
 
-
+*/
 	next();
 	
 };

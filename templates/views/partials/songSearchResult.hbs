@@ -1,4 +1,62 @@
-<div class="row"">
+{{#if clientSide}}
+
+<!-- start song search result -->
+<script id="songSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song=\{{searchResult.song.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">\{{searchResult.song.name}}</button></div>
+        </div>
+        <div class="row">
+            \{{#if searchResult.song.fileName}}
+                <div class="col-md-12">
+                    <div id="wav_\{{searchResult.song.id}}"><p id="wav_loading_\{{searchResult.song.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
+                    <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
+                        <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_\{{searchResult.song.id}}">
+                            <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
+                        </button>
+                    </div>
+                </div>
+            \{{/if}}
+            \{{#unless searchResult.song.fileName}}
+                <div class="col-md-12 searchNoInfo">
+                    No Tracks Recorded Yet
+                </div>
+            \{{/unless}}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="searchResultSubTitle1"> musicians </div>
+
+            \{{#each searchResult.musicians}}
+                <div style='float:left;'>
+                    \{{> musicianInfoIcon userDto=this}}
+                </div>
+            \{{/each}}
+
+
+            <div class="searchResultSubContent1">created: \{{formatDate searchResult.song.dateCreated}}</div>
+            \{{#if searchResult.song.allTags}}
+
+                \{{#each searchResult.song.allTags}}
+                    \{{> tagInfo tag=this}}
+                \{{/each}}
+
+            \{{/if}}
+        </div>
+        \{{#if searchResult.song.description}}
+            <div class="row searchResultSubContent2">\{{truncateText searchResult.song.description 100}}</div>
+        \{{/if}}
+
+    </div>
+</div>
+</script>
+<!-- end song search result -->
+{{/if}}
+
+{{#unless clientSide}}
+<div class="row">
     <div class="col-md-6">
         <div class="row">
             <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song={{searchResult.song.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">{{searchResult.song.name}}</button></div>
@@ -47,3 +105,4 @@
 
     </div>
 </div>
+{{/unless}}

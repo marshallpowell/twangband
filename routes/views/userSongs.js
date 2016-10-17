@@ -2,6 +2,7 @@ var log = require(APP_LIB + 'util/Logger').getLogger(__filename);
 var songDao = require(APP_LIB + 'dao/SongDao');
 var trackDao = require(APP_LIB + 'dao/TrackDao');
 var userDao = require(APP_LIB + 'dao/UserDao');
+var likeContentDao = require(APP_LIB + 'dao/LikeContentDao');
 var searchService = require(APP_LIB + 'service/SearchService');
 var Q = require('q');
 
@@ -9,10 +10,30 @@ exports = module.exports = function(req, res) {
 
     log.debug("enter userSongs with user id: " + JSON.stringify(req.user));
     var locals = res.locals;
+    var offset = req.query.offset || 0;
+    var limit = req.query.limit || 10;
+    var requestType = req.query.requestType || 'html';
+
+    var jsonResult={};
+    jsonResult.searchResults=[];
+    jsonResult.songs=[];
+    jsonResult.errors=[];
 
     // locals.section is used to set the currently selected
     // item in the header navigation.
     locals.section = 'songs';
+
+    var renderView = function(data){
+
+        if(requestType === 'html'){
+            log.debug('render html view');
+            res.render('userSongs');
+        }
+        else{
+            log.debug('render json view');
+            res.json(data);
+        }
+    };
 
     var getUsersFromSong = function(songDto){
 
@@ -38,7 +59,10 @@ exports = module.exports = function(req, res) {
         searchService.createSongSearchResult(songs).then(function(searchResults){
             locals['songSearchResults'] = searchResults;
             locals['songs'] = songs;
-            res.render('userSongs');
+            locals['offset'] = songs.length;
+            jsonResult.searchResults = searchResults;
+            jsonResult.songs = songs;
+            renderView(jsonResult);
         });
     };
 
@@ -47,29 +71,28 @@ exports = module.exports = function(req, res) {
 
             log.debug('####searchResults: ' + JSON.stringify(searchResults));
             locals['trackSearchResults'] = searchResults;
+            locals['offset'] = tracks.length;
+            locals['tracks'] = tracks;
 
-            var tracks = [];
-            for(var x = 0; x < searchResults.length; x++){
-                tracks.push(searchResults[x].track);
-            }
-
-            if(tracks.length){
-                locals['tracks'] = tracks;
-            }
-
-            res.render('userSongs');
+            jsonResult.searchResults = searchResults;
+            jsonResult.songs = tracks;
+           renderView(jsonResult);
         });
     };
 
     var failureCb = function (error) {
         log.debug("error retrieving songs: " + err);
         req.flash('error', "error retrieving songs: " + err);
-        res.render('userSongs');
+        jsonResult.errors.push("error retrieving songs: " + err)
+        renderView(jsonResult);
     };
 
-    var updateLocals = function (title, tab, searchType) {
+    var updateLocals = function (title, tab, searchType, offset, limit) {
         locals['title'] = title;
         locals[tab] = true;
+        locals['limit'] = limit;
+        locals['offset'] = offset;
+        locals['search'] = req.query.search || 'songs';
 
         if(searchType == 'tracks'){
             locals['showTracks'] = true;
@@ -90,9 +113,9 @@ exports = module.exports = function(req, res) {
 
         if (req.query.search == 'collaborator') {
 
-            updateLocals('Songs you have been invited to collaborate on', req.query.search, 'songs')
+            updateLocals('Songs you have been invited to collaborate on', req.query.search, 'songs', offset, limit);
             isLoggedIn();
-            songDao.findUserCollaboratorSongs(req.user.id).then(
+            songDao.findUserCollaboratorSongs(req.user.id, offset, limit).then(
                 successSongSearchCb,
                 failureCb
             );
@@ -100,28 +123,29 @@ exports = module.exports = function(req, res) {
 
         else if (req.query.search == 'mySongs') {
 
-            updateLocals('Your Songs', req.query.search, 'songs');
+            updateLocals('Your Songs', req.query.search, 'songs', offset, limit);
             isLoggedIn();
 
-            songDao.findUserSongs(req.user.id).then(
+            songDao.findUserSongs(req.user.id, offset, limit).then(
                 successSongSearchCb,
                 failureCb
             );
 
         }
-        //TODO user tracks
+
         else if (req.query.search == 'myTracks') {
-            updateLocals('All of your tracks', req.query.search, 'tracks');
+
+            updateLocals('All of your tracks', req.query.search, 'tracks', offset, limit);
             isLoggedIn();
 
-            trackDao.findUserTracks(req.user).then(
+            trackDao.findUserTracks(req.user, offset, limit).then(
                 successTrackSearchCb,
                 failureCb
             );
         }
         else if (req.query.search == 'tracks') {
 
-            updateLocals('Create a new song from an existing track ', req.query.keywords, 'tracks');
+            updateLocals('Create a new song from an existing track ', req.query.keywords, 'tracks', offset, limit);
             isLoggedIn();
 
             var keywords = req.query.keywords || '';
@@ -129,33 +153,37 @@ exports = module.exports = function(req, res) {
             log.debug('search for public tracks with keywords: ' + keywords);
 
             if(keywords.length){
-                trackDao.searchTracksByKeywords(keywords).then(
+                trackDao.searchTracksByKeywords(keywords, offset, limit).then(
                     successTrackSearchCb,
                     failureCb
                 );
             }
             else{
-                res.render('userSongs');
+                renderView(jsonResult);
             }
 
 
         }
         //TODO songs user has liked
         else if (req.query.search == 'favoriteSongs') {
-            updateLocals('These are songs you have liked', req.query.search, 'songs');
+
+            updateLocals('These are songs you have liked', req.query.search, 'songs', offset, limit);
             isLoggedIn();
 
-            songDao.findLatestPublicSongs().then(
-                successSongSearchCb,
-                failureCb
-            );
+            likeContentDao.getUserLikesByType(req.user, 'song', offset, limit).then(
+                songDao.findSmallSongSearchResultsById).then(
+                    successSongSearchCb,
+                    failureCb
+                );
+
         }
         //TODO musicians i follow songs
         else if (req.query.search == 'following') {
-            updateLocals('Songs from musicians you follow', req.query.search);
+
+            updateLocals('Songs from musicians you follow', req.query.search, offset, limit);
             isLoggedIn();
 
-            songDao.findLatestPublicSongs().then(
+            songDao.findLatestPublicSongs(offset, limit).then(
                 successSongSearchCb,
                 failureCb
             );
@@ -163,10 +191,10 @@ exports = module.exports = function(req, res) {
         else if (req.query.search == 'songs') {
 
             if(req.query.tags){
-                updateLocals('Song Search by tags', 'keywords', 'songs');
+                updateLocals('Song Search by tags', 'keywords', 'songs', offset, limit);
                 var tags = [];
-                tags.push(req.query.tags)
-                songDao.findPublicSongsByTags(tags).then(
+                tags.push(req.query.tags);
+                songDao.findPublicSongsByTags(tags, offset, limit).then(
                     successSongSearchCb,
                     failureCb
                 );
@@ -174,16 +202,16 @@ exports = module.exports = function(req, res) {
             else{
                 var keywords = req.query.keywords || '';
 
-                updateLocals('Song Search for: '+keywords, 'keywords', 'songs');
-
+                updateLocals('Song Search for: '+keywords, 'keywords', 'songs', offset, limit);
+                locals['keywords'] = keywords;
                 if(keywords.length){
-                    songDao.searchPublicSongs(keywords).then(
+                    songDao.searchPublicSongs(keywords, offset, limit).then(
                         successSongSearchCb,
                         failureCb
                     );
                 }
                 else{
-                    res.render('userSongs');
+                    renderView(jsonResult);
                 }
 
             }
@@ -191,8 +219,8 @@ exports = module.exports = function(req, res) {
         }
         //TODO latest public songs
         else {
-            updateLocals('Our latest songs', 'latest', 'songs');
-            songDao.findLatestPublicSongs(0,20).then(
+            updateLocals('Our latest songs', 'latest', 'songs', offset, limit);
+            songDao.findLatestPublicSongs(offset, limit).then(
                 successSongSearchCb,
                 failureCb
             );
@@ -201,7 +229,8 @@ exports = module.exports = function(req, res) {
     }
     catch(e){
         req.flash('error', e.message);
-        res.render('userSongs');
+        jsonResult.errors.push(e.message);
+        renderView(jsonResult);
     }
 
 

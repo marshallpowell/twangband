@@ -1,5 +1,6 @@
 <div class="row">
     <ul class="nav nav-pills">
+        <li {{#if favoriteSongs}}class="active"{{/if}}><a href="/music?search=favoriteSongs">Liked Songs</a></li>
         <li {{#if mySongs}}class="active"{{/if}}><a href="/music?search=mySongs">My Songs</a></li>
         <li {{#if collaborator}}class="active"{{/if}}><a href="/music?search=collaborator">My Collaborations</a></li>
         <li {{#if myTracks}}class="active"{{/if}}><a href="/music?search=myTracks">My Tracks</a></li>

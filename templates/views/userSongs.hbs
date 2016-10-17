@@ -1,6 +1,6 @@
 {{!< default}}
 
-<div class="container">
+<div class="container" id="searchResults">
 
     {{> songNav }}
 
@@ -43,16 +43,14 @@
 </div>
 
 
-{{#if songs}}
-    {{> songSearchWavJS songDtos=songs}}
-{{/if}}
-{{#if tracks}}
-    {{> songSearchWavJS songDtos=tracks}}
-{{/if}}
+
 
 {{> songInfoDialog }}
 {{> userProfileDialog}}
 {{> createSongFromTrackDialog }}
+{{> songSearchResult clientSide=true }}
+{{> trackSearchResult clientSide=true }}
+
 
 <script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
 <script src="/js/lib/wavesurfer/wavesurfer.regions.js"></script>
@@ -64,4 +62,79 @@
 <script src="/js/lib/dialogs/NewSongDialog.js"></script>
 <script src="/js/lib/dialogs/SongInfoDialog.js"></script>
 <script src="/js/lib/dialogs/UserProfileDialog.js"></script>
+<script src="/js/lib/dialogs/SearchResultDialog.js"></script>
+<script type="text/javascript">
+
+    {{#if showSongs}}
+        var showView = 'songs';
+    {{/if}}
+    {{#unless showSongs}}
+        var showView = 'tracks';
+    {{/unless}}
+    {{#if songs}}
+        var songDtos = {{{json songs}}};
+    {{/if}}
+    {{#if tracks}}
+        var songDtos = {{{json tracks}}};
+    {{/if}}
+
+    $(document).ready(function () {
+        tb.dialogs.search.loadWavs(songDtos);
+    });
+
+    var log = new Logger('DEBUG');
+    var offset = {{offset}};
+    var limit = {{limit}};
+    var resultCount = 0;
+    var searchType = '{{search}}';
+
+
+        {{#if keywords}}
+        url +='&keywords='+encodeURIComponent('{{keywords}}');
+        {{/if}}
+
+    $(window).scroll(function(){
+        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+
+            var url = "/music?search="+searchType+'&offset='+offset+'&limit='+limit+'&requestType=json';
+            log.debug('url = '+url);
+
+            $.ajax({
+                method: "GET",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: url,
+                dataType: "json",
+                success : function(json){
+
+                    if(json.errors.length){
+                        var message = "There were errors with your search:\n * "+json.errors.join("\n * ");
+                        $.notify(message, {autoHide: false, arrowShow:true, className: 'error'});
+                    }
+                    else{
+
+                        offset += json.searchResults.length;
+
+                        //console.log('found results: ' + JSON.stringify(json));
+                        //TODO build function to append results
+
+                        if(json.searchResults.length){
+                            tb.dialogs.search.addResults(showView, json.searchResults, json.songs);
+                        }
+                        else{
+                            log.debug('There are no more results: ' + limit + ' offset: ' + offset);
+                        }
+
+
+                    }
+
+                },
+                error : function(error){
+                    $.notify("There was an error processing your submission: " + error, {autoHide: false, arrowShow:true, className: 'error'});
+                }
+            });
+        }
+    });
+</script>
 

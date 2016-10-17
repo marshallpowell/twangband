@@ -16,6 +16,8 @@ function UserDto(){
     this.profilePic;
     this.instruments=[];
     this.tags=[];
+    this.loginType;
+    this.uiId;
 
 }
 

@@ -32,3 +32,8 @@ node_modules_local
 .DS_Store
 
 gcloud_credentials.json
+
+# secrets files contain sensitive info that shouldn't be put in git
+prod-secrets.yaml
+secrets.yaml
+

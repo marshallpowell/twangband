@@ -1,0 +1,26 @@
+<!-- begin mixerCallibrateDialog -->
+<script id="mixerCallibratePartial" type="text/x-handlebars-template">
+<div id="callibrationDialog">
+    <div class="row">
+        <div id="callibrationIcons" class="col-md-2"><img src="/img/micSpeakerIconBlk.png" width="60"
+                                                          height="60"/></div>
+        <div id="callibrationDirections" class="col-md-10">Before you begin recording, we need to callibrate
+            your system's audio input and output. You will need to be very quiet and put your microphone as
+            close to your speaker as possible. You will hear a series of 5 clicks, and the test will be
+            complete. Please click below to proceed
+        </div>
+    </div>
+    <div class="row">
+        <div id="callibrationResults" class="col-lg-12"></div>
+    </div>
+
+    <div class="modal-footer" style="padding-top: 5px; text-align:center;" id="callibrateDialogFooter">
+        <button id="bcallibrate"
+                onclick="MixerUtil.callibrateSystem();"
+                title="Callibrate System"
+                type="button" class="btn btn-primary btn-lg">
+            <span class="glyphicon glyphicon-time"></span> Callibrate Your System
+        </button>
+    </div>
+</div>
+    </script>

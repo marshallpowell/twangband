@@ -1,0 +1,92 @@
+<!-- begin mixerRecordingDialog -->
+<script id="mixerRecordingPartial" type="text/x-handlebars-template">
+
+    <div id="mixerRecordingBody" class="modalDialogForm" style="padding:5px;">
+
+
+        <div class="row panel-group" id="recordingGroup">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div>
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#recordingGroup" href="#metronomeTools">Metronome</a>
+
+                            <div id="metronomeCanvas" style="float:right"></div>
+                        </h4>
+                    </div>
+                </div>
+                <div id="metronomeTools" class="panel-collapse collapse in">
+                    <div class="panel-body">
+
+                        <div id="metronome">
+
+                            <div class="form-group col-sm-12 col-lg-7 col-md-8">
+                                <button class="btn btn-primary btn-sm play" onclick="this.innerText = toggleMetronome();">Test
+                                    Metronome
+                                </button>
+                            </div>
+                            <div class="form-group col-sm-12 col-lg-7 col-md-6">
+                                <label class="control-label" for="tempo">Beats Per Minute: <span
+                                        id="showTempo">60</span></label>
+                                <input id="tempo" type="range" min="30.0" max="160.0" step="1" value="60"
+                                       style="height: 20px; width: 200px"
+                                       onInput="tempo = event.target.value; document.getElementById('showTempo').innerText=tempo;">
+                            </div>
+                            <div class="form-group col-sm-12 col-lg-7 col-md-6">
+                                <select class="form-control" id="resolution"
+                                        onchange="noteResolution = this.options[this.selectedIndex].value;">
+                                    <option value="2" selected>Use Quarter notes</option>
+                                    <option value="1">Use 8th notes</option>
+                                    <option value="0">Use 16th notes</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-12 col-lg-7 col-md-6">
+                                <label class="control-label" for="useMetronome">Play Metronome While Recording?</label>
+                                <select class="form-control" id="useMetronome">
+                                    <option value="true" selected>Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="row" id="record">
+            <div id="startTimer" class="col-lg-12" style="text-align:center">
+                <button class="btn btn-primary btn-lg" onclick="toggleMetronome('stop'); $('#metronomeTools').collapse('hide'); initAudio();">Start
+                    Recording
+                </button>
+            </div>
+            <div id="recordingInfo" class="col-lg-12" style="text-align:center"><span
+                    id="countdownInfo"></span>&nbsp;<span
+                    id="countdownTimer" style="background-color: #FFFF00"></span></div>
+        </div>
+
+
+    </div>
+</script>
+
+<div id="mixerRecordingDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                {{> siteName }}
+                <button type="button" class="close" id="modalXCloseBtn" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">
+                <div id="mixerRecordingBody"><p id="mixerRecordingFoo"></p></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- end mixerRecordingDialog-->
+

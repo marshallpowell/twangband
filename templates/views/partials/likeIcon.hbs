@@ -1,0 +1,28 @@
+{{#if clientSide}}
+    <!-- start musicianInfoIcon -->
+    <script id="likeIconPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+        <div class="likeInfoIcon">
+            <input type="text" style="display:none" id="_\{{likeDto.entityId}}_likeDto" value='\{{json likeDto}}' />
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            <a id="_\{{likeDto.entityId}}_likeInfo" href="javascript:void(0);" onclick="tb.dialogs.activities.showLikes('\{{likeDto.entityType}}', '\{{likeDto.entityId}}');">
+                \{{#if likeDto.count}}
+                    +\{{likeDto.count}}
+                \{{/if}}
+            </a>
+            <a href="javascript:void(0);" onclick="tb.dialogs.activities.toggleLike('\{{likeDto.entityId}}');" ><span id='_\{{likeDto.entityId}}_likeLinkTxt'>\{{#if likeDto.like}}unlike\{{/if}}\{{#unless likeDto.like}}like\{{/unless}}</span></a>
+        </div>
+    </script>
+    <!-- end musicianInfoIcon -->
+{{/if}}
+{{#unless clientSide}}
+    <div class="likeInfoIcon">
+        <input type="text" style="display:none" id="_{{likeDto.entityId}}_likeDto" value='{{json likeDto}}' />
+        <span class="glyphicon glyphicon-thumbs-up"></span>
+        <a id="_{{likeDto.entityId}}_likeInfo" href="javascript:void(0);" onclick="tb.dialogs.activities.showLikes('{{likeDto.entityType}}', '{{likeDto.entityId}}');">
+        {{#if likeDto.count}}
+            +{{likeDto.count}}
+        {{/if}}
+    </a>
+        <a href="javascript:void(0);" onclick="tb.dialogs.activities.toggleLike('{{likeDto.entityId}}');" ><span id='_{{likeDto.entityId}}_likeLinkTxt'>{{#if likeDto.like}}(unlike){{/if}}{{#unless likeDto.like}}like{{/unless}}</span></a>
+    </div>
+{{/unless}}

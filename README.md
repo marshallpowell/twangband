@@ -51,6 +51,17 @@ FFMPEG and http://sharp.dimens.io/en/stable/install/ where installed through bre
     #note you cannot mount a data dir from osx to a virtual box machine
     docker run --name musicilo-mongo -d -p 27017:27017  musicilo/mongo-server 
     
+    docker run \
+    -p 27018:27017 \
+    -e ADMIN_MONGO_DB_USER=tb \ 
+    -e ADMIN_MONGO_DB_PASS=test1234 \
+    -e TB_MONGO_DB_USER=tb \ 
+    -e TB_MONGO_DB_PASS=test1234 \
+    --name twang-mongo gcr.io/marshallpowell/mongo-server
+    
+    db.createUser({user: 'tb', pwd: 'test1234', roles:[{role:'dbOwner',db:'twangband'}]})
+        
+
     #connect to the server from commandline on the container
     mongo 127.0.0.1:27017/twangband -u tb -p fuzzyWUZZYhadnohair102938476
 ### Ngnix Web Server
@@ -141,6 +152,8 @@ http://kubernetes.io/docs/user-guide/kubectl-cheatsheet/
     
     #create secrets file:
     kubectl create -f ./prod-secrets.yaml
+    # update secrets file:
+    kubectl apply -f ./prod-secrets.yaml
     # show the current secrets files in a cluster
     kubectl get secrets
 
@@ -192,6 +205,9 @@ git tag -a v1.0.1 -m "Track model simplified, FFProbe enabled"
            -newkey rsa:2048 -nodes -keyout twangband.com.key \
            -x509 -days 365 -out twangband.com.crt
 
+### create csr 
+    openssl req -new -sha256 -key twangband.com.key -out twangband.com.csr
+    
 ### base64 encode ssl key and cert for replication controller file
     cat twangband.com.key | base64
     cat twangband.com.crt | base64

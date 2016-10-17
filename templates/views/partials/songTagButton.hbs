@@ -1,3 +1,15 @@
+{{#if clientSide}}
+    <!-- start track search result -->
+    <script id="songTagButtonPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+
+        <div class="tagInfoIcon">
+            <button type="button" class="btn btn-primary btn-xs" onclick='tb.dialogs.openSongInfoDialog(\{{{json song }}});'>\{{ song.name }}</button>
+        </div>
+
+    </script>
+{{/if}}
+{{#unless clientSide}}
 <div class="tagInfoIcon">
     <button type="button" class="btn btn-primary btn-xs" onclick='tb.dialogs.openSongInfoDialog({{{json song }}});'>{{ song.name }}</button>
 </div>
+{{/unless}}

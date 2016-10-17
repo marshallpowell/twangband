@@ -2,7 +2,7 @@
 
 
 export MONGO_SERVICE_HOST=192.168.99.100
-export MONGO_SERVICE_PORT=27017
+export MONGO_SERVICE_PORT=27018
 export CDN=https://local.twangband.com/uploads/
 export MONGO_DB_NAME=twangband
 export TB_MONGO_DB_USER=tb

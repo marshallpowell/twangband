@@ -54,6 +54,10 @@ $(document).ready(function () {
                 songInfoWavesurfer.skipForward();
             });
 
+            $( "#newSongFromTrackDialog").on('hidden.bs.modal', function (e) {
+                songInfoWavesurfer.stop();
+            });
+
             $('#newSongFromTrackDialog').modal('toggle');
 
         };
