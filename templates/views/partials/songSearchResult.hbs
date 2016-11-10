@@ -2,20 +2,28 @@
 
 <!-- start song search result -->
 <script id="songSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
-<div class="row">
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song=\{{searchResult.song.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">\{{searchResult.song.name}}</button></div>
+<div class="row searchResultRow">
+    <div class="col-md-9" >
+
+        <div class="row searchRowTitle">
+            <div class="col-md-12" >
+                <div style='float:left; padding:10px;'>
+                    <button class="btn btn-primary btn-circle" onclick="tb.dialogs.openSongInfoDialog(\{{json searchResult.song}});" >
+                        <i class="glyphicon glyphicon-play"></i>
+                    </button>
+                </div>
+                <div style='float:left; padding-top:13px; line-height: 90%;'>
+                    <a  href="/songMixer?song=\{{searchResult.song.id}}">\{{searchResult.song.name}}</a><br />
+                    <span class="searchDuration">\{{searchResult.song.duration}} seconds, created: \{{formatDate searchResult.song.dateCreated}}</span>
+                </div>
+            </div>
         </div>
-        <div class="row">
+        <div class="row" style="overflow: hidden">
             \{{#if searchResult.song.fileName}}
                 <div class="col-md-12">
                     <div id="wav_\{{searchResult.song.id}}"><p id="wav_loading_\{{searchResult.song.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
-                    <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
-                        <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_\{{searchResult.song.id}}">
-                            <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
-                        </button>
-                    </div>
+                    <div id="wavImg_\{{searchResult.song.id}}" class="searchRowWav"></div>
+
                 </div>
             \{{/if}}
             \{{#unless searchResult.song.fileName}}
@@ -25,29 +33,29 @@
             \{{/unless}}
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="row">
-            <div class="searchResultSubTitle1"> musicians </div>
+    <div class="col-md-3 ">
+
+        <div class="row searchResultExtraInfo">
+            <div class="searchResultSideLabel"> musicians: </div>
 
             \{{#each searchResult.musicians}}
                 <div style='float:left;'>
-                    \{{> musicianInfoIcon userDto=this}}
+                   \{{> musicianInfoIcon userDto=this}}
                 </div>
             \{{/each}}
-
-
-            <div class="searchResultSubContent1">created: \{{formatDate searchResult.song.dateCreated}}</div>
-            \{{#if searchResult.song.allTags}}
-
-                \{{#each searchResult.song.allTags}}
-                    \{{> tagInfo tag=this}}
-                \{{/each}}
-
-            \{{/if}}
         </div>
-        \{{#if searchResult.song.description}}
-            <div class="row searchResultSubContent2">\{{truncateText searchResult.song.description 100}}</div>
+
+        \{{#if searchResult.song.allTags}}
+            <div class="row searchResultExtraInfo">
+                <div class="searchResultSideLabel"> tags: </div>
+                <div style='float:left;'>
+                    \{{#each searchResult.song.allTags}}
+                        \{{> tagInfo tag=this}}
+                    \{{/each}}
+                </div>
+            </div>
         \{{/if}}
+
 
     </div>
 </div>
@@ -56,20 +64,28 @@
 {{/if}}
 
 {{#unless clientSide}}
-<div class="row">
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-12"><button type="button" onclick="window.location.href='/songMixer?song={{searchResult.song.id}}'" style="display: block; width: 100%;" class="btn btn-primary btn-sm">{{searchResult.song.name}}</button></div>
-         </div>
-        <div class="row">
+<div class="row searchResultRow">
+    <div class="col-md-9" >
+
+        <div class="row searchRowTitle">
+            <div class="col-md-12" >
+                <div style='float:left; padding:10px;'>
+                    <button class="btn btn-primary btn-circle" onclick="tb.dialogs.openSongInfoDialog({{json searchResult.song}});" >
+                        <i class="glyphicon glyphicon-play"></i>
+                    </button>
+                </div>
+                <div style='float:left; padding-top:13px; line-height: 90%;'>
+                    <a  href="/songMixer?song={{searchResult.song.id}}">{{searchResult.song.name}}</a><br />
+                    <span class="searchDuration">{{searchResult.song.duration}} seconds, created: {{formatDate searchResult.song.dateCreated}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="overflow: hidden">
         {{#if searchResult.song.fileName}}
             <div class="col-md-12">
                 <div id="wav_{{searchResult.song.id}}"><p id="wav_loading_{{searchResult.song.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
-                <div style='float:right;position: absolute;top: 0px; left:10px;z-index:2000' >
-                    <button class="btn-link" style="color:#2BAD1D" data-action="play" id="play_{{searchResult.song.id}}">
-                        <i class="glyphicon glyphicon-play"></i> / <i class="glyphicon glyphicon-pause"></i>
-                    </button>
-                </div>
+                <div id="wavImg_{{searchResult.song.id}}" class="searchRowWav"></div>
+
             </div>
         {{/if}}
         {{#unless searchResult.song.fileName}}
@@ -79,29 +95,29 @@
         {{/unless}}
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="row">
-            <div class="searchResultSubTitle1"> musicians </div>
+    <div class="col-md-3 ">
+
+            <div class="row searchResultExtraInfo">
+                <div class="searchResultSideLabel"> musicians: </div>
 
                 {{#each searchResult.musicians}}
                 <div style='float:left;'>
                     {{> musicianInfoIcon userDto=this}}
                 </div>
                 {{/each}}
+            </div>
 
-
-            <div class="searchResultSubContent1">created: {{formatDate searchResult.song.dateCreated}}</div>
-            {{#if searchResult.song.allTags}}
-
-            {{#each searchResult.song.allTags}}
-                {{> tagInfo tag=this}}
-            {{/each}}
-
-            {{/if}}
-        </div>
-        {{#if searchResult.song.description}}
-            <div class="row searchResultSubContent2">{{truncateText searchResult.song.description 100}}</div>
+        {{#if searchResult.song.allTags}}
+            <div class="row searchResultExtraInfo">
+                <div class="searchResultSideLabel"> tags: </div>
+                <div style='float:left;'>
+                {{#each searchResult.song.allTags}}
+                    {{> tagInfo tag=this}}
+                {{/each}}
+                    </div>
+            </div>
         {{/if}}
+
 
     </div>
 </div>

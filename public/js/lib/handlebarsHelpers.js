@@ -8,15 +8,7 @@ $(document).ready(function () {
          */
 
         var HbsHelpers = {};
-        HbsHelpers.formatDate = function(date){
 
-            if (typeof(date) == "undefined") {
-                return "Unknown";
-            }
-            //FIXME These methods need to return a String
-            //return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear();
-            return date.toString();
-        };
 
         HbsHelpers.truncateText = function(string, length){
 
@@ -28,6 +20,24 @@ $(document).ready(function () {
             }
             // These methods need to return a String
 
+        };
+
+
+        HbsHelpers.formatDate = function(date){
+
+            if (typeof(date) == "undefined") {
+                return "Unknown";
+            }
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [month, day, year].join('/');
         };
 
         Handlebars.registerHelper('json', JSON.stringify);

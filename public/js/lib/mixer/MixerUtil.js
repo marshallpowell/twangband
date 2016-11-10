@@ -58,8 +58,8 @@ MixerUtil.updateNewSongMessage = function(){
     if(document.getElementById('createNewSong')){
 
         var latency = MixerUtil.getCookie('systemLatency');
-console.log('latency check: ' + latency);
-        if(latency.length){
+
+        if(latency && latency.length){
             console.log('first block');
             document.getElementById('checkLatencyMessage').style.display='none';
             document.getElementById('createNewSongMessage').style.display='block';
@@ -470,13 +470,17 @@ MixerUtil.setCookie = function(cname, cvalue) {
 
 MixerUtil.getCookie =function(cname) {
     var name = cname + "=";
-    var ca = document.cookie.split(';');
+    console.log(document.cookie.replace(/ /g,''));
+    var ca = document.cookie.replace(/ /g,'').split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0)
+        //while (c.charAt(0)==' ') c = c.substring(1);
+        console.log(c);
+        if (c.indexOf(name) == 0){
             console.log('found cookie with value: ' +c.substring(name.length, c.length));
             return c.substring(name.length, c.length);
+        }
+
     }
     return null;
 };

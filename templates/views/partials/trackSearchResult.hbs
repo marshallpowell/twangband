@@ -1,4 +1,168 @@
 {{#if clientSide}}
+
+    <!-- start song search result -->
+    <script id="trackSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
+
+        <div class="row searchResultRow">
+            <div class="col-md-9" >
+
+                <div class="row searchRowTitle">
+                    <div class="col-md-12" >
+                        <div style='float:left; padding:10px;'>
+                            <button class="btn btn-primary btn-circle" onclick="tb.dialogs.openSongInfoDialog(\{{json searchResult.track}},false);" >
+                                <i class="glyphicon glyphicon-play"></i>
+                            </button>
+                        </div>
+                        <div style='float:left; padding-top:13px; line-height: 90%;'>
+                            <a  href="javascript:void(0);" onclick='tb.dialogs.openNewSongDialog(\{{{json searchResult.track}}})'>\{{searchResult.track.name}}</a><br />
+                            <span class="searchDuration">\{{searchResult.track.duration}} seconds, created: \{{formatDate searchResult.track.dateCreated}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="overflow: hidden">
+
+                    <div class="col-md-12">
+                        <div id="wav_\{{searchResult.track.id}}"><p id="wav_loading_\{{searchResult.track.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
+                        <div id="wavImg_\{{searchResult.track.id}}" class="searchRowWav"></div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-3 ">
+
+                <div class="row searchResultExtraInfo">
+                    <div class="searchResultSideLabel"> musicians: </div>
+
+                    \{{#each searchResult.musicians}}
+                        <div style='float:left;'>
+                            \{{> musicianInfoIcon userDto=this}}
+                        </div>
+                    \{{/each}}
+                </div>
+
+                \{{#if searchResult.track.tags}}
+                    <div class="row searchResultExtraInfo">
+                        <div class="searchResultSideLabel"> tags: </div>
+                        <div style='float:left;'>
+                            \{{#each searchResult.track.tags}}
+                                \{{> tagInfo tag=this}}
+                            \{{/each}}
+                        </div>
+                    </div>
+                \{{/if}}
+
+                \{{#if searchResult.songs}}
+                    <div class="row searchResultExtraInfo">
+                        <div class="searchResultSideLabel" > songs: </div>
+                        <div style='float:left;'>
+                            \{{#each searchResult.songs}}
+                                \{{> songTagButton song=this}}
+                            \{{/each}}
+                        </div>
+                    </div>
+                \{{/if}}
+
+
+            </div>
+        </div>
+        
+    </script>
+    <!-- end song search result -->
+{{/if}}
+
+{{#unless clientSide}}
+    <div class="row searchResultRow">
+        <div class="col-md-9" >
+
+            <div class="row searchRowTitle">
+                <div class="col-md-12" >
+                    <div style='float:left; padding:10px;'>
+                        <button class="btn btn-primary btn-circle" onclick="tb.dialogs.openSongInfoDialog({{json searchResult.track}},false);" >
+                            <i class="glyphicon glyphicon-play"></i>
+                        </button>
+                    </div>
+                    <div style='float:left; padding-top:13px; line-height: 90%;'>
+                        <a  href="javascript:void(0);" onclick='tb.dialogs.openNewSongDialog({{{json searchResult.track}}})'>{{searchResult.track.name}}</a><br />
+                        <span class="searchDuration">{{searchResult.track.duration}} seconds, created: {{formatDate searchResult.track.dateCreated}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="overflow: hidden">
+
+                    <div class="col-md-12">
+                        <div id="wav_{{searchResult.track.id}}"><p id="wav_loading_{{searchResult.track.id}}"><span class="fa fa-spinner fa-pulse"></span> Loading...</p></div>
+                        <div id="wavImg_{{searchResult.track.id}}" class="searchRowWav"></div>
+
+                    </div>
+
+            </div>
+        </div>
+        <div class="col-md-3 ">
+
+            <div class="row searchResultExtraInfo">
+                <div class="searchResultSideLabel"> musicians: </div>
+
+                {{#each searchResult.musicians}}
+                    <div style='float:left;'>
+                        {{> musicianInfoIcon userDto=this}}
+                    </div>
+                {{/each}}
+            </div>
+
+            {{#if searchResult.track.tags}}
+                <div class="row searchResultExtraInfo">
+                    <div class="searchResultSideLabel"> tags: </div>
+                    <div style='float:left;'>
+                        {{#each searchResult.track.tags}}
+                            {{> tagInfo tag=this}}
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if searchResult.songs}}
+                <div class="row searchResultExtraInfo">
+                    <div class="searchResultSideLabel" > songs: </div>
+                    <div style='float:left;'>
+                    {{#each searchResult.songs}}
+                        {{> songTagButton song=this}}
+                    {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+
+        </div>
+    </div>
+{{/unless}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{#if blah}}
+
+{{#if clientSide}}
     <!-- start track search result -->
     <script id="trackSearchResultPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
 
@@ -118,3 +282,5 @@
 </div>
 
 {{/unless}}
+
+{{/if}}

@@ -28,7 +28,7 @@ $(document).ready(function () {
         };
 
         tb.dialogs.search.loadWavs = function(songDtos){
-
+console.log('here');
             for(var i = 0; i < songDtos.length; i++){
                 tb.dialogs.search.createWav(songDtos[i]);
             }
@@ -36,10 +36,13 @@ $(document).ready(function () {
 
         tb.dialogs.search.createWav = function(songDto){
 
+//console.log(JSON(songDto));
             if(songDto.fileName){
 
+                var container = document.querySelector('#wav_'+songDto.id);
+
                 wavesurfers[songDto.id] = WaveSurfer.create({
-                    container: document.querySelector('#wav_'+songDto.id),
+                    container: container,
                     waveColor: '#1989D4',
                     progressColor: '#2BAD1D ',
                     scrollParent: false,
@@ -51,17 +54,23 @@ $(document).ready(function () {
                 wavesurfers[songDto.id].load(tb.CDN+'/'+songDto.fileName);
                 wavesurfers[songDto.id].on('ready', (function(){
                     document.getElementById('wav_loading_'+songDto.id).remove();
+                    wavesurfers[songDto.id].destroy();
+
                 }));
                 wavesurfers[songDto.id].on('destroy', (function(){
-                    document.getElementById('wav_loading_'+songDto.id).remove();
+                    wavCanvas = container.querySelector('canvas');
+                    width = wavCanvas.style.width;
+                    wavCanvas.removeAttribute("style");
+                    wavCanvas.style.width = width;
+                    document.getElementById('wavImg_'+songDto.id).appendChild(wavCanvas);
                 }));
                 wavesurfers[songDto.id].on('error', (function(){
                     document.getElementById('wav_loading_'+songDto.id).remove();
+                    wavesurfers[songDto.id].destroy();
                 }));
 
-                document.getElementById('play_'+songDto.id).addEventListener('click', function (e) {
-                    wavesurfers[songDto.id].playPause();
-                });
+
+
 
             }
         };

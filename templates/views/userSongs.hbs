@@ -9,12 +9,12 @@
     </div>
 
     {{#if showSongs}}
-
+        <div class="row searchResults">
         {{#if songSearchResults}}
             {{#each songSearchResults}}
                 {{> songSearchResult searchResult=this}}
             {{/each}}
-
+        </div>
         {{/if}}
 
         {{#unless songSearchResults}}
@@ -50,6 +50,7 @@
 {{> createSongFromTrackDialog }}
 {{> songSearchResult clientSide=true }}
 {{> trackSearchResult clientSide=true }}
+{{> likesUserList }}
 
 
 <script src="/js/lib/wavesurfer/wavesurfer.min.js"></script>
@@ -63,6 +64,7 @@
 <script src="/js/lib/dialogs/SongInfoDialog.js"></script>
 <script src="/js/lib/dialogs/UserProfileDialog.js"></script>
 <script src="/js/lib/dialogs/SearchResultDialog.js"></script>
+<script src="/js/lib/dialogs/LikeContentDialog.js"></script>
 <script type="text/javascript">
 
     {{#if showSongs}}

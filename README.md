@@ -88,6 +88,9 @@ FFMPEG and http://sharp.dimens.io/en/stable/install/ where installed through bre
 ## Gcloud Info
 Gcloud API ref: https://cloud.google.com/sdk/gcloud/reference/info
 
+    #If authentication stops working (ex "invalid_grant") try the below command
+    gcloud auth login
+
     #This is how to upgrade the master and nodes for kubernetes. For more info: https://cloud.google.com/container-engine/docs/clusters/upgrade
     gcloud container clusters upgrade prod-cluster --master
     gcloud container clusters upgrade prod-cluster

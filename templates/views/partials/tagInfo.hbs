@@ -1,6 +1,15 @@
-
+{{#if clientSide}}
 <script id="tagInfoPartial" type="text/x-handlebars-template" xmlns="http://www.w3.org/1999/html">
 <div class="tagInfoIcon">
     <button type="button" class="btn btn-primary btn-xs" onclick="SearchUtil.searchByTags('\{{ tag }}')">\{{ tag }}</button>
 </div>
 </script>
+
+{{/if}}
+
+{{#unless clientSide}}
+    <div class="tagInfoIcon">
+        <button type="button" class="btn btn-primary btn-xs" onclick="SearchUtil.searchByTags('{{ tag }}')">{{ tag }}</button>
+    </div>
+{{/unless}}
+
