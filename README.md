@@ -1,3 +1,5 @@
+# This is an older project I created to record and mix music online. The app worked well, but I abandonded due to lack of time. Hopefully someone can make use of it as it was a fun exercise. Feel free to use however you like. The below readme is just helpful info I recorded for managing the project locally and in gcp. All the key, password info is garbage.
+
 # Environment Info
 
 ## Docker base image layers
@@ -45,7 +47,7 @@ FFMPEG and http://sharp.dimens.io/en/stable/install/ where installed through bre
     -e GCLOUD_PRIVATE_KEY='MY PRIVATE KEY' \
     -e GCLOUD_PRIVATE_KEY_ID='1104b3efa3eefc0e64f6dd5427542d5fe9bd92b1' \
     -e GOOGLE_APPLICATION_CREDENTIALS=/src/gcloud_service_account.json \
-    -e GCLOUD_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCKpKUwEVb0JrVn\n2S2HaCvzUKCKD00N8WSfDc36z/CNO5ETluAQ/hgQ/juv3CtMQFlqXxQIuoRlV+k7\nsHgrn4fje2d6pUJ+ouH1xidTVwjy8mP9lj7xia+0CenBg0lOAfDKIfTg6oD6akQT\nUb1v83RYi6Eb6XLE3OHJoEwxTKb2T7Uj4GUBcNo+KEQoxeopNIbSh9lZLH87qkhE\nLAmuFJA962620zBz83CP+Ok/NY5vpBgRHgZ5HjXCZFes4BV9utSUNHnh5A2dDtxW\nmjg87nc4QiTgKBjUXWoizTm7nq+uwBEr2JP/eaSeSAneZ65rWOze9/PlC99cirB1\nTkpQQUM1AgMBAAECggEAUMr3lFZWdLrl9dmChaj4C7eNhka6YYitWV7jDOkGRldT\nCLZgZqacAbMVtzq3ZJ0PPkSf2SJQKvqa6PTCYrF5r9/nAnqxkDh9MwtBOXi7t0/3\nYvyeO4VABcvNE77dBf9tgW1eVX9yn/szJor4uPeHcl4UCb716bDKRwQJwqTnmxsk\n8bcPzk3KZliQp2aZlJRQnHLaAS9GdiH5DLi6ahegvzvZ0BWIDMNEvLx1gILVa+a7\nk2u+8DYm8dSoV9W0qjC7jXHWz8wr++Jn4urIzeISgtbcoZlecPWKbIz0+FbEd7C6\nuMs2lnV69QO2B+4K9n8dspnvTEW77pm1rmqcOrPPQQKBgQDTPBNhdeG58zAkGuU3\ntY9oN3uXB9YUTivHWClNa3hk3BBmqRFRm8BKtcJ4G1M7Jpms46t9VaF0oPL87PUr\nLyBeBohcgHuGHPisJh6+9Si4qmrHptI/OyWE3HRGEsXZjWE7Zuqo/Tifs4ZcEMW4\nfARfK4iYMdyzlXJJyj62OASCMQKBgQCoBlOyXhglsB640bjR9kiMOwWsa/DETE6r\nL/SOrFvQR9md5XnMHSxOqvexMheuz9jCLvJeeuVSj/JnAaX9eNgNqUzSMZaRaD9m\nlwk4bfsxUAW2mcYInLll3FdfgSqHbqt7mFBKdr9go70pIwznSO5GisvXnOxCQEpp\nTvNvMRXsRQKBgQDRzbieM5yIud+V7NTAOWf/piPuBY1/S4k2DP2w9M52txDfNouK\nF/2s9sz5yIIpnRRD4TmiWhvsIDRYPO7h/oPSgACOh9qogTwImDAvkIbqq/E07h+j\nSBbi2KfwNZMnmsH5YyYtxJyqGoCYDtyjeSJKeI3KRLQl9oi2e9c/23G28QKBgQCN\nYF12HFQHCgyfh98R0z8xtsvMSzpXgLlEsuH8ViwesQX7JEV6KCXKv3IQB00ECuCg\nau4F7zQbZwEYCLwI7XAk9omr5ouBJ40JHhZlA60yzdkwzmxhfLVGbsKZmk4VjFn/\ncaZFMWtPvhYAkfxecvACLPDdJ61nBT9XIlYT/eIrXQKBgE5vXlclAfqfOer56IWq\nt4B9tAdjEINNafCIqS2yKYMocqei7+gUIsT62X2jYMo0s43NYDdLn3bJo1IT55SD\nXkUkvyOxMS+1Z6wfFOuWsYj2eOhwqiKhP1Ye+gZUkNZoVmsYM0htPUSPx5ot/gCY\nY+lkAwcL7LGrLKPNKMmB/qDQ\n-----END PRIVATE KEY-----\n' \
+    -e GCLOUD_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----\GARBAGEBAQCKpKUwEVb0JrVn\n2S2HaCvzUKCKD00N8WSfDc36z/CNO5ETluAQ/hgQ/juv3CtMQFlqXxQIuoRlV+k7\nsHgrn4fje2d6pUJ+ouH1xidTVwjy8mP9lj7xia+0CenBg0lOAfDKIfTg6oD6akQT\nUb1v83RYi6Eb6XLE3OHJoEwxTKb2T7Uj4GUBcNo+KEQoxeopNIbSh9lZLH87qkhE\nLAmuFJA962620zBz83CP+Ok/NY5vpBgRHgZ5HjXCZFes4BV9utSUNHnh5A2dDtxW\nmjg87nc4QiTgKBjUXWoizTm7nq+uwBEr2JP/eaSeSAneZ65rWOze9/PlC99cirB1\nTkpQQUM1AgMBAAECggEAUMr3lFZWdLrl9dmChaj4C7eNhka6YYitWV7jDOkGRldT\nCLZgZqacAbMVtzq3ZJ0PPkSf2SJQKvqa6PTCYrF5r9/nAnqxkDh9MwtBOXi7t0/3\nYvyeO4VABcvNE77dBf9tgW1eVX9yn/szJor4uPeHcl4UCb716bDKRwQJwqTnmxsk\n8bcPzk3KZliQp2aZlJRQnHLaAS9GdiH5DLi6ahegvzvZ0BWIDMNEvLx1gILVa+a7\nk2u+8DYm8dSoV9W0qjC7jXHWz8wr++Jn4urIzeISgtbcoZlecPWKbIz0+FbEd7C6\nuMs2lnV69QO2B+4K9n8dspnvTEW77pm1rmqcOrPPQQKBgQDTPBNhdeG58zAkGuU3\ntY9oN3uXB9YUTivHWClNa3hk3BBmqRFRm8BKtcJ4G1M7Jpms46t9VaF0oPL87PUr\nLyBeBohcgHuGHPisJh6+9Si4qmrHptI/OyWE3HRGEsXZjWE7Zuqo/Tifs4ZcEMW4\nfARfK4iYMdyzlXJJyj62OASCMQKBgQCoBlOyXhglsB640bjR9kiMOwWsa/DETE6r\nL/SOrFvQR9md5XnMHSxOqvexMheuz9jCLvJeeuVSj/JnAaX9eNgNqUzSMZaRaD9m\nlwk4bfsxUAW2mcYInLll3FdfgSqHbqt7mFBKdr9go70pIwznSO5GisvXnOxCQEpp\nTvNvMRXsRQKBgQDRzbieM5yIud+V7NTAOWf/piPuBY1/S4k2DP2w9M52txDfNouK\nF/2s9sz5yIIpnRRD4TmiWhvsIDRYPO7h/oPSgACOh9qogTwImDAvkIbqq/E07h+j\nSBbi2KfwNZMnmsH5YyYtxJyqGoCYDtyjeSJKeI3KRLQl9oi2e9c/23G28QKBgQCN\nYF12HFQHCgyfh98R0z8xtsvMSzpXgLlEsuH8ViwesQX7JEV6KCXKv3IQB00ECuCg\nau4F7zQbZwEYCLwI7XAk9omr5ouBJ40JHhZlA60yzdkwzmxhfLVGbsKZmk4VjFn/\ncaZFMWtPvhYAkfxecvACLPDdJ61nBT9XIlYT/eIrXQKBgE5vXlclAfqfOer56IWq\nt4B9tAdjEINNafCIqS2yKYMocqei7+gUIsT62X2jYMo0s43NYDdLn3bJo1IT55SD\nXkUkvyOxMS+1Z6wfFOuWsYj2eOhwqiKhP1Ye+gZUkNZoVmsYM0htPUSPx5ot/gCY\nY+lkAwcL7LGrLKPNKMmB/qDQ\n-----END PRIVATE KEY-----\n' \
 
 ### Mongo Server
     #note you cannot mount a data dir from osx to a virtual box machine
@@ -63,7 +65,7 @@ FFMPEG and http://sharp.dimens.io/en/stable/install/ where installed through bre
         
 
     #connect to the server from commandline on the container
-    mongo 127.0.0.1:27017/twangband -u tb -p fuzzyWUZZYhadnohair102938476
+    mongo 127.0.0.1:27017/twangband -u tb -p fuzzyWUZZYhadnohair102938476garbage
 ### Ngnix Web Server
 
     docker run  \
